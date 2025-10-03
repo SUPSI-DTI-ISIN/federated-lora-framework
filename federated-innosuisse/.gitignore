@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# virtualenv
+.venv/
+
+# packaging
+dist/
+build/
+*.egg-info/
+
+# editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# pipenv/poetry lock files if you don't use them
+Pipfile.lock
