@@ -7,6 +7,10 @@ __pycache__/
 # virtualenv
 .venv/
 
+.env
+
+pdf-innosuisse/
+
 # packaging
 dist/
 build/
