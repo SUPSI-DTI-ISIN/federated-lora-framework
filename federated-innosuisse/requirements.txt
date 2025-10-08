@@ -1,2 +1,8 @@
-setuptools==80.9.0
-wheel==0.45.1
+annotated-types==0.7.0
+pydantic==2.11.10
+pydantic-settings==2.11.0
+pydantic_core==2.33.2
+PyMuPDF==1.26.4
+python-dotenv==1.1.1
+typing-inspection==0.4.2
+typing_extensions==4.15.0

@@ -1,6 +1,7 @@
 
 from abc import ABC, abstractmethod
-
+from typing import Dict, List
+from pymupdf import Page
 
 class BaseParser(ABC):
     @abstractmethod
@@ -8,7 +9,11 @@ class BaseParser(ABC):
         ...
     
     @abstractmethod
-    def get_pages(self) -> int:
+    def get_text_document(self) -> str:
+        ...
+    
+    @abstractmethod
+    def get_pages(self) -> List[Page]:
         ...
     
     @abstractmethod
