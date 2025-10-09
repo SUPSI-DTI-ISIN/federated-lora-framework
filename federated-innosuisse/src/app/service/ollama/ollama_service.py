@@ -1,27 +1,29 @@
 import json
-from typing import List
+from typing import List, override
 import ollama
 
 from app.config.settings import settings
 from app.model.section import Section
+from app.service.ollama.base_ollama_service import BaseOllamaService
 
 def build_prompt(system_prompt: str, user_prompt: str) -> str:
     return (
-        "role: System\n"
-        + "content: " + "\"" + system_prompt + "\""
+        "SYSTEM PROMPT:\n"
+        + system_prompt
         + "\n\n"
-        + "role: User\n"
-        + "content: " + "\"" + user_prompt + "\""
+        + "USER PROMPT\n"
+        + user_prompt
     )
 
 
-class OllamaService:
+class OllamaService(BaseOllamaService):
     def __init__(self):
         self._host = settings.llm_ollama_host
         self._model = settings.llm_ollama_model
         self.client = ollama.Client(host=self._host)
     
-    def generate_document_sections(self, system_prompt: str, user_prompt: str) -> str:
+    @override
+    def call_model(self, system_prompt: str, user_prompt: str) -> str:
         if not self._is_ollama_running():
             return []
     
@@ -31,7 +33,7 @@ class OllamaService:
         print("\nCall ollama model")
         result = self.client.generate(model=self._model, prompt=build_prompt(system_prompt, user_prompt))
         raw = str(result.get('response', ''))
-        print(json.dumps(raw, indent=4))
+        print(raw)
 
         return raw
     
