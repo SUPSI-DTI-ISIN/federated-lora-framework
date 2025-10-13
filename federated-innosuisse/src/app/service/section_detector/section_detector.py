@@ -1,6 +1,7 @@
+import json
 import re
 from pymupdf import Page
-from typing import List, Optional, override
+from typing import List, Optional, Tuple, override
 from app.model.section import Section
 from app.service.ollama.ollama_service import OllamaService
 from app.service.section_detector.base_section_detector import BaseSectionDetector
@@ -45,56 +46,80 @@ Strict: do not include any extra text outside the JSON array.
 class SectionDetector(BaseSectionDetector):
     def __init__(self):
         self._ollama_service = OllamaService()
-        self._section_pattern = re.compile(
-            r'^(\d+(?:\.\d+)*)\s+([^\n]+?)(?:\n|$)',
-            re.MULTILINE
+        self._section_pattern = re.compile(r"""
+            (?m) 
+            ^                               
+            (?:
+                (?P<num1>\d+)\.[^\S\r\n]+(?P<title1>[^\n]+)    
+                |
+                (?P<num2>\d+(?:\.\d+)+)[^\S\r\n]+(?P<title2>[^\n]+) 
+            )
+            """,
+            re.VERBOSE,
         )
+
 
     @override
     def detect_sections(self, text: str, project_number: str) -> List[Section]:
         print(text)
-        return self._ollama_service.call_model(system_prompt=build_system_prompt(project_number), user_prompt=text)
-        #return self._manual_script_extraction(text_document)
+        #return self._ollama_service.call_model(system_prompt=build_system_prompt(project_number), user_prompt=text)
+        return self._extract_sections(text, project_number.strip())
     
-    def _manual_script_extraction(self, text_document: str) -> List[Section]:
-        sections: List[Section] = []
 
-        for match in self._section_pattern.finditer(text_document):
-            section_number = match.group(1)
-            section_title = match.group(2).strip()
-            start_content_pos = match.end()
-            section_level = section_number.count('.')
-            parent_number = self._get_parent_number(section_number)
-            
-            section: Section = Section(
-                number=section_number,
-                title=section_title,
-                level=section_level,
-                start_content_pos=start_content_pos,
-                parent_number=parent_number
-            )
+    def _extract_sections(self, text: str, project_number: str) -> List[str]:
+        sections: List[Section] = self._get_raw_items(text)
 
-            sections.append(section)
+        sections = self._remove_non_valid_sections(raw_sections=sections, project_number=project_number)
+
+        sections = self._get_content_for_sections(sections, text)
         
-        sections = self._build_sections_content(sections, text_document)
+        for section in sections:
+            print(json.dumps(section.to_dict(), indent=4))
+        return []
 
-        return sections
-    
-    def _get_parent_number(self, section_number: str) -> Optional[str]:
-        parts = section_number.split('.')
-        if len(parts) == 1:
-            return None
-        return '.'.join(parts[:-1])
-    
-    def _build_sections_content(self, sections: List[Section], text_document: str) -> List[Section]:
-        for i, section in enumerate(sections):
-            start_text = section.start_content_pos
-            end_text = (sections[i + 1].start_content_pos 
-                   if i + 1 < len(sections) 
-                   else len(text_document))
-            
-            content = text_document[start_text:end_text]
+    def _get_raw_items(self, text: str) -> List[Section]:
+        raw_items: List[Section] = []
+        for match in self._section_pattern.finditer(text):
+            if match.group("num1"):
+                number = match.group("num1") + "."
+                title = match.group("title1").strip()
+            else:
+                number = match.group("num2")
+                title = match.group("title2").strip()
+
+            if not title:
+                continue
+
+            raw_items.append(Section(
+                title=number + " " + title,
+                start_pos=match.start(),
+                start_content_pos=match.end()
+            ))
+        
+        return raw_items
+
+    def _remove_non_valid_sections(self, raw_sections: List[Section], project_number: str) -> List[Section]:
+        items_counter = dict()
+
+        for item in raw_sections:
+            items_counter[item.title] = items_counter.get(item.title, 0) + 1
+
+        result: List[Section] = []
+
+        for item in raw_sections:
+            if items_counter.get(item.title, 0) == 1 and project_number not in item.title:
+                result.append(item)
+        
+        return result
+
+    def _get_content_for_sections(self, sections: List[Section], text: str) -> List[Section]:
+        result: List[Section] = []
+
+        for index, section in enumerate(sections):
+            start = section.start_content_pos
+            end = sections[index + 1].start_pos if index + 1 < len(sections) else len(text)
+            content = text[start:end].strip()
             section.content = content
-        
-        return sections
-            
+            result.append(section)
+
+        return result

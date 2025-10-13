@@ -20,7 +20,7 @@ class PdfReader:
         ])
         self._project_number_detector: ProjectNumberDetector = ProjectNumberDetector()
         self._section_detector: SectionDetector = SectionDetector()
-        self._batch_size = 1
+        self._batch_size = 5
     
     def parse_pdf(self):
         print(f"Start parsing pdf files from folder {self.pdf_foldername}")
@@ -37,26 +37,11 @@ class PdfReader:
                 self._pdf_parser.load(str(pdf_file))
 
                 pages = self._pdf_parser.get_pages()
-                buffer: List[str] = []
 
                 project_number = self._project_number_detector.extract_project_number(pages[0].get_textpage().extractText())
                 print(f"project number is: {project_number}")
 
-                for page in pages:
-                    page_text = page.get_textpage().extractText()
-
-                    buffer.append(page_text)
-
-                    if len(buffer) == self._batch_size:
-                        joined_text = "\n".join(buffer)
-                        text = self._text_cleaner.clean(joined_text)
-                        sections = self._section_detector.detect_sections(text, str(pdf_file))
-                        buffer = []
-
-                if buffer:
-                    joined_text = "\n".join(buffer)
-                    text = self._text_cleaner.clean(joined_text)
-                    sections = self._section_detector.detect_sections(text, str(pdf_file))
-
+                full_text = self._pdf_parser.get_text_document()
+                self._section_detector.detect_sections(full_text, project_number)
             finally:
                 self._pdf_parser.close()
