@@ -1,3 +1,4 @@
+dependency-injector
 annotated-types==0.7.0
 pydantic==2.11.10
 pydantic-settings==2.11.0

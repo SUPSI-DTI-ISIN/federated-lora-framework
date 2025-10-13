@@ -1,11 +1,10 @@
+import pymupdf
+
 from pathlib import Path
 from typing import List
 from pymupdf import Page
 from typing_extensions import override
-from app.service.pdf_parser.base_pdf_parser import BasePdfParser
-
-
-import pymupdf
+from app.services.pdf_parser.base_pdf_parser import BasePdfParser
 
 
 class PyMuPdfParser(BasePdfParser):
@@ -13,7 +12,7 @@ class PyMuPdfParser(BasePdfParser):
         self.document = None
 
     @override
-    def load(self, filename: Path) -> bool:
+    def load(self, filename: Path) -> None:
         self.document = pymupdf.open(filename)
         if not self.document.is_pdf:
             raise Exception("File passed is not a pdf")
@@ -44,4 +43,4 @@ class PyMuPdfParser(BasePdfParser):
             self.document = None
 
     def _is_document_open(self) -> bool:
-        return self.document != None and not self.document.is_closed
+        return self.document is not None and not self.document.is_closed
