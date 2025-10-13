@@ -1,15 +1,15 @@
-
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from pathlib import Path
+from typing import List
 from pymupdf import Page
 
-class BaseParser(ABC):
+class BasePdfParser(ABC):
     @abstractmethod
-    def load(self, path: str) -> None: 
+    def load(self, path: Path) -> None: 
         ...
     
     @abstractmethod
-    def get_text_document(self) -> str:
+    def get_all_text_document(self) -> str:
         ...
     
     @abstractmethod

@@ -1,7 +1,5 @@
-import json
 import re
-from pymupdf import Page
-from typing import List, Optional, Tuple, override
+from typing import List, override
 from app.model.section import Section
 from app.service.ollama.ollama_service import OllamaService
 from app.service.section_detector.base_section_detector import BaseSectionDetector
@@ -61,7 +59,6 @@ class SectionDetector(BaseSectionDetector):
 
     @override
     def detect_sections(self, text: str, project_number: str) -> List[Section]:
-        print(text)
         #return self._ollama_service.call_model(system_prompt=build_system_prompt(project_number), user_prompt=text)
         return self._extract_sections(text, project_number.strip())
     
@@ -72,10 +69,8 @@ class SectionDetector(BaseSectionDetector):
         sections = self._remove_non_valid_sections(raw_sections=sections, project_number=project_number)
 
         sections = self._get_content_for_sections(sections, text)
-        
-        for section in sections:
-            print(json.dumps(section.to_dict(), indent=4))
-        return []
+
+        return sections
 
     def _get_raw_items(self, text: str) -> List[Section]:
         raw_items: List[Section] = []

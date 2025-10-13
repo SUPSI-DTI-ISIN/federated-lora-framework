@@ -1,6 +1,6 @@
 import re
 from typing import override
-from app.service.text_cleaner.base_text_cleaner import BaseTextCleaner
+from app.service.text_cleaner.strategies.base_text_cleaner import BaseTextCleaner
 
 
 class PageNumberCleaner(BaseTextCleaner):

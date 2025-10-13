@@ -1,40 +1,31 @@
-from typing import Dict, List
+from pathlib import Path
+from typing import List
 from pymupdf import Page
 from typing_extensions import override
-from app.parser.base_parser import BaseParser
+from app.service.pdf_parser.base_pdf_parser import BasePdfParser
 
 
 import pymupdf
 
 
-class PyMuPdfParser(BaseParser):
+class PyMuPdfParser(BasePdfParser):
     def __init__(self) -> None:
         self.document = None
-        self.filename = None
 
     @override
-    def load(self, filename: str) -> bool:
-        try:
-            self.filename = filename
-            self.document = pymupdf.open(filename)
-            if not self.document.is_pdf:
-                print("File passed is not a pdf")
-                return False
-            return True    
-        except Exception:
-            print("Error loading file")
-            return False
-
+    def load(self, filename: Path) -> bool:
+        self.document = pymupdf.open(filename)
+        if not self.document.is_pdf:
+            raise Exception("File passed is not a pdf")
 
     @override
-    def get_text_document(self) -> str:
+    def get_all_text_document(self) -> str:
         if not self._is_document_open():
-            print("Document is not set or its already closed")
-            return None
+            raise Exception("Document is not open")
         
         text_per_page: List[str] = []
         
-        for page in self.document:
+        for page in self.get_pages():
             text_per_page.append(page.get_textpage().extractText())
         
         return "\n".join(text_per_page)
@@ -42,8 +33,7 @@ class PyMuPdfParser(BaseParser):
     @override
     def get_pages(self) -> List[Page]:
         if not self._is_document_open():
-            print("Document is not set or its already closed")
-            return None
+            raise Exception("Document is not open")
 
         return self.document
 
