@@ -1,10 +1,10 @@
-import json
+import app.dataset as dataset_builder
 import app.commons as commons
 
 from pathlib import Path
 from typing import List
 
-from app.domain import Document
+from app.domain import Document, TrainingDataset
 from app.services.pdf_parser import PdfParser
 
 def _parse_pdf_files(pdf_folder: Path) -> List[Document]:
@@ -28,5 +28,5 @@ def core(pdf_folder: str):
 
     documents: List[Document] = _parse_pdf_files(pdf_folder)
 
-    for document in documents:
-        print(json.dumps(document.to_json(), indent=4))
+    dataset: TrainingDataset = dataset_builder.build_dataset_from_documents(documents)
+    dataset.to_jsonl("./pdf-innosuisse/dataset.jsonl")

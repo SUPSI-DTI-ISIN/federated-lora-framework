@@ -31,10 +31,10 @@ class PdfParser:
         return
 
     def get_metadata(self) -> Metadata:
-        return Metadata(self.document.name, self._project_title)
+        return Metadata(self.document.name, self.project_title)
 
     def get_sections(self) -> List[Section]:
-        sections = extractor.extract_document_sections(self._full_text, self._project_number)
+        sections = extractor.extract_document_sections(self.full_text, self.project_number)
         return sections
 
     def _open(self) -> None:
@@ -42,9 +42,9 @@ class PdfParser:
         if not self.document.is_pdf:
             self._close()
             raise Exception("File passed is not a pdf")
-        self._full_text = self._get_text_document()
-        self._project_title = extractor.extract_project_title(self._full_text)
-        self._project_number = extractor.extract_project_number(self._full_text)
+        self.full_text = self._get_text_document()
+        self.project_title = extractor.extract_project_title(self.full_text)
+        self.project_number = extractor.extract_project_number(self.full_text)
 
     def _close(self) -> None:
         if self._is_document_open():

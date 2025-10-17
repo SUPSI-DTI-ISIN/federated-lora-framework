@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from app.domain.metadata import Metadata
-from app.domain.section import Section
+from .metadata import Metadata
+from .section import Section
 
 
 @dataclass
