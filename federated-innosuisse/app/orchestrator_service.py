@@ -1,17 +1,32 @@
 import json
+import app.commons as commons
+
 from pathlib import Path
 from typing import List
 
-from app.config.settings import settings
-from app.domain.entities.document import Document
-from app.use_cases.process_pdf_documents.process_pdf_documents_use_case import ProcessPdfDocumentsUseCase
+from app.domain import Document
+from app.services.pdf_parser import PdfParser
+
+def _parse_pdf_files(pdf_folder: Path) -> List[Document]:
+    documents: List[Document] = []
+    for pdf_file in commons.get_pdf_files_from_folder(pdf_folder):
+        with PdfParser(pdf_file) as pdf_parser:
+            documents.append(
+                Document(
+                    metadata=pdf_parser.get_metadata(),
+                    sections=pdf_parser.get_sections()
+                )
+            )
+    return documents
 
 
-class OrchestratorService:
-    def __init__(self, process_pdf_documents_use_case: ProcessPdfDocumentsUseCase):
-        self._process_pdf_documents_use_case: ProcessPdfDocumentsUseCase = process_pdf_documents_use_case
+def core(pdf_folder: str):
+    pdf_folder = Path(pdf_folder)
 
-    def execute_service(self):
-        documents: List[Document] = self._process_pdf_documents_use_case.parse_folder(Path(settings.pdf_folder))
-        for doc in documents:
-            print(json.dumps(doc.to_json(), indent=4))
+    if not commons.is_folder_valid(pdf_folder):
+        exit(1)
+
+    documents: List[Document] = _parse_pdf_files(pdf_folder)
+
+    for document in documents:
+        print(json.dumps(document.to_json(), indent=4))

@@ -1,11 +1,12 @@
-from app.config.container import Container
+import argparse
 
-def main():
-    container = Container()
+from app import core
 
-    orchestrator_service = container.orchestrator_service()
-    orchestrator_service.execute_service()
+if __name__ == '__main__':
+    arg_parser = argparse.ArgumentParser()
 
+    arg_parser.add_argument("-f", "--folder", help="Pdf Folder path", required=True, default="./pdf-innosuisse", type=str)
 
-if __name__ == "__main__":
-    main()
+    args = arg_parser.parse_args()
+
+    core(args.folder)
