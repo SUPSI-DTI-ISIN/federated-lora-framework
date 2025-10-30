@@ -27,3 +27,6 @@ Thumbs.db
 
 # pipenv/poetry lock files if you don't use them
 Pipfile.lock
+
+models/
+output/
