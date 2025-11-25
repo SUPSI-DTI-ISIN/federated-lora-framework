@@ -1,6 +1,6 @@
 from dependency_injector import containers, providers
 
-from app.services.pdf_parser import PdfParser
+from app.parser.pdf_parser import PdfParser
 
 
 class Container(containers.DeclarativeContainer):

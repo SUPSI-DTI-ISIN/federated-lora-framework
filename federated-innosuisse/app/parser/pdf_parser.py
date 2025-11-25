@@ -7,11 +7,6 @@ from pymupdf import Page
 
 from app.domain import Metadata, Section
 
-
-def _get_text_from_page(page: Page) -> str:
-    return page.get_textpage().extractText()
-
-
 class PdfParser:
     def __init__(self, pdf_file: Path) -> None:
         if not pdf_file or not pdf_file.is_file():
@@ -59,6 +54,10 @@ class PdfParser:
         text_per_page: List[str] = []
 
         for page in self.document:
-            text_per_page.append(_get_text_from_page(page))
+            text_per_page.append(self._get_text_from_page(page))
 
         return "\n".join(text_per_page)
+
+    @staticmethod
+    def _get_text_from_page(page: Page) -> str:
+        return page.get_textpage().extractText()

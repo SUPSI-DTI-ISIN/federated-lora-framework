@@ -1,6 +1,6 @@
 import argparse
 
-from app import core
+from app.orchestrator_service import core
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser()
