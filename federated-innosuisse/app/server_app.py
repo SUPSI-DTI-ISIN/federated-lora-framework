@@ -24,6 +24,7 @@ def main(grid: Grid, context: Context) -> None:
     print(f"Fraction train: {fraction_train}")
     print(f"Number of rounds: {num_rounds}")
     print(f"LR: {lr}")
+    print("START FEDERATED SERVER APP")
 
     # Load global model
     #global_model, _ = load_peft_model(model_name)

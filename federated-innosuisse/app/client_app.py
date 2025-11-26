@@ -48,6 +48,7 @@ def lifespan(context: Context):
 @app.train()
 def train(msg: Message, context: Context):
     """Train the model on local data."""
+    print("Client App called")
     """global _MODEL, _TOKENIZER, _DATASET_FILE
 
     model_name = context.node_config["model-name"]
