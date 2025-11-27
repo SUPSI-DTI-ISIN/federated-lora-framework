@@ -1,0 +1,111 @@
+services:
+  superlink:
+    image: flwr/superlink:${FLWR_VERSION:-1.23.0}
+    container_name: superlink
+    command:
+      - --insecure
+      - --isolation
+      - process
+    ports:
+      - "9091:9091"
+      - "9092:9092"
+      - "9093:9093"
+    networks:
+      - flwr-network
+
+  superexec-serverapp:
+    build:
+      dockerfile: docker/superexec.Dockerfile
+    container_name: superexec-serverapp
+    command:
+      - --insecure
+      - --plugin-type
+      - serverapp
+      - --appio-api-address
+      - superlink:9091
+    restart: on-failure:3
+    depends_on:
+      - superlink
+    networks:
+      - flwr-network
+
+  supernode-1:
+    image: flwr/supernode:${FLWR_VERSION:-1.23.0}
+    container_name: supernode-1
+    ports:
+      - "9094:9094"
+    command:
+      - --insecure
+      - --superlink
+      - superlink:9092
+      - --clientappio-api-address
+      - 0.0.0.0:9094
+      - --isolation
+      - process
+    depends_on:
+      - superlink
+    networks:
+      - flwr-network
+
+  supernode-2:
+    image: flwr/supernode:${FLWR_VERSION:-1.23.0}
+    container_name: supernode-2
+    ports:
+      - "9095:9095"
+    command:
+      - --insecure
+      - --superlink
+      - superlink:9092
+      - --clientappio-api-address
+      - 0.0.0.0:9095
+      - --isolation
+      - process
+    depends_on:
+      - superlink
+    networks:
+      - flwr-network
+
+  superexec-clientapp-1:
+    build:
+      dockerfile: docker/superexec.Dockerfile
+    container_name: superexec-clientapp-1
+    command:
+      - --insecure
+      - --plugin-type
+      - clientapp
+      - --appio-api-address
+      - supernode-1:9094
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+    stop_signal: SIGINT
+    depends_on:
+      - supernode-1
+    networks:
+      - flwr-network
+
+  superexec-clientapp-2:
+    build:
+      dockerfile: docker/superexec.Dockerfile
+    container_name: superexec-clientapp-2
+    command:
+      - --insecure
+      - --plugin-type
+      - clientapp
+      - --appio-api-address
+      - supernode-2:9095
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+    stop_signal: SIGINT
+    depends_on:
+      - supernode-2
+    networks:
+      - flwr-network
+
+
+networks:
+  flwr-network:
+    driver: bridge
