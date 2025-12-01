@@ -1,13 +1,14 @@
 import os.path
-
 import torch
 import torch.nn as nn
+
 from datasets import load_dataset, Split
-from peft import LoraConfig, get_peft_model, PeftModel
+from peft import LoraConfig, get_peft_model
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer, \
     IntervalStrategy, DataCollatorForLanguageModeling
 
 from app.config.settings import settings
+from app.domain.llm_model import LlmModel
 
 LORA_CONFIG = LoraConfig(
     r=8,
@@ -28,7 +29,7 @@ def print_trainable_parameters(model):
     print(f"Trainable parameters: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param:.2f}%")
 
 
-def load_peft_model(model_name: str):
+def load_peft_model(model_name: str) -> LlmModel:
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         device_map="auto"
@@ -52,13 +53,15 @@ def load_peft_model(model_name: str):
 
     model = get_peft_model(model, LORA_CONFIG)
 
-    return model, tokenizer
+    llm_model = LlmModel(model=model, tokenizer=tokenizer)
+
+    return llm_model
 
 
-def load_data(dataset_file: str):
-    dataset = load_dataset("json", data_files={"train": dataset_file}, split=Split.TRAIN)
+def load_data(dataset_path: str, test_size: float = 0.25):
+    dataset = load_dataset("json", data_files={"train": dataset_path}, split=Split.TRAIN)
 
-    dataset = dataset.train_test_split(test_size=0.25)
+    dataset = dataset.train_test_split(test_size=test_size)
     train_dataset = dataset['train']
     eval_dataset = dataset['test']
 
@@ -133,10 +136,15 @@ def train_local(model, tokenizer, train_dataset, eval_dataset):
     )
 
     model.config.use_cache=False
-    trainer.train()
+    train_output = trainer.train()
+    eval_metrics = trainer.evaluate()
 
-    model.save_pretrained(adapter_folder)
-    tokenizer.save_pretrained(adapter_folder)
+    metrics = {
+        "train_loss": float(train_output.training_loss) if hasattr(train_output, "training_loss") else None,
+        "eval_loss": eval_metrics.get("eval_loss"),
+        "hf_train_metrics": train_output.metrics if hasattr(train_output, "metrics") else None,
+    }
+    return metrics
 
 
 

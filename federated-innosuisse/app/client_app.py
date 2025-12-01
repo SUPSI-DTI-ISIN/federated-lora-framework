@@ -1,104 +1,85 @@
 import os
-
 import torch
-from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
+
+from flwr.app import Context, Message, RecordDict
 from flwr.clientapp import ClientApp
-from peft import set_peft_model_state_dict
+from flwr.common import ArrayRecord, MetricRecord
+from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
 from app.config.settings import settings
-from app.dataset import dataset_builder
+from app.dataset.dataset_builder import build_dataset_from_documents
+from app.domain.llm_model import LlmModel
+from app.model_service import ModelService
 from app.parser import parse_pdf_files
-from app.training.core import load_peft_model, load_data
+from app.training.core import load_data, train_local
 
-# Flower ClientApp
 app = ClientApp()
-
-"""
-_MODEL = None
-_TOKENIZER = None
-_DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-_DATASET_FILE = None
 
 @app.lifespan()
 def lifespan(context: Context):
-    global _MODEL, _TOKENIZER, _DATASET_FILE
-
+    print("Entro nel lifespan...")
     model_name: str = context.run_config["model-name"]
     pdf_folder: str = context.run_config["pdf-folder"]
-    node_id: int = context.node_id
 
+    model_service = ModelService.get_model_service(model_name=model_name)
 
-    _MODEL, _TOKENIZER = load_peft_model(model_name)
-    _MODEL.to(_DEVICE)
-    _MODEL.eval()
+    documents = parse_pdf_files(pdf_folder=pdf_folder)
+    dataset = build_dataset_from_documents(documents=documents)
 
-    documents = parse_pdf_files(pdf_folder)
-    dataset = dataset_builder.build_dataset_from_documents(documents)
-    file_name = "dataset" + str(node_id) + ".jsonl"
-    _DATASET_FILE = os.path.join(settings.output_folder, file_name)
-    os.makedirs(os.path.dirname(_DATASET_FILE), exist_ok=True)
-    dataset.to_jsonl(_DATASET_FILE)
+    os.makedirs(os.path.dirname(settings.dataset_path), exist_ok=True)
+    dataset.to_jsonl(output_path=settings.dataset_path)
 
     yield
 
-    _MODEL = None
-    _TOKENIZER = None
-"""
+    model_service.clear()
+    print("Esco nel lifespan...")
 
 @app.train()
 def train(msg: Message, context: Context):
-    """Train the model on local data."""
     print("Client App called")
-    """global _MODEL, _TOKENIZER, _DATASET_FILE
 
-    model_name = context.node_config["model-name"]
-    node_id: int = context.node_id
+    model_name: str = context.run_config["model-name"]
 
-    if _MODEL is None:
-        _MODEL, _TOKENIZER = load_peft_model(model_name)
-        _MODEL.to(_DEVICE)
-
-    if _DATASET_FILE is None:
-        file_name = "dataset" + str(node_id) + ".jsonl"
-        _DATASET_FILE = os.path.join(settings.output_folder, file_name)
+    model_service = ModelService.get_model_service(model_name=model_name)
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
-    set_peft_model_state_dict(_MODEL, peft_state)
-    _MODEL.train()
+    llm_model = model_service.llm_model
+    set_peft_model_state_dict(llm_model.model, peft_state)
+    llm_model.model.train()
 
-    train_dataset, eval_dataset = load_data(_DATASET_FILE)
+    train_dataset, eval_dataset = load_data(dataset_path=settings.dataset_path)
 
-    # Load the data
-    
-    train_loss, train_acc = train_fn()
-    trainloader, _ = load_data(partition_id, num_partitions)
+    print("DOING TRAIN...")
 
-    # Call the training function
-    train_loss = train_fn(
-        model,
-        trainloader,
-        context.run_config["local-epochs"],
-        msg.content["config"]["lr"],
-        device,
+    train_metrics = train_local(
+        model=llm_model.model,
+        tokenizer=llm_model.tokenizer,
+        train_dataset=train_dataset,
+        eval_dataset=eval_dataset
     )
 
-    # Construct and return reply Message
-    model_record = ArrayRecord(model.state_dict())
+    print(f"Train metrics: {train_metrics}")
+
+    peft_state_out = get_peft_model_state_dict(llm_model.model)
+    arrays = ArrayRecord(peft_state_out)
+
     metrics = {
-        "train_loss": train_loss,
-        "num-examples": len(trainloader.dataset),
+        "train_loss": train_metrics.get("train_loss", None),
+        "eval_loss": train_metrics.get("eval_loss", None),
+        "num-examples": int(len(train_dataset)),
     }
     metric_record = MetricRecord(metrics)
-    content = RecordDict({"arrays": model_record, "metrics": metric_record})
+
+    content = RecordDict({"arrays": arrays, "metrics": metric_record})
     return Message(content=content, reply_to=msg)
-    """
-    return Message(content=RecordDict(), reply_to=msg)
+
 
 @app.evaluate()
 def evaluate(msg: Message, context: Context):
     """Evaluate the model on local data."""
 
-    # Load the model and initialize it with the received weights
+    print("Start evaluation...")
+
     """
     model = Net()
     model.load_state_dict(msg.content["arrays"].to_torch_state_dict())

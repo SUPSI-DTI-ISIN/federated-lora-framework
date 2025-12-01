@@ -15,7 +15,7 @@ services:
 
   superexec-serverapp:
     build:
-      dockerfile: docker/superexec.Dockerfile
+      dockerfile: docker/superexec.server.Dockerfile
     container_name: superexec-serverapp
     command:
       - --insecure
@@ -67,7 +67,7 @@ services:
 
   superexec-clientapp-1:
     build:
-      dockerfile: docker/superexec.Dockerfile
+      dockerfile: docker/superexec.client.Dockerfile
     container_name: superexec-clientapp-1
     command:
       - --insecure
@@ -87,7 +87,7 @@ services:
 
   superexec-clientapp-2:
     build:
-      dockerfile: docker/superexec.Dockerfile
+      dockerfile: docker/superexec.client.Dockerfile
     container_name: superexec-clientapp-2
     command:
       - --insecure

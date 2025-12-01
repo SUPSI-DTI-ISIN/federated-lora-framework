@@ -1,43 +1,35 @@
+import os
 import torch
+
 from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
-from app.training.core import load_peft_model, print_trainable_parameters
+from app.model_service import ModelService
+from app.training.core import print_trainable_parameters
 
-# Create ServerApp
 app = ServerApp()
-
 
 @app.main()
 def main(grid: Grid, context: Context) -> None:
-    """Main entry point for the ServerApp."""
-
-    # Read run config
     model_name: str = context.run_config["model-name"]
     fraction_train: float = context.run_config["fraction-train"]
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["lr"]
 
-    print(f"Model name: {model_name}")
-    print(f"Fraction train: {fraction_train}")
-    print(f"Number of rounds: {num_rounds}")
-    print(f"LR: {lr}")
-    print("START FEDERATED SERVER APP")
+    print("Start server app")
 
-    # Load global model
-    #global_model, _ = load_peft_model(model_name)
-    #print_trainable_parameters(global_model)
+    model_service = ModelService.get_model_service(model_name=model_name)
 
-    #peft_state = get_peft_model_state_dict(global_model)
-    #arrays = ArrayRecord(peft_state)
-    arrays = ArrayRecord()
+    global_model = model_service.llm_model.model
+    print_trainable_parameters(global_model)
+    peft_state = get_peft_model_state_dict(global_model)
 
-    # Initialize FedAvg strategy
+    arrays = ArrayRecord(peft_state)
+
     strategy = FedAvg(fraction_train=fraction_train)
 
-    # Start strategy, run FedAvg for `num_rounds`
     result = strategy.start(
         grid=grid,
         initial_arrays=arrays,
@@ -45,7 +37,8 @@ def main(grid: Grid, context: Context) -> None:
         num_rounds=num_rounds,
     )
 
-    # Save final model to disk
     print("\nSaving final model to disk...")
-    #state_dict = result.arrays.to_torch_state_dict()
+    state_dict = result.arrays.to_torch_state_dict()
+
+    #os.makedirs(os.path.normpath("./output"), exist_ok=True)
     #torch.save(state_dict, "final_model.pt")

@@ -7,7 +7,7 @@ dependencies = [
     "dependency-injector>=4.48.2",
     "flwr>=1.23.0",
     "peft>=0.18.0",
-    "pydantic>=2.12.4",
+    "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
     "pymupdf>=1.26.6",
     "torch>=2.9.1",
@@ -24,7 +24,7 @@ clientapp = "app.client_app:app"
 # Custom config values accessible via `context.run_config`
 [tool.flwr.app.config]
 model-name = "distilbert/distilgpt2"
-pdf_folder = "pdf-innosuisse/"
+pdf-folder = "pdf-innosuisse/"
 num-server-rounds = 3
 fraction-train = 0.5
 local-epochs = 1
