@@ -18,8 +18,6 @@ def main(grid: Grid, context: Context) -> None:
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["lr"]
 
-    print("Start server app")
-
     model_service = ModelService.get_model_service(model_name=model_name)
 
     global_model = model_service.llm_model.model

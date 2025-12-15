@@ -1,5 +1,4 @@
 import os
-import torch
 
 from flwr.app import Context, Message, RecordDict
 from flwr.clientapp import ClientApp
@@ -8,7 +7,6 @@ from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
 from app.config.settings import settings
 from app.dataset.dataset_builder import build_dataset_from_documents
-from app.domain.llm_model import LlmModel
 from app.model_service import ModelService
 from app.parser import parse_pdf_files
 from app.training.core import load_data, train_local
@@ -31,8 +29,8 @@ def lifespan(context: Context):
 
     yield
 
-    model_service.clear()
-    print("Esco nel lifespan...")
+    del model_service
+    print("Esco dal lifespan...")
 
 @app.train()
 def train(msg: Message, context: Context):
@@ -48,8 +46,6 @@ def train(msg: Message, context: Context):
     llm_model.model.train()
 
     train_dataset, eval_dataset = load_data(dataset_path=settings.dataset_path)
-
-    print("DOING TRAIN...")
 
     train_metrics = train_local(
         model=llm_model.model,
