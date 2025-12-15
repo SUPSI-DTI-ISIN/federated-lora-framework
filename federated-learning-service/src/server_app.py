@@ -3,8 +3,9 @@ from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
-from model_service import ModelService
+from services.model import ModelService
 from training.core import print_trainable_parameters
+from utils import settings
 
 app = ServerApp()
 
@@ -15,9 +16,7 @@ def main(grid: Grid, context: Context) -> None:
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["lr"]
 
-    model_service = ModelService.get_model_service(model_name=model_name)
-
-    global_model = model_service.llm_model.model
+    global_model = ModelService.load_model(model_name=model_name, device=settings.device, lora_config=settings.lora_config)
     print_trainable_parameters(global_model)
     peft_state = get_peft_model_state_dict(global_model)
 

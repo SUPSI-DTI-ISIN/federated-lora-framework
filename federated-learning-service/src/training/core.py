@@ -3,70 +3,12 @@ import torch
 import torch.nn as nn
 
 from datasets import load_dataset, Split
-from peft import LoraConfig, get_peft_model
+from peft import get_peft_model
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer, \
     IntervalStrategy, DataCollatorForLanguageModeling
 
-from config import settings
-from domain.llm_model import LlmModel
-
-LORA_CONFIG = LoraConfig(
-    r=8,
-    lora_alpha=16,
-    lora_dropout=0.05,
-    bias='none',
-    task_type="CAUSAL_LM",
-)
-
-def print_trainable_parameters(model):
-    trainable_params = 0
-    all_param = 0
-    for _, param in model.named_parameters():
-        all_param += param.numel()
-        if param.requires_grad:
-            trainable_params += param.numel()
-
-    print(f"Trainable parameters: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param:.2f}%")
-
-
-def load_peft_model(model_name: str) -> LlmModel:
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        device_map="auto"
-    )
-
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    tokenizer.pad_token = tokenizer.eos_token
-
-    for param in model.parameters():
-        param.requires_grad = False
-        if param.ndim == 1:
-            param.data = param.data.to(torch.float32)
-
-    model.gradient_checkpointing_disable()
-    model.enable_input_require_grads()
-
-    class CastOutputToFloat(nn.Sequential):
-        def forward(self, x): return super().forward(x).to(torch.float32)
-
-    model.lm_head = CastOutputToFloat(model.lm_head)
-
-    model = get_peft_model(model, LORA_CONFIG)
-
-    llm_model = LlmModel(model=model, tokenizer=tokenizer)
-
-    return llm_model
-
-
-def load_data(dataset_path: str, test_size: float = 0.25):
-    dataset = load_dataset("json", data_files={"train": dataset_path}, split=Split.TRAIN)
-
-    dataset = dataset.train_test_split(test_size=test_size)
-    train_dataset = dataset['train']
-    eval_dataset = dataset['test']
-
-    return train_dataset, eval_dataset
-
+from services.model import ModelService
+from utils import settings
 
 def train_local(model, tokenizer, train_dataset, eval_dataset):
     def preprocess(examples):
@@ -172,16 +114,8 @@ def train(dataset_file: str):
 
     model.lm_head = CastOutputToFloat(model.lm_head)
 
-    config = LoraConfig(
-        r=8,
-        lora_alpha=16,
-        lora_dropout=0.05,
-        bias='none',
-        task_type="CAUSAL_LM",
-    )
-
-    model = get_peft_model(model, config)
-    print_trainable_parameters(model)
+    model = get_peft_model(model, settings.lora_config)
+    ModelService.print_trainable_parameters(model)
 
     dataset = load_dataset("json", data_files={"train": dataset_file}, split="train")
 

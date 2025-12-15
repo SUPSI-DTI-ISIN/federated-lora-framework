@@ -8,18 +8,17 @@ from pymupdf import Page
 
 from domain.document import Metadata, Section
 
-class PdfParser:
+class PdfParserService:
     def __init__(self, pdf_file: Path) -> None:
         if not pdf_file or not pdf_file.is_file():
             raise Exception(f"PDF file '{pdf_file}' is not valid")
 
-        self.document = None
-        self.pdf_file = pdf_file
-        self._open()
+        self._document = None
+        self._open(pdf_file=pdf_file)
 
-    def __enter__(self) -> "PdfParser":
+    def __enter__(self, pdf_file: Path) -> "PdfParserService":
         if not self._is_document_open():
-            self._open()
+            self._open(pdf_file=pdf_file)
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -27,35 +26,34 @@ class PdfParser:
         return
 
     def get_metadata(self) -> Metadata:
-        return Metadata(self.document.name, self.project_title)
+        return Metadata(self._document.name, self._project_title)
 
     def get_sections(self) -> List[Section]:
-        sections = extractor.extract_document_sections(self.full_text, self.project_number)
+        sections = extractor.extract_document_sections(self._full_text, self._project_number)
         return sections
 
-    def _open(self) -> None:
-        self.document = pymupdf.open(self.pdf_file)
-        if not self.document.is_pdf:
+    def _open(self, pdf_file: Path) -> None:
+        self._document = pymupdf.open(pdf_file)
+        if not self._document.is_pdf:
             self._close()
             raise Exception("File passed is not a pdf")
-        self.full_text = self._get_text_document()
-        self.project_title = extractor.extract_project_title(self.full_text)
-        self.project_number = extractor.extract_project_number(self.full_text)
+        self._full_text = self._get_text_document()
+        self._project_title = extractor.extract_project_title(self._full_text)
+        self._project_number = extractor.extract_project_number(self._full_text)
 
     def _close(self) -> None:
         if self._is_document_open():
-            self.document.close()
-            self.document = None
-            self.pdf_file = None
+            self._document.close()
+            self._document = None
 
     def _is_document_open(self) -> bool:
-        return self.document is not None and not self.document.is_closed
+        return self._document is not None and not self._document.is_closed
 
     def _get_text_document(self) -> str:
         text_per_page: List[str] = []
 
-        for page in self.document:
-            text_per_page.append(self._get_text_from_page(page))
+        for page in self._document:
+            text_per_page.append(PdfParserService._get_text_from_page(page))
 
         return "\n".join(text_per_page)
 

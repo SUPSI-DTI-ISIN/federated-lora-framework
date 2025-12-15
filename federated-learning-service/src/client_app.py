@@ -5,10 +5,10 @@ from flwr.clientapp import ClientApp
 from flwr.common import ArrayRecord, MetricRecord
 from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
-from config import settings
-from dataset.dataset_builder import build_dataset_from_documents
-from model_service import ModelService
-from parser import parse_pdf_files
+from utils import settings
+from services.dataset import DatasetService
+from services.model import ModelService
+from services.parser import PdfParserFacade
 from training.core import load_data, train_local
 
 app = ClientApp()
@@ -16,20 +16,15 @@ app = ClientApp()
 @app.lifespan()
 def lifespan(context: Context):
     print("Entro nel lifespan...")
-    model_name: str = context.run_config["model-name"]
     pdf_folder: str = context.run_config["pdf-folder"]
 
-    model_service = ModelService.get_model_service(model_name=model_name)
-
-    documents = parse_pdf_files(pdf_folder=pdf_folder)
-    dataset = build_dataset_from_documents(documents=documents)
-
-    os.makedirs(os.path.dirname(settings.dataset_path), exist_ok=True)
-    dataset.to_jsonl(output_path=settings.dataset_path)
+    documents = PdfParserFacade.parse_pdf_files(pdf_folder=pdf_folder)
+    dataset = DatasetService.build_dataset_from_documents(documents=documents)
+    os.makedirs(settings.dataset_output_path, exist_ok=True)
+    dataset.to_jsonl(output_path=settings.dataset_output_path)
 
     yield
 
-    del model_service
     print("Esco dal lifespan...")
 
 @app.train()
@@ -38,25 +33,24 @@ def train(msg: Message, context: Context):
 
     model_name: str = context.run_config["model-name"]
 
-    model_service = ModelService.get_model_service(model_name=model_name)
-
     peft_state = msg.content["arrays"].to_torch_state_dict()
-    llm_model = model_service.llm_model
-    set_peft_model_state_dict(llm_model.model, peft_state)
-    llm_model.model.train()
+    model = ModelService.load_model(model_name=model_name, device=settings.device, lora_config=settings.lora_config)
+    tokenizer = ModelService.load_tokenizer(model_name=model_name)
+    set_peft_model_state_dict(model.model, peft_state)
+    model.model.train()
 
     train_dataset, eval_dataset = load_data(dataset_path=settings.dataset_path)
 
     train_metrics = train_local(
-        model=llm_model.model,
-        tokenizer=llm_model.tokenizer,
+        model=model,
+        tokenizer=tokenizer,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset
     )
 
     print(f"Train metrics: {train_metrics}")
 
-    peft_state_out = get_peft_model_state_dict(llm_model.model)
+    peft_state_out = get_peft_model_state_dict(model)
     arrays = ArrayRecord(peft_state_out)
 
     metrics = {

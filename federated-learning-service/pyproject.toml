@@ -5,7 +5,6 @@ description = "Federated Learning service which contains client app and server a
 requires-python = "==3.12.12"
 dependencies = [
     "datasets>=4.4.1",
-    "dependency-injector>=4.48.2",
     "flwr>=1.23.0",
     "peft>=0.18.0",
     "pydantic>=2.12.5",
