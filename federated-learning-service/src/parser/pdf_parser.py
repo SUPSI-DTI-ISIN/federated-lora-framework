@@ -1,11 +1,12 @@
 import pymupdf
-import app.extractor as extractor
+
+import extractor
 
 from pathlib import Path
 from typing import List
 from pymupdf import Page
 
-from app.domain import Metadata, Section
+from domain.document import Metadata, Section
 
 class PdfParser:
     def __init__(self, pdf_file: Path) -> None:

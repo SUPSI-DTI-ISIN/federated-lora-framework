@@ -1,9 +1,10 @@
 from pathlib import Path
 from typing import List
 
-from app import commons
-from app.domain import Document
-from app.parser.pdf_parser import PdfParser
+import commons
+
+from domain.document import Document
+from parser.pdf_parser import PdfParser
 
 
 def parse_pdf_files(pdf_folder: str) -> List[Document]:

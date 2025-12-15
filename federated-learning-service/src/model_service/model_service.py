@@ -1,7 +1,7 @@
 import torch
 
-from app.domain.llm_model import LlmModel
-from app.training.core import load_peft_model
+from domain.llm_model import LlmModel
+from training.core import load_peft_model
 
 
 class ModelService:

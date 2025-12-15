@@ -7,8 +7,8 @@ from peft import LoraConfig, get_peft_model
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainingArguments, Trainer, \
     IntervalStrategy, DataCollatorForLanguageModeling
 
-from app.config.settings import settings
-from app.domain.llm_model import LlmModel
+from config import settings
+from domain.llm_model import LlmModel
 
 LORA_CONFIG = LoraConfig(
     r=8,

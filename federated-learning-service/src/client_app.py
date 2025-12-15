@@ -5,11 +5,11 @@ from flwr.clientapp import ClientApp
 from flwr.common import ArrayRecord, MetricRecord
 from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
-from app.config.settings import settings
-from app.dataset.dataset_builder import build_dataset_from_documents
-from app.model_service import ModelService
-from app.parser import parse_pdf_files
-from app.training.core import load_data, train_local
+from config import settings
+from dataset.dataset_builder import build_dataset_from_documents
+from model_service import ModelService
+from parser import parse_pdf_files
+from training.core import load_data, train_local
 
 app = ClientApp()
 

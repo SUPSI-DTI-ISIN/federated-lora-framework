@@ -1,6 +1,7 @@
 from typing import List
 
-from app.domain import Document, TrainingRow, TrainingDataset, Section, Metadata
+from domain.document import Document, Section, Metadata
+from domain.training import TrainingRow, TrainingDataset
 
 
 def build_dataset_from_documents(documents: List[Document]):

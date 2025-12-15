@@ -1,7 +1,7 @@
 import re
 
 from typing import List
-from app.domain import Section
+from domain.document import Section
 
 _section_re_pattern = re.compile(r"""
             (?m) 

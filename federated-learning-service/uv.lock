@@ -271,7 +271,7 @@ wheels = [
 ]
 
 [[package]]
-name = "federated-innosuisse"
+name = "federated-learning-service"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

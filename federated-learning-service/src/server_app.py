@@ -1,13 +1,10 @@
-import os
-import torch
-
 from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
-from app.model_service import ModelService
-from app.training.core import print_trainable_parameters
+from model_service import ModelService
+from training.core import print_trainable_parameters
 
 app = ServerApp()
 
