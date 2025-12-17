@@ -14,11 +14,12 @@ class PdfParserService:
             raise Exception(f"PDF file '{pdf_file}' is not valid")
 
         self._document = None
-        self._open(pdf_file=pdf_file)
+        self._pdf_file = pdf_file
+        self._open()
 
-    def __enter__(self, pdf_file: Path) -> "PdfParserService":
+    def __enter__(self) -> "PdfParserService":
         if not self._is_document_open():
-            self._open(pdf_file=pdf_file)
+            self._open()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -32,8 +33,8 @@ class PdfParserService:
         sections = extractor.extract_document_sections(self._full_text, self._project_number)
         return sections
 
-    def _open(self, pdf_file: Path) -> None:
-        self._document = pymupdf.open(pdf_file)
+    def _open(self) -> None:
+        self._document = pymupdf.open(self._pdf_file)
         if not self._document.is_pdf:
             self._close()
             raise Exception("File passed is not a pdf")
@@ -45,6 +46,7 @@ class PdfParserService:
         if self._is_document_open():
             self._document.close()
             self._document = None
+            self._pdf_file = None
 
     def _is_document_open(self) -> bool:
         return self._document is not None and not self._document.is_closed

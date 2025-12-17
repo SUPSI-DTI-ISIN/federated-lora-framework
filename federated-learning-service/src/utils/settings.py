@@ -1,10 +1,13 @@
 import os
 
 from peft import LoraConfig
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
 
 class Settings(BaseSettings):
-    device: str
+    model_config = SettingsConfigDict(validate_default=False)
+
+    device: str = "auto"
 
     rank: int = 8
     lora_alpha: int = 16

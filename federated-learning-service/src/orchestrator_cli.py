@@ -22,7 +22,7 @@ def core(pdf_folder: str):
     documents: List[Document] = PdfParserFacade.parse_pdf_files(pdf_folder=pdf_folder)
 
     dataset: TrainingDataset = DatasetService.build_dataset_from_documents(documents=documents)
-    os.makedirs(settings.dataset_output_path, exist_ok=True)
+    os.makedirs(settings.output_folder, exist_ok=True)
     dataset.to_jsonl(output_path=settings.dataset_output_path)
 
     print("train...")

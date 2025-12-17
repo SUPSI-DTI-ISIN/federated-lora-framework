@@ -4,7 +4,6 @@ from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
 from services.model import ModelService
-from training.core import print_trainable_parameters
 from utils import settings
 
 app = ServerApp()
@@ -17,7 +16,7 @@ def main(grid: Grid, context: Context) -> None:
     lr: float = context.run_config["lr"]
 
     global_model = ModelService.load_model(model_name=model_name, device=settings.device, lora_config=settings.lora_config)
-    print_trainable_parameters(global_model)
+    ModelService.print_trainable_parameters(model=global_model)
     peft_state = get_peft_model_state_dict(global_model)
 
     arrays = ArrayRecord(peft_state)
