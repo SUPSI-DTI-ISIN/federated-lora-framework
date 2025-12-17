@@ -1,0 +1,23 @@
+services:
+  inference-service:
+    build:
+      context: ../inference-service
+      dockerfile: docker/Dockerfile
+    restart: always
+    ports:
+      - "9000:9000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/api_inference/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - external
+
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
+    internal: false
