@@ -9,7 +9,7 @@ from utils import settings
 from services.dataset import DatasetService
 from services.model import ModelService
 from services.parser import PdfParserFacade
-from training.core import load_data, train_local
+from training.core import train_local
 
 app = ClientApp()
 
@@ -39,7 +39,7 @@ def train(msg: Message, context: Context):
     set_peft_model_state_dict(model.model, peft_state)
     model.model.train()
 
-    train_dataset, eval_dataset = load_data(dataset_path=settings.dataset_path)
+    train_dataset, eval_dataset = DatasetService.load_data(dataset_path=settings.dataset_path)
 
     train_metrics = train_local(
         model=model,
