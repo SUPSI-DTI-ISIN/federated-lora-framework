@@ -2,14 +2,16 @@ import traceback
 
 from flask import Blueprint, jsonify
 
+from services.model import ModelService
+
 bp = Blueprint("main", __name__)
 
 @bp.route("/api_inference/query", methods=["POST"])
 def query(prompt: str):
     try:
-        print("prompt", prompt)
+        response = ModelService.inference_model(prompt=prompt)
         return jsonify( {
-            "response": "Ciao Bello MIO!",
+            "response": response,
         } ), 200
 
     except Exception as ex:
