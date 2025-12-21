@@ -1,4 +1,7 @@
-from fastapi import APIRouter, status, UploadFile, HTTPException
+from fastapi import APIRouter, status, UploadFile, HTTPException, Depends
+
+from services.documents import DocumentsServiceInterface
+from .dependencies import get_documents_service
 
 router = APIRouter(prefix="/documents")
 
@@ -20,3 +23,12 @@ async def upload(file: UploadFile):
     #result = await service.process_and_store(content, file.filename)
     
     return {}
+
+
+@router.get(
+    "/",
+    status_code=status.HTTP_200_OK,
+    tags=tags
+)
+async def get_all(documents_service: DocumentsServiceInterface = Depends(get_documents_service)):
+    return documents_service.get_all()

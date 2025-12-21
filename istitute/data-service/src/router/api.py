@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from .documents import router as documents_router
-from .health import router as health_router
+from router.documents import router as documents_router
+from router.health import router as health_router
 
 api_router = APIRouter()
 

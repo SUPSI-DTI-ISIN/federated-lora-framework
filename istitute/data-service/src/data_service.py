@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from config import settings
-from router.api import api_router
+from router import api_router
 
 def create_app() -> FastAPI:
     app = FastAPI(

@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     @field_validator("cors_origins", mode="before")
     @classmethod
-    def assemble_cors_origins(cls, v: Union[str, List[str]]) -> List[str]:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
-        return v
+    def assemble_cors_origins(cls, values: Union[str, List[str]]) -> List[str]:
+        if isinstance(values, str) and not values.startswith("["):
+            return [i.strip() for i in values.split(",")]
+        return values

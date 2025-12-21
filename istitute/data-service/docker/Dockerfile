@@ -1,6 +1,6 @@
 FROM --platform=$TARGETPLATFORM python:3.13-slim
 
-#ARG ENV_PATH=.env
+ARG ENV_PATH=.env.dev
 
 ENV PYTHONUNBUFFERED=1
 
@@ -19,12 +19,12 @@ WORKDIR /app
 COPY src src/
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
-#COPY $ENV_PATH .env
+COPY $ENV_PATH .env
 
 RUN uv sync --locked
 
 EXPOSE 8080
-#ENV UV_ENV_FILE=../.env
+ENV UV_ENV_FILE=../.env
 
 WORKDIR /app/src
 

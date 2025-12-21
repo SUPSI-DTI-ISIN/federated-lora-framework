@@ -31,6 +31,8 @@ services:
     build:
       context: ../data-service
       dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
     restart: always
     expose:
       - "8080:8080"
