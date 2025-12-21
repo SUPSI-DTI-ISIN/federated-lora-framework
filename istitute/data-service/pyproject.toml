@@ -11,4 +11,7 @@ dependencies = [
     "uvicorn>=0.40.0",
     "python-multipart>=0.0.21",
     "sqlalchemy>=2.0.45",
+    "pymupdf>=1.26.7",
+    "aiomysql>=0.3.2",
+    "cryptography>=46.0.3",
 ]

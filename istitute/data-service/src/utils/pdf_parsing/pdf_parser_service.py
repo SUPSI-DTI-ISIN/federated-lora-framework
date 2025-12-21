@@ -1,12 +1,12 @@
 import pymupdf
 
-import extractor
-
 from pathlib import Path
 from typing import List
 from pymupdf import Page
 
-from domain.document import Metadata, Section
+from schemas.documents import DocumentDTO
+from .extractor import SectionExtractor, ProjectTitleExtractor, ProjectNumberExtractor
+
 
 class PdfParserService:
     def __init__(self, pdf_file: Path) -> None:
@@ -26,12 +26,12 @@ class PdfParserService:
         self._close()
         return
 
-    def get_metadata(self) -> Metadata:
-        return Metadata(self._project_number, self._document.name, self._project_title)
-
-    def get_sections(self) -> List[Section]:
-        sections = extractor.extract_document_sections(self._full_text, self._project_number)
-        return sections
+    def get_document(self) -> DocumentDTO:
+        return DocumentDTO(
+            id=self._project_number,
+            title=self._project_title,
+            sections=SectionExtractor.extract_document_sections(text=self._full_text, project_number=self._project_number)
+        )
 
     def _open(self) -> None:
         self._document = pymupdf.open(self._pdf_file)
@@ -39,8 +39,8 @@ class PdfParserService:
             self._close()
             raise Exception("File passed is not a pdf")
         self._full_text = self._get_text_document()
-        self._project_title = extractor.extract_project_title(self._full_text)
-        self._project_number = extractor.extract_project_number(self._full_text)
+        self._project_title = ProjectTitleExtractor.extract_project_title(text_document=self._full_text)
+        self._project_number = ProjectNumberExtractor.extract_project_number(text_document=self._full_text)
 
     def _close(self) -> None:
         if self._is_document_open():
@@ -55,7 +55,7 @@ class PdfParserService:
         text_per_page: List[str] = []
 
         for page in self._document:
-            text_per_page.append(PdfParserService._get_text_from_page(page))
+            text_per_page.append(PdfParserService._get_text_from_page(page=page))
 
         return "\n".join(text_per_page)
 

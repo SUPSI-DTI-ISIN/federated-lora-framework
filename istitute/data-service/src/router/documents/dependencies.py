@@ -2,8 +2,8 @@ from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database import DatabaseConnector
-from repositories.documents import DocumentsRepositoryInterface, DocumentsRepository
-from services.documents import DocumentsServiceInterface, DocumentsService
+from repositories import DocumentsRepositoryInterface, DocumentsRepository
+from services import DocumentsServiceInterface, DocumentsService
 
 def get_documents_repository(db: AsyncSession = Depends(DatabaseConnector.get_db_session)) -> DocumentsRepositoryInterface:
     return DocumentsRepository(db_session=db)

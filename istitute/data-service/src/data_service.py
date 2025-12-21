@@ -6,13 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from config import settings
-from router import api_router
+from database import DatabaseConnector
+from router import api_router, lifespan
 
 def create_app() -> FastAPI:
     app = FastAPI(
         title="Data Service",
         description="Data Service module handle communication with mySql DB storing and retrieving pdf innosuisse files",
         version="1.0.0",
+        lifespan=lifespan
     )
 
 
@@ -26,6 +28,8 @@ def create_app() -> FastAPI:
     app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     app.include_router(router=api_router, prefix="/api_data")
+
+    DatabaseConnector.init_database_connection()
 
     return app
 
