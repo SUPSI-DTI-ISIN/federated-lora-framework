@@ -1,23 +1,28 @@
 services:
-#  database:
-#    image: mysql:8.4.7
-#    container_name: pinkFlamingosContainer
-#    ports:
-#      - "3306:3306"
-#    environment:
-#      - MYSQL_ROOT_PASSWORD=root
-#      - MYSQL_DATABASE=root
-#    volumes:
-#      - mysql:/data/db
-#    networks:
-#      - internal
+  mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: documents
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - internal
 
   inference-service:
     build:
       context: ../inference-service
       dockerfile: docker/Dockerfile
     restart: always
-    expose:
+    ports:
       - "9000:9000"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/api_inference/health" ]
@@ -34,8 +39,11 @@ services:
       args:
         ENV_PATH: .env.local
     restart: always
-    expose:
+    ports:
       - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/api_data/health" ]
       interval: 20s
@@ -66,9 +74,9 @@ services:
       - internal
       - external
 
-#volumes:
-#  mysql:
-#    driver: local
+volumes:
+  mysql-data:
+    driver: local
 
 networks:
   internal:

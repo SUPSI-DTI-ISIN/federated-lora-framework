@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database import BaseModel
+from .base_model import BaseModel
 
 class DocumentModel(BaseModel):
     __tablename__ = "documents"

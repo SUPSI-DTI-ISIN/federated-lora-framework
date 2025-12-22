@@ -1,7 +1,7 @@
 from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from database import BaseModel
+from .base_model import BaseModel
 
 
 class SectionModel(BaseModel):
