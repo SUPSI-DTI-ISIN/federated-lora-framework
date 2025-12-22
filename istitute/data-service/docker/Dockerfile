@@ -1,10 +1,10 @@
 FROM --platform=$TARGETPLATFORM python:3.13-slim
 
-ARG ENV_PATH=.env.dev
+ARG ENV_PATH=.env.local
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates netcat-openbsd
 
 # Download UV installer
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
@@ -20,12 +20,16 @@ COPY src src/
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 COPY $ENV_PATH .env
+COPY migrations/ migrations/
+COPY alembic.ini alembic.ini
+COPY docker/docker-entrypoint.sh docker-entrypoint.sh
+
+RUN chmod +x /app/docker-entrypoint.sh
 
 RUN uv sync --locked
 
 EXPOSE 8080
-ENV UV_ENV_FILE=../.env
+ENV UV_ENV_FILE=.env
 
-WORKDIR /app/src
-
-CMD ["uv", "run", "data_service.py", "-p", "8080"]
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["uv", "run", "src/data_service.py", "-p", "8080"]

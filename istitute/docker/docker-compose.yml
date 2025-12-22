@@ -4,7 +4,6 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: documents
     healthcheck:
@@ -38,6 +37,12 @@ services:
       dockerfile: docker/Dockerfile
       args:
         ENV_PATH: .env.local
+    environment:
+      ALEMBIC_SYNC_DATABASE_URL: "mysql+pymysql://root:root@mysql-db:3306/documents"
+      DATABASE_URL: "mysql+aiomysql://root:root@mysql-db:3306/documents"
+      DB_HOST: "mysql-db"
+      DB_PORT: "3306"
+      FRONTEND_URL: "http://frontend:80"
     restart: always
     ports:
       - "8080:8080"

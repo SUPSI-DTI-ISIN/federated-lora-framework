@@ -22,7 +22,7 @@ if config.config_file_name is not None:
 target_metadata = BaseModel.metadata
 
 load_dotenv()
-DATABASE_URL = os.environ["DATABASE_URL"]
+DATABASE_URL = os.environ["ALEMBIC_SYNC_DATABASE_URL"]
 
 config.set_main_option(
     "sqlalchemy.url",
