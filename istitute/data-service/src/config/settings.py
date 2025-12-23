@@ -1,5 +1,4 @@
-from typing import List, Union
-from pydantic import field_validator
+from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from commons import Environment
