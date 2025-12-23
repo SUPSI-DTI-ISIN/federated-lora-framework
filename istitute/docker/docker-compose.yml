@@ -20,6 +20,10 @@ services:
     build:
       context: ../inference-service
       dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    environment:
+      FRONTEND_URL: "http://frontend:80"
     restart: always
     ports:
       - "9000:9000"

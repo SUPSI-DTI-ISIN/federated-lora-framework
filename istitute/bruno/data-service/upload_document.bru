@@ -1,0 +1,24 @@
+meta {
+  name: upload_document
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/api_data/documents/upload
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(/home/lucafanto/OneDrive/Desktop/Supsi/master/proj_1/decentralised-ai/pdf-innosuisse/103.518 IP-ICT Innolink Application-8.pdf) @contentType(application/pdf)
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

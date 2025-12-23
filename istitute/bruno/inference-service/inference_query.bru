@@ -1,0 +1,26 @@
+meta {
+  name: inference_query
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:9000/api_inference/inference/query
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "prompt": "Tell me what you know about SUPSI"
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

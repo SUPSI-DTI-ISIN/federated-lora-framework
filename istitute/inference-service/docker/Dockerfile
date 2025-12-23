@@ -1,6 +1,6 @@
 FROM --platform=$TARGETPLATFORM python:3.13-slim
 
-#ARG ENV_PATH=.env
+ARG ENV_PATH=.env.local
 
 ENV PYTHONUNBUFFERED=1
 
@@ -19,13 +19,11 @@ WORKDIR /app
 COPY src src/
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
-#COPY $ENV_PATH .env
+COPY $ENV_PATH .env
 
 RUN uv sync --locked
 
 EXPOSE 9000
-#ENV UV_ENV_FILE=../.env
+ENV UV_ENV_FILE=.env
 
-WORKDIR /app/src
-
-CMD ["uv", "run", "inference_service.py", "-p", "9000"]
+CMD ["uv", "run", "src/inference_service.py", "-p", "9000"]

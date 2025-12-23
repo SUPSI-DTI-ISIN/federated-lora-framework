@@ -1,0 +1,16 @@
+meta {
+  name: health
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:9000/api_inference/health
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}

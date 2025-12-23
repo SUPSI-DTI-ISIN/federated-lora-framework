@@ -1,13 +1,30 @@
 import argparse
+import uvicorn
 
-from flask import Flask
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 
-from routes import bp
+from config import settings
+from router import api_router
 
-def create_app() -> Flask:
-    app = Flask("Inference server")
+def create_app() -> FastAPI:
+    app = FastAPI(
+        title="Inference Service",
+        description="Inference Service used for query the LLM model",
+        version="1.0.0",
+    )
 
-    app.register_blueprint(bp)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.cors_origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"]
+    )
+    app.add_middleware(GZipMiddleware, minimum_size=1000)
+
+    app.include_router(router=api_router, prefix="/api_inference")
 
     return app
 
@@ -19,4 +36,9 @@ if __name__ == "__main__":
     args = parser.parse_args()
     app = create_app()
 
-    app.run( host="0.0.0.0", port=args.port, debug=True, use_reloader=False )
+    uvicorn.run(
+        create_app(),
+        host="0.0.0.0",
+        port=args.port,
+        access_log=True,
+    )

@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, UploadFile, HTTPException, Depends
+from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File
 
 from schemas.documents import DocumentDTO
 from services import DocumentsServiceInterface
@@ -17,13 +17,19 @@ tags = ["documents"]
     tags=tags
 )
 async def upload(
-        file: UploadFile,
+        file: UploadFile = File(..., description="PDF file to upload"),
         service: DocumentsServiceInterface = Depends(get_documents_service)
 ):
-    if not file.filename.lower().endswith(".pdf"):
+    if not file:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files allowed"
+            detail="No file provided"
+        )
+
+    if file.content_type != "application/pdf":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only PDF files are allowed"
         )
 
     file_content = await file.read()
@@ -33,6 +39,12 @@ async def upload(
 
 @router.get(
     "/",
+    status_code=status.HTTP_200_OK,
+    response_model=List[DocumentDTO],
+    tags=tags
+)
+@router.get(
+    "",
     status_code=status.HTTP_200_OK,
     response_model=List[DocumentDTO],
     tags=tags
