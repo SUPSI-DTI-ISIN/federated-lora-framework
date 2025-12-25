@@ -8,6 +8,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 from config import settings
 from database import DatabaseConnector
 from router import api_router, lifespan
+from router.exceptions import register_exception_handlers
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -26,6 +28,7 @@ def create_app() -> FastAPI:
         allow_headers=["*"]
     )
     app.add_middleware(GZipMiddleware, minimum_size=1000)
+    register_exception_handlers(app=app)
 
     app.include_router(router=api_router, prefix="/api_data")
 

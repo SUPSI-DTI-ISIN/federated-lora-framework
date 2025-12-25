@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File
+from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File, Path
 
 from schemas.documents import DocumentDTO
 from services import DocumentsServiceInterface
@@ -33,16 +33,9 @@ async def upload(
         )
 
     file_content = await file.read()
-    document_dto_saved = await service.upload_data(file_content=file_content)
-    return document_dto_saved
+    return await service.upload_data(file_content=file_content)
 
 
-@router.get(
-    "/",
-    status_code=status.HTTP_200_OK,
-    response_model=List[DocumentDTO],
-    tags=tags
-)
 @router.get(
     "",
     status_code=status.HTTP_200_OK,
@@ -51,3 +44,29 @@ async def upload(
 )
 async def get_all(documents_service: DocumentsServiceInterface = Depends(get_documents_service)):
     return await documents_service.get_all()
+
+
+@router.get(
+    "/{document_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=DocumentDTO,
+    tags=tags
+)
+async def get_by_id(
+        document_id: str = Path(..., description="Document id", min_length=1, max_length=50),
+        service: DocumentsServiceInterface = Depends(get_documents_service)
+):
+    return await service.get_by_id(document_id=document_id)
+
+
+
+@router.delete(
+    "/{document_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=tags
+)
+async def delete_by_id(
+        document_id: str = Path(..., description="Document id", min_length=1, max_length=50),
+        service: DocumentsServiceInterface = Depends(get_documents_service)
+):
+    await service.delete_by_id(document_id=document_id)

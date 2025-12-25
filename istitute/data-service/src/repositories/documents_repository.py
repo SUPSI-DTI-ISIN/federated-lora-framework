@@ -1,5 +1,6 @@
-from typing import List
+from typing import List, Optional
 
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
@@ -12,11 +13,33 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         self._db_session: AsyncSession = db_session
 
     async def save_document(self, document_model: DocumentModel) -> DocumentModel:
-        self._db_session.add(document_model)
-        await self._db_session.commit()
-        await self._db_session.refresh(document_model)
-        return document_model
+        try:
+            self._db_session.add(document_model)
+            await self._db_session.commit()
+            await self._db_session.refresh(document_model)
+            return document_model
+        except SQLAlchemyError as exc:
+            await self._db_session.rollback()
+            raise exc
 
     async def get_all(self) -> List[DocumentModel]:
-        documents_model = await self._db_session.execute(select(DocumentModel))
-        return list(documents_model.scalars().all())
+        try:
+            result = await self._db_session.execute(select(DocumentModel))
+            return list(result.scalars().all())
+        except SQLAlchemyError as exc:
+            raise exc
+
+    async def get_by_id(self, document_id: str) -> Optional[DocumentModel]:
+        try:
+            model = await self._db_session.get(DocumentModel, document_id)
+            return model
+        except SQLAlchemyError as exc:
+            raise exc
+
+    async def delete_document(self, document_model: DocumentModel) -> None:
+        try:
+            await self._db_session.delete(document_model)
+            await self._db_session.commit()
+        except SQLAlchemyError as exc:
+            await self._db_session.rollback()
+            raise exc
