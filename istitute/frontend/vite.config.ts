@@ -4,15 +4,11 @@ import tailwindcss from "@tailwindcss/vite";
 
 // https://vite.dev/config/
 export default defineConfig(({mode}) => {
-    const env = loadEnv(mode, process.cwd(), '');
-
+    const env = loadEnv(mode, process.cwd(), 'VITE_');
     return {
         plugins: mode === 'test'
             ? []
             : [react(), tailwindcss()],
-        define: {
-            'import.meta.env.MODE': JSON.stringify(mode)
-        },
         server: {
             host: '0.0.0.0',
             port: 3000,

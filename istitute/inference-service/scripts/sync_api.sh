@@ -38,4 +38,7 @@ cd "$CLIENT_DIR"
 npm install
 npm run build
 
+cd ../../../frontend
+npm install "../${SERVICE_NAME}/sdks/${SERVICE_NAME}-client"
+
 echo "Sync $SERVICE_NAME done with version: $VERSION"
