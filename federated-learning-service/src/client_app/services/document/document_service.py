@@ -1,0 +1,32 @@
+import requests
+
+from pydantic import ValidationError
+from typing import List
+
+from client_app.domain.document import DocumentDTO
+
+class DocumentService:
+    _INSTANCE = None
+
+    def __init__(self, data_service_url: str):
+        self._data_service_url = data_service_url
+
+    @classmethod
+    def get_instance(cls, data_service_url: str):
+        if cls._INSTANCE is None:
+            cls._INSTANCE = cls(data_service_url=data_service_url)
+        return cls._INSTANCE
+
+    def get_documents(self) -> List[DocumentDTO]:
+        documents_url: str = f"{self._data_service_url}/api_data/documents"
+        try:
+            resp = requests.get(documents_url, timeout=5, headers={"Accept": "application/json"})
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise RuntimeError(err)
+
+        data = resp.json()
+        try:
+            return [DocumentDTO.model_validate(item) for item in data]
+        except ValidationError as e:
+            raise RuntimeError(f"Invalid response shape: {e}")

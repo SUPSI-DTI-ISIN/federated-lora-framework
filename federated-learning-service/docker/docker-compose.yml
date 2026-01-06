@@ -1,6 +1,6 @@
 services:
   superlink:
-    image: flwr/superlink:${FLWR_VERSION:-1.23.0}
+    image: flwr/superlink:1.23.0
     container_name: superlink
     command:
       - --insecure
@@ -15,7 +15,8 @@ services:
 
   superexec-serverapp:
     build:
-      dockerfile: superexec.server.Dockerfile
+      context: ..
+      dockerfile: docker/superexec.server.Dockerfile
     container_name: superexec-serverapp
     command:
       - --insecure
@@ -30,7 +31,7 @@ services:
       - flwr-network
 
   supernode-1:
-    image: flwr/supernode:${FLWR_VERSION:-1.23.0}
+    image: flwr/supernode:1.23.0
     container_name: supernode-1
     ports:
       - "9094:9094"
@@ -48,7 +49,7 @@ services:
       - flwr-network
 
   supernode-2:
-    image: flwr/supernode:${FLWR_VERSION:-1.23.0}
+    image: flwr/supernode:1.23.0
     container_name: supernode-2
     ports:
       - "9095:9095"
@@ -67,7 +68,8 @@ services:
 
   superexec-clientapp-1:
     build:
-      dockerfile: superexec.client.Dockerfile
+      context: ..
+      dockerfile: docker/superexec.client.Dockerfile
     container_name: superexec-clientapp-1
     command:
       - --insecure
@@ -87,7 +89,8 @@ services:
 
   superexec-clientapp-2:
     build:
-      dockerfile: superexec.client.Dockerfile
+      context: ..
+      dockerfile: docker/superexec.client.Dockerfile
     container_name: superexec-clientapp-2
     command:
       - --insecure
