@@ -10,10 +10,10 @@ from client_app.domain.document import DocumentDTO
 from client_app.domain.training import TrainingDataset
 from client_app.services.dataset import DatasetService
 from client_app.services.document import DocumentService
+from client_app.services.training import TrainingService
 
 from commons.utils import settings as commons_settings
 from commons.services.model import ModelService
-from commons.training.core import train_local
 
 app = ClientApp()
 
@@ -42,12 +42,12 @@ def train(msg: Message, context: Context):
     peft_state = msg.content["arrays"].to_torch_state_dict()
     model = ModelService.load_model(model_name=model_name, device=device, lora_config=commons_settings.lora_config)
     tokenizer = ModelService.load_tokenizer(model_name=model_name)
-    set_peft_model_state_dict(model.model, peft_state)
-    model.model.train()
+    set_peft_model_state_dict(model, peft_state)
+    model.train()
 
     train_dataset, eval_dataset = DatasetService.load_data()
 
-    train_metrics = train_local(
+    train_metrics = TrainingService.train(
         model=model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
@@ -56,7 +56,7 @@ def train(msg: Message, context: Context):
 
     print(f"Train metrics: {train_metrics}")
 
-    peft_state_out = get_peft_model_state_dict(model)
+    peft_state_out = get_peft_model_state_dict(model.model)
     arrays = ArrayRecord(peft_state_out)
 
     metrics = {

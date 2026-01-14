@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@isin/data-service-client": "file:../data-service/sdks/data-service-client",
-    "@isin/inference-service-client": "file:../inference-service/sdks/inference-service-client",
+    "@isin/data-service-client": "0.1.0-dev.1767878633",
+    "@isin/inference-service-client": "0.1.0-dev.1767878654",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.26",
