@@ -11,3 +11,13 @@ dependencies = [
     "flwr>=1.25.0",
     "peft>=0.18.1",
 ]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[build-system]
+requires = ["setuptools>=65.5.1", "wheel", "build"]
+build-backend = "setuptools.build_meta"

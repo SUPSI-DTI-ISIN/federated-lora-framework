@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings>=2.12.0",
     "pymupdf>=1.26.7",
     "torch>=2.9.1",
+    "federated-learning-server==0.1.0",
 ]
 
 [tool.flwr.app]
@@ -44,4 +45,7 @@ insecure = true
 [tool.flwr.federations.remote-federation]
 address = "<SUPERLINK-ADDRESS>:<PORT>"
 insecure = true  # Remove this line to enable TLS
+
+[tool.uv.sources]
+federated-learning-server = { path = "../department/federated-learning-server/dist/federated_learning_server-0.1.0.tar.gz" }
 # root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup

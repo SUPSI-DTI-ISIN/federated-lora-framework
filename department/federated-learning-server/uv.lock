@@ -211,7 +211,7 @@ wheels = [
 [[package]]
 name = "federated-learning-server"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "flwr" },
     { name = "peft" },
