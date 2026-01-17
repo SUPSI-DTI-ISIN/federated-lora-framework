@@ -20,6 +20,10 @@ export default defineConfig(({mode}) => {
                 '/api_data': {
                     target: env.VITE_DATA_SERVICE_URL,
                     changeOrigin: true,
+                },
+                '/api_model': {
+                    target: env.VITE_MODEL_SERVICE_URL,
+                    changeOrigin: true,
                 }
             }
         },

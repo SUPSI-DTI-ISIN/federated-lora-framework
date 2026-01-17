@@ -61,6 +61,26 @@ services:
     networks:
       - internal
 
+
+  model-service:
+    build:
+      context: ../model-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    environment:
+      FRONTEND_URL: "http://frontend:80"
+    restart: always
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/api_model/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
   frontend:
     build:
       context: ../frontend
@@ -71,6 +91,7 @@ services:
     environment:
       INFERENCE_SERVICE_URL: http://inference-service:9000
       DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
       PORT: 80
     restart: always
     ports:

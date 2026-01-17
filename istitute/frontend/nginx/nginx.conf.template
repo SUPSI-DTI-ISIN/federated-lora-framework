@@ -54,19 +54,34 @@ http {
     }
 
     location /api_data {
-          client_max_body_size 100M;
-          proxy_pass ${DATA_SERVICE_URL};
-          add_header 'Access-Control-Allow-Origin' "$http_origin" always;
-          add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
-          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
-          add_header 'Access-Control-Allow-Credentials' 'true' always;
-          add_header X-Proxied-By "nginx-frontend" always;
+      client_max_body_size 100M;
+      proxy_pass ${DATA_SERVICE_URL};
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header X-Proxied-By "nginx-frontend" always;
 
-          if ($request_method = OPTIONS) {
-            return 204;
-          }
+      if ($request_method = OPTIONS) {
+        return 204;
+      }
 
-          proxy_set_header X-Real-IP $remote_addr;
-        }
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /api_model {
+      proxy_pass ${MODEL_SERVICE_URL};
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header X-Proxied-By "nginx-frontend" always;
+
+      if ($request_method = OPTIONS) {
+        return 204;
+      }
+
+      proxy_set_header X-Real-IP $remote_addr;
+    }
   }
 }

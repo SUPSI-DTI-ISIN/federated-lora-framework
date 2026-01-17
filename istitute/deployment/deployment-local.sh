@@ -34,6 +34,7 @@ publish_sdk() {
 
 publish_sdk "../data-service" "data-service-client"
 publish_sdk "../inference-service" "inference-service-client"
+publish_sdk "../model-service" "model-service-client"
 
 cd ../docker
 
