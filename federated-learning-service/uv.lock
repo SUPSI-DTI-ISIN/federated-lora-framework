@@ -377,24 +377,69 @@ wheels = [
 ]
 
 [[package]]
-name = "federated-learning-server"
+name = "federated-learning-client"
 version = "0.1.0"
-source = { path = "../department/federated-learning-server/dist/federated_learning_server-0.1.0.tar.gz" }
+source = { directory = "../istitute/federated-learning-client" }
 dependencies = [
+    { name = "datasets" },
+    { name = "federated-learning-common-library" },
     { name = "flwr" },
     { name = "peft" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "setuptools" },
+    { name = "torch" },
 ]
-sdist = { hash = "sha256:7deaace2924e74b0fcbb5aab891ddfccb73a33ab3734afe481adc1213782fb8a" }
 
 [package.metadata]
 requires-dist = [
+    { name = "datasets", specifier = ">=4.4.2" },
+    { name = "federated-learning-common-library", directory = "../federated-learning-common-library" },
     { name = "flwr", specifier = ">=1.25.0" },
     { name = "peft", specifier = ">=0.18.1" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "setuptools", specifier = ">=80.9.0" },
+    { name = "torch", specifier = ">=2.9.1" },
+]
+
+[[package]]
+name = "federated-learning-common-library"
+version = "0.1.0"
+source = { directory = "../federated-learning-common-library" }
+dependencies = [
+    { name = "peft" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "setuptools" },
+    { name = "torch" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "peft", specifier = ">=0.18.1" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "setuptools", specifier = ">=80.9.0" },
+    { name = "torch", specifier = ">=2.9.1" },
+]
+
+[[package]]
+name = "federated-learning-server"
+version = "0.1.0"
+source = { directory = "../department/federated-learning-server" }
+dependencies = [
+    { name = "federated-learning-common-library" },
+    { name = "flwr" },
+    { name = "peft" },
+    { name = "setuptools" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "federated-learning-common-library", directory = "../federated-learning-common-library" },
+    { name = "flwr", specifier = ">=1.25.0" },
+    { name = "peft", specifier = ">=0.18.1" },
     { name = "setuptools", specifier = ">=80.9.0" },
 ]
 
@@ -404,26 +449,26 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "datasets" },
+    { name = "federated-learning-client" },
     { name = "federated-learning-server" },
     { name = "flwr", extra = ["simulation"] },
     { name = "peft" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "pymupdf" },
-    { name = "setuptools" },
     { name = "torch" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "datasets", specifier = ">=4.4.2" },
-    { name = "federated-learning-server", path = "../department/federated-learning-server/dist/federated_learning_server-0.1.0.tar.gz" },
+    { name = "federated-learning-client", directory = "../istitute/federated-learning-client" },
+    { name = "federated-learning-server", directory = "../department/federated-learning-server" },
     { name = "flwr", extras = ["simulation"], specifier = ">=1.25.0" },
     { name = "peft", specifier = ">=0.18.0" },
     { name = "pydantic", specifier = ">=2.12.5" },
     { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "pymupdf", specifier = ">=1.26.7" },
-    { name = "setuptools", specifier = ">=80.9.0" },
     { name = "torch", specifier = ">=2.9.1" },
 ]
 

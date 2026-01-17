@@ -11,8 +11,8 @@ from services.dataset import DatasetService
 from services.document import DocumentService
 from services.training import TrainingService
 
-from commons.utils import settings as commons_settings
-from commons.services.model import ModelService
+from federated_learning_common.config import settings as commons_settings
+from federated_learning_common.services.model import ModelService
 
 app = ClientApp()
 

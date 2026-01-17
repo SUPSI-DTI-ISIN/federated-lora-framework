@@ -3,7 +3,7 @@ import requests
 from pydantic import ValidationError
 from typing import List
 
-from domain.document import DocumentDTO
+from federated_learning_client.domain.document import DocumentDTO
 
 class DocumentService:
     _INSTANCE = None

@@ -3,6 +3,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
-    data_service_url: str = "cdsds"
+    # Actually it takes this value from .toml value inside federated-learning-service (where simulation start and there is main .toml for FL service)
+    data_service_url: str = None
 
     dataset_output_folder: str = "./output"

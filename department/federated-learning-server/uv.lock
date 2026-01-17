@@ -209,23 +209,42 @@ wheels = [
 ]
 
 [[package]]
+name = "federated-learning-common-library"
+version = "0.1.0"
+source = { directory = "../../federated-learning-common-library" }
+dependencies = [
+    { name = "peft" },
+    { name = "pydantic" },
+    { name = "pydantic-settings" },
+    { name = "setuptools" },
+    { name = "torch" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "peft", specifier = ">=0.18.1" },
+    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "pydantic-settings", specifier = ">=2.12.0" },
+    { name = "setuptools", specifier = ">=80.9.0" },
+    { name = "torch", specifier = ">=2.9.1" },
+]
+
+[[package]]
 name = "federated-learning-server"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "federated-learning-common-library" },
     { name = "flwr" },
     { name = "peft" },
-    { name = "pydantic" },
-    { name = "pydantic-settings" },
     { name = "setuptools" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "federated-learning-common-library", directory = "../../federated-learning-common-library" },
     { name = "flwr", specifier = ">=1.25.0" },
     { name = "peft", specifier = ">=0.18.1" },
-    { name = "pydantic", specifier = ">=2.12.5" },
-    { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "setuptools", specifier = ">=80.9.0" },
 ]
 

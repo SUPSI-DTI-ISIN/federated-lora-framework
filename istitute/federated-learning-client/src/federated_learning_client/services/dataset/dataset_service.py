@@ -5,9 +5,9 @@ from typing import List
 from datasets import load_dataset, Split
 
 from .dataset_utils import DatasetUtils
-from domain.document import DocumentDTO
-from domain.training import TrainingDataset
-from utils import FileUtils
+from federated_learning_client.domain.document import DocumentDTO
+from federated_learning_client.domain.training import TrainingDataset
+from federated_learning_client.utils import FileUtils
 
 
 class DatasetService:

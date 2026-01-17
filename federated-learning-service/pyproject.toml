@@ -4,15 +4,15 @@ version = "0.1.0"
 description = "Federated Learning service which contains client app and server app to orchestrate FL fine tuning"
 requires-python = ">=3.12.12"
 dependencies = [
-    "setuptools>=80.9.0",
     "datasets>=4.4.2",
+    "federated-learning-client",
+    "federated-learning-server",
     "flwr[simulation]>=1.25.0",
     "peft>=0.18.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
     "pymupdf>=1.26.7",
     "torch>=2.9.1",
-    "federated-learning-server==0.1.0",
 ]
 
 [tool.flwr.app]
@@ -47,5 +47,6 @@ address = "<SUPERLINK-ADDRESS>:<PORT>"
 insecure = true  # Remove this line to enable TLS
 
 [tool.uv.sources]
-federated-learning-server = { path = "../department/federated-learning-server/dist/federated_learning_server-0.1.0.tar.gz" }
+federated-learning-server = { path = "../department/federated-learning-server" }
+federated-learning-client = { path = "../istitute/federated-learning-client" }
 # root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup

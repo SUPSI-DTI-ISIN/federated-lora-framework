@@ -3,13 +3,16 @@ from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
-from commons.services.model import ModelService
-from commons.utils import settings
+from federated_learning_common.services.model import ModelService
+from federated_learning_common.config import settings
 
 app = ServerApp()
 
 @app.main()
 def main(grid: Grid, context: Context) -> None:
+
+    print(context.run_config)
+
     model_name: str = context.run_config["model-name"]
     fraction_train: float = context.run_config["fraction-train"]
     num_rounds: int = context.run_config["num-server-rounds"]

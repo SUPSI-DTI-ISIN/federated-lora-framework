@@ -1,6 +1,6 @@
 import os
 
-from config import settings
+from federated_learning_client.config import settings
 
 class FileUtils:
     @staticmethod

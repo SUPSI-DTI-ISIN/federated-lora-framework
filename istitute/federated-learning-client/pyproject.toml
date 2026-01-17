@@ -3,7 +3,7 @@ name = "federated-learning-client"
 version = "0.1.0"
 description = "The server app of Federated Learning Service"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.12.12"
 dependencies = [
     "setuptools>=80.9.0",
     "pydantic>=2.12.5",
@@ -12,4 +12,18 @@ dependencies = [
     "peft>=0.18.1",
     "datasets>=4.4.2",
     "torch>=2.9.1",
+    "federated-learning-common-library",
 ]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.uv.sources]
+federated-learning-common-library = { path = "../../federated-learning-common-library" }
+
+[build-system]
+requires = ["setuptools>=65.5.1", "wheel", "build"]
+build-backend = "setuptools.build_meta"

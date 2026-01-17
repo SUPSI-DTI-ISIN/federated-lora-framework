@@ -1,4 +1,4 @@
-from .server_app import app
+from .client_app import app
 
 __all__ = [
     'app'
