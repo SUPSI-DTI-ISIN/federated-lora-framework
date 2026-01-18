@@ -31,5 +31,5 @@ RUN uv sync --locked
 EXPOSE 8080
 ENV UV_ENV_FILE=.env
 
-ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["uv", "run", "src/data_service.py", "-p", "8080"]
+CMD ["./docker-entrypoint.sh"]
+# CMD ["uv", "run", "src/data_service.py", "-p", "8080"]

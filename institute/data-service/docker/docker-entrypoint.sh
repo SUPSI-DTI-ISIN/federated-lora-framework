@@ -1,16 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-if [ -f /app/.env ]; then
-  echo "Loading /app/.env"
-  set -a
-  # shellcheck disable=SC1091
-  . /app/.env
-  set +a
-fi
-
-: "${DB_HOST:=mysql-db}"
-: "${DB_PORT:=3306}"
+set -e
 
 wait_for_db() {
   host="${DB_HOST}"
@@ -54,4 +43,4 @@ for i in 1 2 3; do
 done
 
 echo "Starting application..."
-exec "$@"
+uv run src/data_service.py -p 8080

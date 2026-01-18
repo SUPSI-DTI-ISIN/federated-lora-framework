@@ -74,6 +74,43 @@ services:
       minio:
         condition: service_healthy
 
+  mlflow-service:
+    build:
+      context: ../mlflow-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    restart: always
+    environment:
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - "9010:9010"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      mlflow:
+        condition: service_started
+
+  nginx-department-service:
+    build:
+      context: ../nginx-service
+      dockerfile: docker/Dockerfile
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+      PORT: 81
+    restart: always
+    ports:
+      - "81:81"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+
 volumes:
   mlflow-postgres-data:
     driver: local

@@ -26,12 +26,6 @@ http {
         return 404;
     }
 
-    location /health {
-        access_log off;
-        return 200 "healthy\n";
-        add_header Content-Type text/plain;
-    }
-
     location /api_mlflow {
       proxy_pass ${MLFLOW_SERVICE_URL};
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
