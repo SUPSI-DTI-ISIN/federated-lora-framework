@@ -26,9 +26,9 @@ services:
       FRONTEND_URL: "http://frontend:80"
     restart: always
     ports:
-      - "9000:9000"
+      - "8095:8095"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/api_inference/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8095/api_inference/health" ]
       interval: 20s
       timeout: 5s
       retries: 10
@@ -89,7 +89,7 @@ services:
         NPM_TOKEN: ${GITLAB_TOKEN}
         ENV_PATH: .env.local
     environment:
-      INFERENCE_SERVICE_URL: http://inference-service:9000
+      INFERENCE_SERVICE_URL: http://inference-service:8095
       DATA_SERVICE_URL: http://data-service:8080
       MODEL_SERVICE_URL: http://model-service:8090
       PORT: 80

@@ -23,7 +23,7 @@ COPY $ENV_PATH .env
 
 RUN uv sync --locked
 
-EXPOSE 9000
+EXPOSE 8095
 ENV UV_ENV_FILE=.env
 
-CMD ["uv", "run", "src/inference_service.py", "-p", "9000"]
+CMD ["uv", "run", "src/inference_service.py", "-p", "8095"]

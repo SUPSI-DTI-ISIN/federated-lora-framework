@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("-p", "--port", type=int, default=9000, help="The port the server is listening")
+    parser.add_argument("-p", "--port", type=int, default=8095, help="The port the server is listening")
     args = parser.parse_args()
     app = create_app()
 
