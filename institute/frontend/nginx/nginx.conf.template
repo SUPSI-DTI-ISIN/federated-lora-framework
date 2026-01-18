@@ -29,6 +29,12 @@ http {
         try_files $uri $uri/ /index.html;
     }
 
+    location /health {
+        access_log off;
+        return 200 "healthy\n";
+        add_header Content-Type text/plain;
+    }
+
     location /api_inference {
       proxy_pass ${INFERENCE_SERVICE_URL};
 

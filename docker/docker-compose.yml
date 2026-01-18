@@ -1,0 +1,175 @@
+services:
+  mlflow-service:
+    build:
+      context: ../department/mlflow-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    restart: always
+    ports:
+      - "9010:9010"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-department
+      - external
+
+  nginx-department-service:
+    build:
+      context: ../department/nginx-service
+      dockerfile: docker/Dockerfile
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+      PORT: 81
+    restart: always
+    ports:
+      - "81:81"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:81/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-department
+      - external
+
+  mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - internal-institute
+
+  inference-service:
+    build:
+      context: ../institute/inference-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    environment:
+      FRONTEND_URL: "http://frontend:80"
+    restart: always
+    ports:
+      - "9000:9000"
+    depends_on:
+      model-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/api_inference/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+
+  data-service:
+    build:
+      context: ../institute/data-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    environment:
+      ALEMBIC_SYNC_DATABASE_URL: "mysql+pymysql://root:root@mysql-db:3306/documents"
+      DATABASE_URL: "mysql+aiomysql://root:root@mysql-db:3306/documents"
+      DB_HOST: "mysql-db"
+      DB_PORT: "3306"
+      FRONTEND_URL: "http://frontend:80"
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api_data/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+
+  model-service:
+    build:
+      context: ../institute/model-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+    environment:
+      FRONTEND_URL: "http://frontend:80"
+      DEPARTMENT_NGINX_SERVICE_URL: "http://nginx-department-service:81"
+    restart: always
+    ports:
+      - "8090:8090"
+    depends_on:
+      nginx-department-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/api_model/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+      - external
+
+  frontend:
+    build:
+      context: ../institute/frontend
+      dockerfile: docker/Dockerfile
+      args:
+        NPM_TOKEN: ${GITLAB_TOKEN}
+        ENV_PATH: .env.local
+    environment:
+      INFERENCE_SERVICE_URL: http://inference-service:9000
+      DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
+      PORT: 80
+    restart: always
+    ports:
+      - "80:80"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:80/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      inference-service:
+        condition: service_healthy
+      data-service:
+        condition: service_healthy
+      model-service:
+        condition: service_healthy
+    networks:
+      - internal-institute
+      - external
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  internal-department:
+    driver: bridge
+    internal: true
+  internal-institute:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false
