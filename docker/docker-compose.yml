@@ -199,7 +199,7 @@ services:
         ENV_PATH: .env.local
     environment:
       FRONTEND_URL: http://frontend:80
-      DEPARTMENT_NGINX_SERVICE_URL: http://nginx-department-service:81
+      DEPARTMENT_SERVICE_URL: http://nginx-department-service:81
     restart: always
     ports:
       - "8090:8090"

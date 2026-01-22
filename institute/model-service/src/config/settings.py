@@ -8,8 +8,9 @@ class Settings(BaseSettings):
 
     model_key: str
     frontend_url: str = "http://localhost:3000"
-    mlflow_service_url: str = "http://localhost:9010"
+    department_service_url: str = "http://localhost:81"
     environment: str = Environment.DEV
+    model_base_path: str = "./model"
 
     @property
     def cors_origins(self) -> List[str]:

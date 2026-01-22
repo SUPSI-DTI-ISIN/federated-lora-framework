@@ -6,13 +6,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from config import settings
-from router import api_router
+from router import api_router, lifespan
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
         title="Model Service",
         description="Model Service used for manage base model and adapters",
         version="1.0.0",
+        lifespan=lifespan
     )
 
     app.add_middleware(

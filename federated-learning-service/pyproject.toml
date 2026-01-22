@@ -48,5 +48,5 @@ insecure = true  # Remove this line to enable TLS
 
 [tool.uv.sources]
 federated-learning-server = { path = "../department/federated-learning-server" }
-federated-learning-client = { path = "../istitute/federated-learning-client" }
+federated-learning-client = { path = "../institute/federated-learning-client" }
 # root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup

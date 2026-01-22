@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, Depends
 
 from schemas.inference import QueryResponseDTO
 from schemas.inference.query_request_dto import QueryRequestDTO
-from services import InferenceServiceInterface
+from services.inference import InferenceServiceInterface
 from .dependencies import get_inference_service
 
 router = APIRouter(prefix="/inference")

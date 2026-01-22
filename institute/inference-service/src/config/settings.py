@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     model_id: str
     frontend_url: str = "http://localhost:3000"
+    model_service_url: str = "http://localhost:8090"
     environment: str = Environment.DEV
 
     @property

@@ -379,7 +379,7 @@ wheels = [
 [[package]]
 name = "federated-learning-client"
 version = "0.1.0"
-source = { directory = "../istitute/federated-learning-client" }
+source = { directory = "../institute/federated-learning-client" }
 dependencies = [
     { name = "datasets" },
     { name = "federated-learning-common-library" },
@@ -462,7 +462,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "datasets", specifier = ">=4.4.2" },
-    { name = "federated-learning-client", directory = "../istitute/federated-learning-client" },
+    { name = "federated-learning-client", directory = "../institute/federated-learning-client" },
     { name = "federated-learning-server", directory = "../department/federated-learning-server" },
     { name = "flwr", extras = ["simulation"], specifier = ">=1.25.0" },
     { name = "peft", specifier = ">=0.18.0" },
