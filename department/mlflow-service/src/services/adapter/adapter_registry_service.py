@@ -1,7 +1,7 @@
 import os
 
 from commons import ModelPathUtils
-from schemas.model import ModelAdaptersVersion, NewAdapterPath
+from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO
 from .adapter_registry_service_interface import AdapterRegistryServiceInterface
 
 
@@ -15,11 +15,13 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         return cls.__INSTANCE
 
 
-    def get_adapters_version(self, model_key: str) -> ModelAdaptersVersion:
+    def get_adapters_version(self, model_key: str) -> ModelAdaptersVersionDTO:
         model_adapters_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
 
         if not os.path.exists(model_adapters_path):
-            raise FileNotFoundError(f"No adapters found for model '{model_key}'")
+            return ModelAdaptersVersionDTO(
+                model_key=model_key
+            )
 
         versions = []
         for entry in os.listdir(model_adapters_path):
@@ -28,17 +30,19 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
                 versions.append(int(entry))
 
         if not versions:
-            raise FileNotFoundError(f"No adapters found for model '{model_key}'")
+            return ModelAdaptersVersionDTO(
+                model_key=model_key
+            )
 
         versions.sort()
 
-        return ModelAdaptersVersion(
+        return ModelAdaptersVersionDTO(
             model_key=model_key,
             adapters_version=versions
         )
 
 
-    def get_new_adapter_path(self, model_key: str) -> NewAdapterPath:
+    def get_new_adapter_path(self, model_key: str) -> NewAdapterPathDTO:
         model_adapters_path = ModelPathUtils.get_model_adapters_path(
             model_key=model_key
         )
@@ -47,9 +51,9 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             raise FileNotFoundError(f"No adapters found for model '{model_key}'")
 
         if not os.path.isdir(model_adapters_path):
-            return NewAdapterPath(new_adapter_path=os.path.join(model_adapters_path, "1"))
+            return NewAdapterPathDTO(new_adapter_path=os.path.join(model_adapters_path, "1"))
 
         adapters_versions = self.get_adapters_version(model_key)
         next_version = max(adapters_versions.adapters_version) + 1
 
-        return NewAdapterPath(new_adapter_path=os.path.join(model_adapters_path, str(next_version)))
+        return NewAdapterPathDTO(new_adapter_path=os.path.join(model_adapters_path, str(next_version)))

@@ -6,8 +6,8 @@ from typing import List
 from tqdm import tqdm
 
 from clients.mlflow import MlFlowServiceClientInterface
+from clients.schemas import ModelManifestDTO
 from commons import ModelPathUtils, FileHashUtils
-from schemas.model import ModelManifestDTO
 
 
 class ModelValidityService:

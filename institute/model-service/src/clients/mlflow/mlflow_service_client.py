@@ -1,7 +1,7 @@
 import requests
 from pydantic import ValidationError
 
-from schemas.model import ModelManifestDTO
+from clients.schemas import ModelManifestDTO, ModelAdaptersVersionDTO
 from .mlflow_service_client_interface import MlFlowServiceClientInterface
 
 
@@ -42,3 +42,17 @@ class MlFlowServiceClient(MlFlowServiceClientInterface):
             raise RuntimeError(err)
 
         return resp
+
+    def get_adapters_version(self, model_key: str) -> ModelAdaptersVersionDTO:
+        adapters_version_url: str = f"{self.__department_service_url}/api_mlflow/model/{model_key}/adapters"
+        try:
+            resp = requests.get(adapters_version_url, headers={"Accept": "application/json"})
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            raise RuntimeError(err)
+
+        data = resp.json()
+        try:
+            return ModelAdaptersVersionDTO.model_validate(data)
+        except ValidationError as e:
+            raise RuntimeError(f"Invalid response shape: {e}")

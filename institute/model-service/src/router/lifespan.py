@@ -1,5 +1,5 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 
 from clients.mlflow import MlFlowServiceClientInterface, MlFlowServiceClient
 from config import settings
