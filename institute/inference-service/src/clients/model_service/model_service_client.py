@@ -9,7 +9,7 @@ class ModelServiceClient(ModelServiceClientInterface):
     __INSTANCE = None
 
     def __init__(self, model_service_url: str):
-        self._model_service_url = model_service_url
+        self.__model_service_url = model_service_url
 
     @classmethod
     def get_instance(cls, model_service_url: str):
@@ -17,10 +17,10 @@ class ModelServiceClient(ModelServiceClientInterface):
             cls.__INSTANCE = cls(model_service_url=model_service_url)
         return cls.__INSTANCE
 
-    def get_model_path(self) -> ModelPathDTO:
-        model_path_url: str = f"{self._model_service_url}/api_model/model-path"
+    def get_model_path_for_adapter(self, model_key: str, adapter_version: int) -> ModelPathDTO:
+        model_path_for_adapter_url: str = f"{self.__model_service_url}/api_model/model/{model_key}/adapters/{adapter_version}"
         try:
-            resp = requests.get(model_path_url, timeout=5, headers={"Accept": "application/json"})
+            resp = requests.get(model_path_for_adapter_url, headers={"Accept": "application/json"})
             resp.raise_for_status()
         except requests.exceptions.HTTPError as err:
             raise RuntimeError(err)

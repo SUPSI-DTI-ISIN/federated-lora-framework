@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 
 class QueryResponseDTO(BaseModel):
-    query: str
+    prompt: str
     response: str
-    model_id: str
+    model_key: str
+    adapter_version: int
