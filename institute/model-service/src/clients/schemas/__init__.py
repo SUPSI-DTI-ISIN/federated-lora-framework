@@ -1,10 +1,10 @@
-from .model_file_dto import ModelFileDTO
-from .model_manifest_dto import ModelManifestDTO
+from .file_dto import FileDTO
+from .manifest_dto import ManifestDTO
 from .model_adapters_version_dto import ModelAdaptersVersionDTO
 
 __all__ = [
-    'ModelFileDTO',
-    'ModelManifestDTO',
+    'FileDTO',
+    'ManifestDTO',
     'ModelAdaptersVersionDTO'
 ]
 

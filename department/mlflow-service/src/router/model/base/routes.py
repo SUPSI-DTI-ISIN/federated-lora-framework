@@ -2,7 +2,7 @@ from fastapi import status, Depends, HTTPException, APIRouter
 from fastapi.responses import FileResponse
 
 from .dependencies import get_model_registry_service
-from schemas.model import ModelManifestDTO
+from schemas.model import ManifestDTO
 from services.model import ModelRegistryServiceInterface
 
 router = APIRouter(prefix="/model/{model_key}")
@@ -11,7 +11,7 @@ tags = ["model", "base"]
 @router.get(
     "/manifest",
     status_code=status.HTTP_200_OK,
-    response_model=ModelManifestDTO,
+    response_model=ManifestDTO,
     tags=tags
 )
 async def get_model_base_manifest(model_key: str, model_registry_service: ModelRegistryServiceInterface = Depends(get_model_registry_service)):

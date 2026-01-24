@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from schemas.model import ModelManifestDTO
+from schemas.model import ManifestDTO
 
 
 class ModelRegistryServiceInterface(ABC):
     @abstractmethod
-    def get_model_manifest(self, model_key: str) -> ModelManifestDTO:
+    def get_model_manifest(self, model_key: str) -> ManifestDTO:
         raise NotImplementedError
 
     @abstractmethod

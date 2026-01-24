@@ -1,10 +1,12 @@
 import os
+from pathlib import Path
 from typing import List
 
 from clients.mlflow import MlFlowServiceClientInterface
-from commons import ModelPathUtils
+from commons import ModelPathUtils, FileUtils
 from schemas.model import AvailableAdaptersDTO, AdapterDTO
 from .adapter_registry_service_interface import AdapterRegistryServiceInterface
+from .adapter_validity_service import AdapterValidityService
 
 
 class AdapterRegistryService(AdapterRegistryServiceInterface):
@@ -60,3 +62,19 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         ]
 
         return AvailableAdaptersDTO(model_key=model_key, adapters=adapters)
+
+
+    def download_remote_adapter(self, model_key: str, adapter_version: int) -> AdapterDTO:
+        adapter_manifest = self.__mlflow_service_client.get_adapter_manifest(model_key=model_key, adapter_version=adapter_version)
+
+        target_folder_path = Path(ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=adapter_version))
+        invalid_or_missing_files = FileUtils.check_local_files_validity(target_folder_path=target_folder_path, manifest=adapter_manifest)
+
+        if len(invalid_or_missing_files) > 0:
+            FileUtils.delete_files(target_folder_path=target_folder_path, model_files=invalid_or_missing_files)
+            AdapterValidityService.fetch_adapter(mlflow_service_client=self.__mlflow_service_client, model_key=model_key, adapter_version=adapter_version, manifest=adapter_manifest, files_to_download=invalid_or_missing_files)
+
+        return AdapterDTO(
+            version=adapter_version,
+            available_local=True
+        )

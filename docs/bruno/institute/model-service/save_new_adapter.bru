@@ -1,17 +1,23 @@
 meta {
-  name: get_available_adapters
+  name: save_new_adapter
   type: http
-  seq: 2
+  seq: 3
 }
 
-get {
+post {
   url: http://localhost:8090/api_model/model/:model_key/adapters
-  body: none
+  body: json
   auth: inherit
 }
 
 params:path {
   model_key: llama-2-7b
+}
+
+body:json {
+  {
+    "version": 1
+  }
 }
 
 settings {

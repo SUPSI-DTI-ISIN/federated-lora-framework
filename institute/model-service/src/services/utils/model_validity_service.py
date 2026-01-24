@@ -6,50 +6,13 @@ from typing import List
 from tqdm import tqdm
 
 from clients.mlflow import MlFlowServiceClientInterface
-from clients.schemas import ModelManifestDTO
+from clients.schemas import ManifestDTO
 from commons import ModelPathUtils, FileHashUtils
 
 
 class ModelValidityService:
     @classmethod
-    def check_local_model_files_validity(cls, manifest: ModelManifestDTO) -> List[str]:
-        print("Checking local model validity...")
-        model_name = manifest.model_key
-
-        target_folder_path = ModelPathUtils.get_model_base_path(model_key=model_name)
-        invalid_or_missing_files = []
-
-        for model_file_item in manifest.files:
-            model_file_path = os.path.join(target_folder_path, model_file_item.rel_path)
-            if not os.path.exists(model_file_path):
-                print(f"- missing model file: {model_file_path}")
-                invalid_or_missing_files.append(model_file_item.rel_path)
-                continue
-            if FileHashUtils.get_file_hash(file_path=Path(model_file_path)) != model_file_item.hash:
-                print(f"- corrupted model file: {model_file_path}")
-                invalid_or_missing_files.append(model_file_item.rel_path)
-                continue
-            else:
-                print(f"- model file: {model_file_path} is valid.")
-
-        if not invalid_or_missing_files:
-            print(f"Model {model_name} is valid locally.")
-
-        return invalid_or_missing_files
-
-
-    @classmethod
-    def delete_model_files(cls, model_key: str, model_files) -> None:
-        target_folder_path = ModelPathUtils.get_model_base_path(model_key=model_key)
-        for model_file in model_files:
-            model_file_path = os.path.join(target_folder_path, model_file)
-            if os.path.exists(model_file_path):
-                os.remove(model_file_path)
-                print(f"Deleted model file {model_file_path}")
-
-
-    @classmethod
-    def fetch_model(cls, mlflow_service_client: MlFlowServiceClientInterface, model_key: str, manifest: ModelManifestDTO, files_to_download = None) -> int:
+    def fetch_model(cls, mlflow_service_client: MlFlowServiceClientInterface, model_key: str, manifest: ManifestDTO, files_to_download = None) -> int:
         target_folder_path = ModelPathUtils.get_model_base_path(model_key=model_key)
         if not os.path.exists(target_folder_path):
             os.makedirs(target_folder_path)

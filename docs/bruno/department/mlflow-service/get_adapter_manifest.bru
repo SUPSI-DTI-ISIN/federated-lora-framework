@@ -1,0 +1,21 @@
+meta {
+  name: get_adapter_manifest
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:9010/api_mlflow/model/:model_key/adapters/:adapter_version/manifest
+  body: none
+  auth: inherit
+}
+
+params:path {
+  adapter_version: 1
+  model_key: llama-2-7b
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
-from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO
+from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO, ManifestDTO
 
 
 class AdapterRegistryServiceInterface(ABC):
@@ -10,4 +11,12 @@ class AdapterRegistryServiceInterface(ABC):
 
     @abstractmethod
     def get_new_adapter_path(self, model_key: str) -> NewAdapterPathDTO:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_adapter_manifest(self, model_key: str, adapter_version: int) -> ManifestDTO:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_adapter_file(self, model_key: str, adapter_version: int, file_name: str) -> Path:
         raise NotImplementedError

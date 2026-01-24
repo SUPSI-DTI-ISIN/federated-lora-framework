@@ -1,7 +1,8 @@
 import os
+from pathlib import Path
 
-from commons import ModelPathUtils
-from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO
+from commons import ModelPathUtils, ManifestUtils, FileUtils
+from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO, ManifestDTO
 from .adapter_registry_service_interface import AdapterRegistryServiceInterface
 
 
@@ -57,3 +58,21 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         next_version = max(adapters_versions.adapters_version) + 1
 
         return NewAdapterPathDTO(new_adapter_path=os.path.join(model_adapters_path, str(next_version)))
+
+
+    def get_adapter_manifest(self, model_key: str, adapter_version: int) -> ManifestDTO:
+        adapter_version_path = ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=adapter_version)
+
+        if not Path(adapter_version_path).exists():
+            raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")
+
+        return ManifestUtils.get_manifest(base_path=Path(adapter_version_path), model_key=model_key)
+
+
+    def get_adapter_file(self, model_key: str, adapter_version: int, file_name: str) -> Path:
+        adapter_version_path = ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=adapter_version)
+
+        if not Path(adapter_version_path).exists():
+            raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")
+
+        return FileUtils.join_paths(base_path=Path(adapter_version_path), file_name=file_name)
