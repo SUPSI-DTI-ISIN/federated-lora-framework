@@ -19,7 +19,7 @@ class MlFlowServiceClient(MlFlowServiceClientInterface):
 
 
     def get_model_base_manifest(self, model_key: str) -> ModelManifestDTO:
-        model_base_manifest_url: str = f"{self.__department_service_url}/api_mlflow/model/base/{model_key}/manifest"
+        model_base_manifest_url: str = f"{self.__department_service_url}/api_mlflow/model/{model_key}/manifest"
         try:
             resp = requests.get(model_base_manifest_url, headers={"Accept": "application/json"})
             resp.raise_for_status()
@@ -34,7 +34,7 @@ class MlFlowServiceClient(MlFlowServiceClientInterface):
 
 
     def get_model_file(self, model_key: str, model_file_path: str) -> requests.models.Response:
-        file_url = f"{self.__department_service_url}/api_mlflow/model/base/{model_key}/file_name/{model_file_path}"
+        file_url = f"{self.__department_service_url}/api_mlflow/model/{model_key}/file_name/{model_file_path}"
         try:
             resp = requests.get(file_url, stream=True)
             resp.raise_for_status()

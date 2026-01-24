@@ -1,13 +1,12 @@
-from fastapi import APIRouter, status, Depends, HTTPException
+from fastapi import status, Depends, HTTPException, APIRouter
 from fastapi.responses import FileResponse
 
 from .dependencies import get_model_registry_service
 from schemas.model import ModelManifestDTO
 from services.model import ModelRegistryServiceInterface
 
-router = APIRouter(prefix="/model/base/{model_key}")
-
-tags = ["model-base"]
+router = APIRouter(prefix="/model/{model_key}")
+tags = ["model", "base"]
 
 @router.get(
     "/manifest",
