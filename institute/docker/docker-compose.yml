@@ -1,5 +1,5 @@
 services:
-  mysql-db:
+  documents-mysql-db:
     image: mysql:8.4.7
     ports:
       - "3306:3306"
@@ -12,7 +12,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - mysql-data:/var/lib/mysql
+      - documents-mysql-data:/var/lib/mysql
 
   inference-service:
     build:
@@ -22,9 +22,13 @@ services:
         ENV_PATH: .env.local
     environment:
       FRONTEND_URL: http://frontend:80
+      MODEL_SERVICE_URL: http://model-service:8090
     restart: always
     ports:
       - "8095:8095"
+    depends_on:
+      model-service:
+        condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8095/api_inference/health" ]
       interval: 20s
@@ -38,16 +42,16 @@ services:
       args:
         ENV_PATH: .env.local
     environment:
-      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@mysql-db:3306/${MYSQL_DATABASE}
-      DATABASE_URL: mysql+aiomysql://root:${MYSQL_ROOT_PASSWORD}@mysql-db:3306/${MYSQL_DATABASE}
-      DB_HOST: mysql-db
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${MYSQL_DATABASE}
+      DB_HOST: documents-mysql-db
       DB_PORT: 3306
       FRONTEND_URL: http://frontend:80
     restart: always
     ports:
       - "8080:8080"
     depends_on:
-      mysql-db:
+      documents-mysql-db:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/api_data/health" ]
@@ -71,6 +75,8 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
+    volumes:
+      - models-institute:/models
 
   frontend:
     build:
@@ -96,5 +102,11 @@ services:
         condition: service_healthy
 
 volumes:
-  mysql-data:
+  documents-mysql-data:
     driver: local
+  models-institute:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ../../models/institute
