@@ -4,7 +4,7 @@ from typing import List
 
 from clients.mlflow import MlFlowServiceClientInterface
 from commons import ModelPathUtils, FileUtils
-from schemas.model import AvailableAdaptersDTO, AdapterDTO
+from schemas.model import AvailableAdaptersDTO, AdapterDTO, ModelPathDTO
 from .adapter_registry_service_interface import AdapterRegistryServiceInterface
 from .adapter_validity_service import AdapterValidityService
 
@@ -77,4 +77,20 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         return AdapterDTO(
             version=adapter_version,
             available_local=True
+        )
+
+
+    def get_model_path_for_adapter(self, model_key: str, adapter_version: int) -> ModelPathDTO:
+        model_base_path = ModelPathUtils.get_model_base_path(model_key=model_key)
+        adapter_path = ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=adapter_version)
+
+        if not os.path.exists(model_base_path):
+            raise FileNotFoundError(f"Model path does not exist model {model_key}")
+
+        if not os.path.exists(adapter_path):
+            raise FileNotFoundError(f"Adapter with version {adapter_version} for model {model_key} does not exist")
+
+        return ModelPathDTO(
+            model_base_path=model_base_path,
+            adapter_path=adapter_path
         )

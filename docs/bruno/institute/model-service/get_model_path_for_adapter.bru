@@ -1,0 +1,27 @@
+meta {
+  name: get_model_path_for_adapter
+  type: http
+  seq: 4
+}
+
+get {
+  url: http://localhost:8090/api_model/model/:model_key/adapters/:adapter_version
+  body: none
+  auth: inherit
+}
+
+params:path {
+  adapter_version: 1
+  model_key: llama-2-7b
+}
+
+body:json {
+  {
+    "version": 1
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
