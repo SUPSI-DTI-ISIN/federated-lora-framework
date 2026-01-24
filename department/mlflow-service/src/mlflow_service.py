@@ -4,13 +4,15 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.gzip import GZipMiddleware
 
-from router import api_router
+from router import api_router, lifespan
+
 
 def create_app() -> FastAPI:
     app = FastAPI(
         title="MlFlow Service",
         description="MlFlow Service used for manage MlFlow server interactions and operations",
         version="1.0.0",
+        # lifespan=lifespan
     )
 
     app.add_middleware(GZipMiddleware, minimum_size=1000)

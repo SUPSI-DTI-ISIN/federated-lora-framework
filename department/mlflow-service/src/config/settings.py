@@ -1,7 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from commons import Environment
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
@@ -12,4 +10,4 @@ class Settings(BaseSettings):
     aws_access_key_id: str
     aws_secret_access_key: str
 
-    environment: str = Environment.DEV
+    model_base_path: str = "./model"
