@@ -47,7 +47,6 @@ export const DocumentsPage = () => {
                 <DocumentFilterBar
                     value={searchQuery}
                     onChange={(v) => setSearchQuery(v)}
-                    onOpenUpload={() => setShowUpload(true)}
                 />
 
                 {/* Document List */}

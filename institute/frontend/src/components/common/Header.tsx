@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useLocation } from "react-router-dom";
 import { Home, FileText, MessageSquare, Menu, X, Microchip } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { LanguageSwitcher } from "../header/LanguageSwitcher";
+import mimirLogo from "../../assets/mimir-logo.png"
 
 export const Header = () => {
     const { t } = useTranslation();
     const [mobileOpen, setMobileOpen] = useState(false);
+    const location = useLocation();
 
     const navigationLinks = [
         { path: "/", labelKey: "header.nav.home", icon: Home },
@@ -17,49 +19,61 @@ export const Header = () => {
     ];
 
     return (
-        <header className="sticky top-0 z-50 bg-base-200/80 backdrop-blur-sm border-b border-base-300">
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="navbar h-16">
-                    {/* START: Brand */}
+        <header className="sticky top-0 z-50 w-full border-b border-base-content/10 bg-base-100/60 backdrop-blur-md transition-all duration-300">
+            <div className="container mx-auto px-4 py-2">
+                <div className="navbar min-h-16 px-0">
+
                     <div className="navbar-start">
-                        <Link to="/" className="flex items-center gap-3">
+                        <Link
+                            to="/"
+                            className="group flex items-center gap-3 focus-visible:outline-primary rounded-lg transition-all"
+                            aria-label={t("header.nav.home")}
+                        >
                             <motion.div
-                                initial={{ scale: 1 }}
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.97 }}
+                                whileHover={{ scale: 1.01 }}
+                                whileTap={{ scale: 0.99 }}
                                 className="flex items-center gap-3"
                             >
-                                <div
-                                    aria-hidden
-                                    className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-content font-semibold"
-                                >
-                                    {t("header.logoInitials")}
-                                </div>
-                                <span className="hidden sm:inline text-lg font-semibold text-base-content">
-                  {t("header.title")}
-                </span>
+                                <img
+                                    src={mimirLogo}
+                                    alt="Mimir Logo"
+                                    className="h-10 w-auto"
+                                />
+                                <span className="hidden text-xl font-bold tracking-tight text-base-content sm:inline-block">
+                                    {t("header.title")}
+                                </span>
                             </motion.div>
                         </Link>
                     </div>
 
                     {/* CENTER: Desktop nav */}
                     <div className="navbar-center hidden lg:flex">
-                        <nav aria-label={t("header.navLabel") as string}>
-                            <ul className="menu menu-horizontal px-1 gap-2">
+                        <nav aria-label={t("header.navLabel")}>
+                            <ul className="flex items-center gap-1 p-0">
                                 {navigationLinks.map((link) => {
                                     const Icon = link.icon;
+                                    const isActive = location.pathname === link.path;
                                     return (
-                                        <li key={link.path}>
+                                        <li key={link.path} className="relative">
                                             <NavLink
                                                 to={link.path}
                                                 className={({ isActive }) =>
-                                                    `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                                                        isActive ? "bg-primary text-primary-content" : "hover:bg-base-300"
+                                                    `relative flex items-center gap-2 px-4 py-2 text-sm font-medium transition-colors hover:text-primary ${
+                                                        isActive ? "text-primary" : "text-base-content/70"
                                                     }`
                                                 }
                                             >
-                                                <Icon size={16} />
+                                                <Icon size={18} strokeWidth={isActive ? 2.5 : 2} />
                                                 <span>{t(link.labelKey)}</span>
+
+                                                {/* Animated Indicator for Active Link */}
+                                                {isActive && (
+                                                    <motion.div
+                                                        layoutId="nav-active"
+                                                        className="absolute inset-0 -z-10 rounded-lg bg-primary/10"
+                                                        transition={{ type: "spring", duration: 0.5 }}
+                                                    />
+                                                )}
                                             </NavLink>
                                         </li>
                                     );
@@ -68,57 +82,71 @@ export const Header = () => {
                         </nav>
                     </div>
 
-                    {/* END: actions (mobile menu + language switcher) */}
-                    <div className="navbar-end flex items-center gap-3">
-                        {/* Mobile menu toggle visible on small screens */}
+                    {/* END: actions */}
+                    <div className="navbar-end gap-2">
+                        <div className="hidden sm:flex">
+                            <LanguageSwitcher />
+                        </div>
+
+                        {/* Mobile toggle */}
                         <button
-                            className="lg:hidden btn btn-ghost btn-circle"
+                            className="btn btn-ghost btn-circle lg:hidden"
+                            aria-expanded={mobileOpen}
+                            aria-controls="mobile-menu"
                             aria-label={mobileOpen ? t("header.closeMenu") : t("header.openMenu")}
                             onClick={() => setMobileOpen((s) => !s)}
                         >
-                            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+                            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
-
-                        {/* Language switcher component (kept as your existing one) */}
-                        <div className="hidden sm:block">
-                            <LanguageSwitcher />
-                        </div>
                     </div>
                 </div>
-
-                {/* Mobile nav panel */}
-                {mobileOpen && (
-                    <div className="lg:hidden border-t border-base-300 bg-base-100/90">
-                        <div className="px-4 py-3 space-y-2">
-                            <nav aria-label={t("header.navLabel") as string}>
-                                {navigationLinks.map((link) => {
-                                    const Icon = link.icon;
-                                    return (
-                                        <NavLink
-                                            key={link.path}
-                                            to={link.path}
-                                            onClick={() => setMobileOpen(false)}
-                                            className={({ isActive }) =>
-                                                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                                                    isActive ? "bg-primary text-primary-content" : "hover:bg-base-200"
-                                                }`
-                                            }
-                                        >
-                                            <Icon size={16} />
-                                            <span>{t(link.labelKey)}</span>
-                                        </NavLink>
-                                    );
-                                })}
-                            </nav>
-
-                            {/* Language switcher shown also inside mobile menu */}
-                            <div className="pt-2">
-                                <LanguageSwitcher />
-                            </div>
-                        </div>
-                    </div>
-                )}
             </div>
+
+            {/* Mobile nav panel with AnimatePresence */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <motion.div
+                        id="mobile-menu"
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        className="overflow-hidden lg:hidden border-t border-base-content/10 bg-base-100"
+                    >
+                        <nav className="flex flex-col gap-1 p-4" aria-label={t("header.navLabel")}>
+                            {navigationLinks.map((link) => {
+                                const Icon = link.icon;
+                                return (
+                                    <NavLink
+                                        key={link.path}
+                                        to={link.path}
+                                        onClick={() => setMobileOpen(false)}
+                                        className={({ isActive }) =>
+                                            `flex items-center gap-4 rounded-xl px-4 py-3 text-base font-medium transition-all ${
+                                                isActive
+                                                    ? "bg-primary text-primary-content shadow-md"
+                                                    : "hover:bg-base-200 text-base-content/80"
+                                            }`
+                                        }
+                                    >
+                                        <Icon size={20} />
+                                        <span>{t(link.labelKey)}</span>
+                                    </NavLink>
+                                );
+                            })}
+
+                            {/* Mobile Language Switcher integration */}
+                            <div className="mt-4 border-t border-base-content/5 pt-4 sm:hidden">
+                                <p className="mb-2 px-4 text-xs font-semibold uppercase tracking-wider text-base-content/40">
+                                    {t("header.settings.language")}
+                                </p>
+                                <div className="px-2">
+                                    <LanguageSwitcher />
+                                </div>
+                            </div>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 };

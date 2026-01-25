@@ -45,7 +45,10 @@
       "linkedin": "LinkedIn",
       "email": "Email"
     },
-    "copyright": "Innosuisse AI Assistant. All rights reserved."
+    "copyright": "Innosuisse AI Assistant. All rights reserved.",
+    "role": "Developer",
+    "craftedWith": "Made with",
+    "and": "and"
   },
   "home": {
     "hero": {

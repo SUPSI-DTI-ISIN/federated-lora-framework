@@ -4,10 +4,9 @@ import { Search } from "lucide-react";
 type DocumentFilterBarProps = {
     value: string;
     onChange: (v: string) => void;
-    onOpenUpload?: () => void;
 };
 
-export const DocumentFilterBar = ({ value, onChange, onOpenUpload }: DocumentFilterBarProps) => {
+export const DocumentFilterBar = ({ value, onChange }: DocumentFilterBarProps) => {
     const { t } = useTranslation();
 
     return (
@@ -33,18 +32,6 @@ export const DocumentFilterBar = ({ value, onChange, onOpenUpload }: DocumentFil
                             />
                         </div>
                     </div>
-
-                    {onOpenUpload && (
-                        <div className="w-full md:w-auto flex justify-end">
-                            <button
-                                onClick={onOpenUpload}
-                                className="btn btn-outline btn-primary"
-                                aria-label={t("documents.uploadButton")}
-                            >
-                                {t("documents.uploadButton")}
-                            </button>
-                        </div>
-                    )}
                 </div>
             </div>
         </div>
