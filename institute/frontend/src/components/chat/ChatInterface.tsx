@@ -3,6 +3,7 @@ import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
 import {ChatComposer} from "./ChatComposer";
 import {type InferenceModelParams, useInferenceModel} from "../../hooks/inference/useInferenceModel.ts";
+import {Cpu, Sparkles, User} from "lucide-react";
 
 type Message = {
     id: string;
@@ -68,26 +69,38 @@ export const ChatInterface = ({
     };
 
     return (
-        <div className="h-full flex flex-col">
-            {/* Messages */}
-            <div className="flex-1 overflow-auto p-6 space-y-4" ref={scrollRef} role="log" aria-live="polite">
+        <div className="h-full flex flex-col max-w-4xl mx-auto w-full">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 scroll-smooth" ref={scrollRef}>
                 {messages.length === 0 && (
-                    <div className="text-center text-base-content/60">{t("chat.emptyHint")}</div>
+                    <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
+                        <Sparkles size={48}/>
+                        <p className="max-w-xs text-lg font-medium">{t("chat.emptyHint")}</p>
+                    </div>
                 )}
 
                 {messages.map((message) => (
-                    <div key={message.id} className={`max-w-3xl ${message.from === "user" ? "ml-auto text-right" : ""}`}>
+                    <div key={message.id} className={`flex gap-4 ${message.from === "user" ? "flex-row-reverse" : ""}`}>
+                        <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
+                            message.from === "user" ? "bg-primary text-primary-content" : "bg-secondary text-secondary-content"
+                        }`}>
+                            {message.from === "user" ? <User size={16}/> : <Sparkles size={16}/>}
+                        </div>
+
                         <div
-                            className={`inline-block p-3 rounded-lg wrap-break-word ${
-                                message.from === "user" ? "bg-primary text-primary-content" : "bg-base-200"
-                            }`}
-                        >
-                            {message.text}
-                            {message.from === "assistant" && message.modelKey && (
-                                <div className="text-xs text-base-content/50 mt-1">
-                                    {message.adapterVersion !== null
-                                        ? `${message.modelKey} (v${message.adapterVersion})`
-                                        : `${message.modelKey} (base)`}
+                            className={`flex flex-col gap-2 max-w-[80%] ${message.from === "user" ? "items-end" : ""}`}>
+                            <div className={`p-4 rounded-2xl text-base leading-relaxed ${
+                                message.from === "user"
+                                    ? "bg-primary text-primary-content shadow-lg shadow-primary/10"
+                                    : "bg-base-200 text-base-content shadow-sm"
+                            }`}>
+                                {message.text}
+                            </div>
+
+                            {message.from === "assistant" && (
+                                <div
+                                    className="flex items-center gap-2 px-1 text-[10px] font-bold uppercase tracking-tighter opacity-40">
+                                    <Cpu size={12}/>
+                                    {message.adapterVersion ? `Adapter v${message.adapterVersion}` : "Base Model"}
                                 </div>
                             )}
                         </div>
@@ -95,12 +108,7 @@ export const ChatInterface = ({
                 ))}
             </div>
 
-            {/* Composer */}
-            <ChatComposer
-                modelKey={modelKey}
-                onSubmit={handleSend}
-                isSubmitting={isRunningInference}
-            />
+            <ChatComposer modelKey={modelKey} onSubmit={handleSend} isSubmitting={isRunningInference}/>
         </div>
     );
 };

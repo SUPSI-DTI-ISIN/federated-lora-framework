@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ChevronDown } from "lucide-react";
+import {Send} from "lucide-react";
 import {useGetAllAvailableLocalAdapters} from "../../hooks/model/useGetAllAvailableLocalAdapters.ts";
 import type {InferenceModelParams} from "../../hooks/inference/useInferenceModel.ts";
 
@@ -12,91 +12,77 @@ type ChatComposerProps = {
 
 export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatComposerProps) => {
     const { t } = useTranslation();
-    const { data: availableAdaptersDTO, isLoading: loadingAdapters } = useGetAllAvailableLocalAdapters(modelKey);
+    const { data: availableAdaptersDTO } = useGetAllAvailableLocalAdapters(modelKey);
     const adapters = availableAdaptersDTO?.adapters ?? [];
 
-    const [prompt, setPrompt] = useState<string>("");
+    const [prompt, setPrompt] = useState("");
     const [selectedAdapterVersion, setSelectedAdapterVersion] = useState<number | null>(null);
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+    // Auto-resize logic
+    const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setPrompt(e.target.value);
+        const target = e.target;
+        target.style.height = "auto";
+        target.style.height = `${Math.min(target.scrollHeight, 200)}px`;
+    };
 
     const handleSubmit = async () => {
-        if (!prompt.trim()) return;
-        await onSubmit({
-            modelKey: modelKey,
-            prompt: prompt.trim(),
-            adapterVersion: selectedAdapterVersion
-        });
+        if (!prompt.trim() || isSubmitting) return;
+        await onSubmit({ modelKey, prompt: prompt.trim(), adapterVersion: selectedAdapterVersion });
         setPrompt("");
+        if (textareaRef.current) textareaRef.current.style.height = "auto";
     };
 
     return (
-        <div className="border-t border-base-300 p-4 bg-base-100">
-            <div className="flex gap-3 items-center">
-                {/* Adapter select */}
-                <div className="flex items-center gap-2">
-                    <label className="sr-only">{t("chat.adapter.selectLabel")}</label>
-                    <div className="relative">
-                        <select
-                            className="select select-bordered select-sm"
-                            aria-label={t("chat.adapter.selectLabel") as string}
-                            value={selectedAdapterVersion ?? ""}
-                            onChange={(e) => {
-                                const v = e.target.value;
-                                setSelectedAdapterVersion(v === "" ? null : Number(v));
-                            }}
-                            disabled={loadingAdapters}
-                        >
-                            <option value="">{t("chat.adapter.baseModelLabel")}</option>
-                            {adapters.map((a) => (
-                                <option key={String(a.version)} value={String(a.version)}>
-                                    {`v${a.version} ${a.available_local ? `(${t("chat.adapter.local")})` : ""}`}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" size={14} />
-                    </div>
+        <div className="p-4 sm:p-6 bg-linear-to-t from-base-100 via-base-100 to-transparent">
+            <div className="max-w-4xl mx-auto relative bg-base-200 rounded-3xl p-2 border border-base-content/10 shadow-2xl focus-within:border-primary/30 transition-all">
+
+                {/* Adapter Selection Bar */}
+                <div className="flex items-center gap-2 px-2 pb-2 mb-2 border-b border-base-content/5">
+                    <span className="text-[10px] font-black uppercase opacity-40 ml-1">Choose adapter:</span>
+                    <select
+                        className="select select-ghost select-xs font-bold text-primary focus:bg-transparent"
+                        value={selectedAdapterVersion ?? ""}
+                        onChange={(e) => setSelectedAdapterVersion(e.target.value ? Number(e.target.value) : null)}
+                    >
+                        <option value="">{t("chat.adapter.baseModelLabel")}</option>
+                        {adapters.map((a) => (
+                            <option key={a.version} value={a.version}>v{a.version}</option>
+                        ))}
+                    </select>
                 </div>
 
-                {/* Input */}
-                <input
-                    ref={inputRef}
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyDown={async (e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault();
-                            await handleSubmit();
-                        }
-                    }}
-                    placeholder={t("chat.startPromptPlaceholder")}
-                    className="input input-bordered flex-1"
-                    aria-label={t("chat.startPromptPlaceholder") as string}
-                />
-
-                {/* Send */}
-                <div className="flex items-center gap-2">
-                    <button
-                        className="btn btn-ghost"
-                        onClick={() => {
-                            setPrompt("");
+                <div className="flex items-end gap-2">
+                    <textarea
+                        ref={textareaRef}
+                        rows={1}
+                        value={prompt}
+                        onChange={handleInput}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSubmit();
+                            }
                         }}
-                        disabled={isSubmitting}
-                        title={t("common.clear") as string}
-                    >
-                        {t("common.clear")}
-                    </button>
+                        placeholder={t("chat.startPromptPlaceholder")}
+                        className="textarea textarea-ghost w-full resize-none bg-transparent focus:outline-none py-3 px-4 text-base min-h-13"
+                    />
 
                     <button
-                        className="btn btn-primary"
                         onClick={handleSubmit}
                         disabled={isSubmitting || !prompt.trim()}
-                        aria-label={t("chat.sendButton") as string}
+                        className={`btn btn-circle btn-primary mb-1 mr-1 transition-all ${
+                            isSubmitting ? "loading" : ""
+                        }`}
                     >
-                        {isSubmitting ? t("chat.sending") : t("chat.sendButton")}
+                        {!isSubmitting && <Send size={18} />}
                     </button>
                 </div>
             </div>
+            <p className="text-[10px] text-center mt-3 opacity-30 font-medium">
+                Federated Engine can make mistakes. Check important info.
+            </p>
         </div>
     );
 };

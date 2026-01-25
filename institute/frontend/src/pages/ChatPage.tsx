@@ -1,50 +1,40 @@
 import {useState} from "react";
-import {motion} from "framer-motion";
-import {Sparkles} from "lucide-react";
-import {useTranslation} from "react-i18next";
+import {Menu} from "lucide-react";
 
 import {ChatInterface} from "../components/chat/ChatInterface";
 import {ChatSidebar} from "../components/chat/ChatSidebar";
 import {getModelKey} from "../utils/envUtils.ts";
 
 export const ChatPage = () => {
-    const {t} = useTranslation();
+    // const { t } = useTranslation();
     const modelKey = getModelKey();
-    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     return (
-        <div className="h-[calc(100vh-6.5rem)] bg-linear-to-br from-base-100 via-base-200 to-base-100">
-            <div className="h-full max-w-6xl mx-auto flex">
-                {/* Sidebar */}
-                <ChatSidebar isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen((s) => !s)}/>
+        <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-base-100">
+            <ChatSidebar
+                isOpen={isSidebarOpen}
+                onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+            />
 
-                <div className="flex-1 flex flex-col">
-                    {/* Header */}
-                    <motion.div
-                        initial={{opacity: 0, y: -12}}
-                        animate={{opacity: 1, y: 0}}
-                        className="bg-base-200/80 backdrop-blur-sm border-b border-base-300 px-6 py-4"
-                    >
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <div
-                                    className="w-10 h-10 rounded-lg bg-linear-to-br from-primary to-secondary flex items-center justify-center">
-                                    <Sparkles className="text-primary-content" size={18}/>
-                                </div>
-                                <div>
-                                    <h1 className="text-xl font-bold">{t("chat.title")}</h1>
-                                    <p className="text-sm text-base-content/60">{t("chat.subtitle")}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </motion.div>
-
-                    {/* Main */}
-                    <div className="flex-1 overflow-hidden">
-                        <ChatInterface modelKey={modelKey}/>
+            <main className="flex flex-1 flex-col relative overflow-hidden">
+                <header className="flex h-14 items-center justify-between border-b border-base-content/5 px-6 bg-base-100/50 backdrop-blur-md">
+                    <div className="flex items-center gap-3">
+                        {!isSidebarOpen && (
+                            <button onClick={() => setIsSidebarOpen(true)} className="btn btn-ghost btn-xs">
+                                <Menu size={18} />
+                            </button>
+                        )}
+                        <h2 className="text-sm font-bold tracking-tight uppercase opacity-50">
+                            {modelKey}
+                        </h2>
                     </div>
+                </header>
+
+                <div className="flex-1 overflow-hidden">
+                    <ChatInterface modelKey={modelKey} />
                 </div>
-            </div>
+            </main>
         </div>
     );
 };
