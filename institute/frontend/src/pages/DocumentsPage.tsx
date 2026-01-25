@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileText } from "lucide-react";
+import { Files, Plus } from "lucide-react";
 
 import { DocumentUpload } from "../components/documents/DocumentUpload";
 import { DocumentList } from "../components/documents/DocumentList";
@@ -13,53 +13,51 @@ export const DocumentsPage = () => {
     const [showUpload, setShowUpload] = useState(false);
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-base-100 via-base-200 to-base-100 py-8 px-4">
-            <div className="max-w-7xl mx-auto">
-                {/* Page Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mb-8"
-                >
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-                                <FileText className="text-primary" size={36} />
-                                <span>{t("documents.title")}</span>
-                            </h1>
-                            <p className="text-base-content/70">{t("documents.subtitle")}</p>
-                        </div>
+        <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
+            <div className="relative z-10 max-w-7xl mx-auto">
 
-                        <div className="flex items-center gap-3">
-                            <button
-                                onClick={() => setShowUpload(true)}
-                                className="btn btn-primary gap-2"
-                                aria-label={t("documents.uploadButton")}
-                            >
-                                <FileText size={18} />
-                                {t("documents.uploadButton")}
-                            </button>
+                {/* Header della Pagina */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10"
+                >
+                    <div className="flex items-center gap-4">
+                        <div className="flex h-14 w-14 items-center justify-center bg-primary/10 rounded-2xl text-primary shadow-inner">
+                            <Files size={32} />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black tracking-tight text-base-content">
+                                {t("documents.title")}
+                            </h1>
+                            <p className="text-base-content/60 font-medium">
+                                {t("documents.subtitle")}
+                            </p>
                         </div>
                     </div>
+
+                    <button
+                        onClick={() => setShowUpload(true)}
+                        className="btn btn-primary btn-md md:btn-lg shadow-xl shadow-primary/20 hover:scale-105 transition-all"
+                    >
+                        <Plus size={20} />
+                        {t("documents.uploadButton")}
+                    </button>
                 </motion.div>
 
-                {/* Filter Bar */}
-                <DocumentFilterBar
-                    value={searchQuery}
-                    onChange={(v) => setSearchQuery(v)}
-                />
+                {/* Filter & List Area */}
+                <div className="space-y-6">
+                    <DocumentFilterBar
+                        value={searchQuery}
+                        onChange={(v) => setSearchQuery(v)}
+                    />
 
-                {/* Document List */}
-                <motion.div
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.06 }}
-                >
-                    <DocumentList searchQuery={searchQuery} />
-                </motion.div>
+                    <div className="bg-base-200/30 rounded-3xl p-2 border border-base-content/5">
+                        <DocumentList searchQuery={searchQuery} />
+                    </div>
+                </div>
             </div>
 
-            {/* Upload Modal */}
             <AnimatePresence>
                 {showUpload && <DocumentUpload onClose={() => setShowUpload(false)} />}
             </AnimatePresence>

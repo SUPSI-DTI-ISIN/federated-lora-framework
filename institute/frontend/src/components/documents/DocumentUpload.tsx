@@ -1,7 +1,7 @@
 import React, { useCallback, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Upload, X, FileText, AlertCircle } from "lucide-react";
+import { Upload, X, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUploadDocument } from "../../hooks/documents/useUploadDocument";
 
@@ -68,103 +68,81 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
 
     return (
         <>
-            {/* Backdrop */}
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-base-300/60 backdrop-blur-md z-40"
                 onClick={() => !isUploading && onClose()}
-                className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
-                role="presentation"
             />
 
-            {/* Modal */}
             <motion.div
-                initial={{ opacity: 0, scale: 0.98, y: 8 }}
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.98, y: 8 }}
-                className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                aria-modal="true"
-                role="dialog"
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
             >
-                <div className="card bg-base-100 shadow-2xl w-full max-w-2xl">
-                    <div className="card-body">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="card-title text-2xl flex items-center gap-3">
-                                <Upload className="text-primary" size={28} />
+                <div className="card bg-base-100 shadow-2xl w-full max-w-xl pointer-events-auto border border-base-content/10 overflow-hidden">
+                    <div className="p-8">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-2xl font-bold text-base-content flex items-center gap-3">
+                                <Upload className="text-primary" />
                                 {t("documents.upload.title")}
                             </h3>
-                            <button
-                                onClick={() => !isUploading && onClose()}
-                                className="btn btn-ghost btn-sm btn-circle"
-                                aria-label={t("common.close")}
-                            >
-                                <X size={18} />
-                            </button>
+                            <button onClick={onClose} className="btn btn-ghost btn-sm btn-circle"><X size={20} /></button>
                         </div>
 
                         <div
                             onDragOver={onDragOver}
                             onDragLeave={onDragLeave}
                             onDrop={onDrop}
-                            className={`border-2 border-dashed rounded-lg p-8 text-center transition-all ${
-                                isDragging ? "border-primary bg-primary/10" : "border-base-300 hover:border-primary/50"
+                            className={`relative border-3 border-dashed rounded-2xl p-10 transition-all duration-300 flex flex-col items-center justify-center ${
+                                isDragging
+                                    ? "border-primary bg-primary/5 scale-[1.02]"
+                                    : "border-base-content/10 bg-base-200/30 hover:bg-base-200/50"
                             }`}
                         >
                             {selectedFile ? (
-                                <motion.div initial={{ opacity: 0.9 }} animate={{ opacity: 1 }}>
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-3 rounded-lg bg-primary/10">
-                                            <FileText className="text-primary" size={32} />
-                                        </div>
-                                        <div className="text-left">
-                                            <p className="font-semibold">{selectedFile.name}</p>
-                                            <p className="text-sm text-base-content/60">
-                                                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                                            </p>
-                                        </div>
-                                        <div className="ml-auto">
-                                            <button onClick={() => setSelectedFile(null)} className="btn btn-ghost btn-sm btn-circle" aria-label={t("common.cancel")}>
-                                                <X size={16} />
-                                            </button>
-                                        </div>
+                                <div className="flex items-center gap-5 w-full bg-base-100 p-4 rounded-xl shadow-sm border border-primary/20">
+                                    <div className="p-3 bg-primary/10 rounded-lg text-primary">
+                                        <FileText size={32} />
                                     </div>
-                                </motion.div>
+                                    <div className="flex-1 overflow-hidden">
+                                        <p className="font-bold truncate text-base-content">{selectedFile.name}</p>
+                                        <p className="text-xs font-medium text-base-content/50 uppercase">
+                                            {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                                        </p>
+                                    </div>
+                                    <button onClick={() => setSelectedFile(null)} className="btn btn-circle btn-xs btn-ghost text-error">
+                                        <X size={16} />
+                                    </button>
+                                </div>
                             ) : (
-                                <>
-                                    <Upload className="mx-auto mb-4 text-base-content/40" size={48} />
-                                    <p className="text-lg font-semibold mb-2">{t("documents.upload.dragDrop")}</p>
-                                    <p className="text-sm text-base-content/60 mb-4">{t("documents.upload.or")}</p>
-                                    <label className="btn btn-primary">
+                                <div className="text-center">
+                                    <div className="mx-auto w-16 h-16 bg-base-content/5 rounded-full flex items-center justify-center mb-4">
+                                        <Upload className="text-base-content/40" size={32} />
+                                    </div>
+                                    <p className="text-lg font-bold text-base-content">{t("documents.upload.dragDrop")}</p>
+                                    <p className="text-sm text-base-content/50 mt-1 mb-6">{t("documents.upload.info")}</p>
+                                    <label className="btn btn-sm btn-outline px-6">
                                         {t("documents.upload.browse")}
                                         <input type="file" accept="application/pdf" className="hidden" onChange={onFileSelect} />
                                     </label>
-                                </>
+                                </div>
                             )}
                         </div>
 
-                        <div className="alert alert-info mt-4">
-                            <AlertCircle size={20} />
-                            <span className="text-sm">{t("documents.upload.info")}</span>
-                        </div>
-
-                        <div className="card-actions justify-end mt-6">
-                            <button onClick={() => !isUploading && onClose()} className="btn btn-ghost" disabled={isUploading}>
+                        <div className="flex gap-3 mt-8">
+                            <button onClick={onClose} className="btn flex-1 bg-base-200 border-none" disabled={isUploading}>
                                 {t("common.cancel")}
                             </button>
-
-                            <button onClick={handleUpload} disabled={!selectedFile || isUploading} className="btn btn-primary gap-2">
-                                {isUploading ? (
-                                    <>
-                                        <span className="loading loading-spinner loading-sm" aria-hidden />
-                                        {t("documents.upload.uploading")}
-                                    </>
-                                ) : (
-                                    <>
-                                        <Upload size={18} />
-                                        {t("documents.upload.confirm")}
-                                    </>
-                                )}
+                            <button
+                                onClick={handleUpload}
+                                disabled={!selectedFile || isUploading}
+                                className="btn btn-primary flex-2 gap-2 shadow-lg shadow-primary/20"
+                            >
+                                {isUploading ? <span className="loading loading-spinner loading-sm" /> : <Upload size={18} />}
+                                {isUploading ? t("documents.upload.uploading") : t("documents.upload.confirm")}
                             </button>
                         </div>
                     </div>

@@ -7,6 +7,8 @@ import {useGetAllAvailableAdapters} from "../hooks/model/useGetAllAvailableAdapt
 import {getModelKey} from "../utils/envUtils.ts";
 import {useSaveNewAdapter} from "../hooks/model/useSaveNewAdapter.ts";
 import type {AdapterDTO} from "@isin/model-service-client";
+import { motion } from "framer-motion";
+import {Cpu} from "lucide-react";
 
 export const AdaptersPage = () => {
     const {t} = useTranslation();
@@ -65,15 +67,30 @@ export const AdaptersPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-base-100 via-base-200 to-base-100 py-8 px-4">
-            <div className="max-w-7xl mx-auto">
-                <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                    <div>
-                        <h1 className="text-3xl font-bold">{t("adapters.title")}</h1>
-                        <p className="text-base-content/70">{t("adapters.subtitle")}</p>
+        <div className="min-h-screen bg-base-100 py-12 px-4 sm:px-8 relative">
+
+            <div className="relative z-10 max-w-7xl mx-auto">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12"
+                >
+                    <div className="flex items-center gap-5">
+                        <div className="flex h-16 w-16 items-center justify-center bg-secondary/10 rounded-2xl text-secondary shadow-inner">
+                            <Cpu size={36} /> {/* Microchip/Cpu icon */}
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
+                                {t("adapters.title")}
+                            </h1>
+                            <p className="text-lg text-base-content/60 font-medium">
+                                {t("adapters.subtitle")}
+                            </p>
+                        </div>
                     </div>
 
-                    <div className="w-full md:w-auto">
+                    <div className="bg-base-200/50 p-2 rounded-2xl border border-base-content/5">
                         <AdapterFilterBar
                             query={query}
                             onQueryChange={setQuery}
@@ -81,7 +98,7 @@ export const AdaptersPage = () => {
                             onLocalOnlyChange={setLocalOnly}
                         />
                     </div>
-                </div>
+                </motion.div>
 
                 <AdaptersList
                     adapters={filtered}

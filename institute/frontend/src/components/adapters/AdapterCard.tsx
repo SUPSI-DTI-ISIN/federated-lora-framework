@@ -1,6 +1,7 @@
-import { Download, CheckCircle, CloudOff } from "lucide-react";
+import { Download, CheckCircle, Cloud } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { AdapterDTO } from "@isin/model-service-client";
+import { motion } from "framer-motion";
 
 type AdapterCardProps = {
     adapter: AdapterDTO;
@@ -13,45 +14,72 @@ export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: Adap
     const { version, available_local } = adapter;
 
     return (
-        <div className="card bg-base-100 shadow">
-            <div className="card-body flex items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded bg-base-200 flex items-center justify-center font-medium">
-                        v{version}
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            className="group w-full bg-base-100 p-4 sm:p-5 rounded-2xl border border-base-content/5 hover:border-secondary/30 hover:shadow-xl hover:shadow-secondary/5 transition-all duration-300"
+        >
+            <div className="flex flex-row items-center justify-between gap-6">
+
+                {/* Left Side: Version Indicator */}
+                <div className="flex items-center gap-5 min-w-0">
+                    <div className="flex flex-col items-center justify-center w-14 h-14 shrink-0 rounded-xl bg-base-200 text-base-content group-hover:bg-secondary group-hover:text-secondary-content transition-all duration-500 shadow-inner font-black">
+                        <span className="text-[9px] uppercase opacity-50 mb-0.5 tracking-tighter">Ver</span>
+                        <span className="text-xl leading-none">{version}</span>
                     </div>
-                    <div>
-                        <div className="font-medium">v{version}</div>
-                        <div className="text-sm text-base-content/60">
+
+                    <div className="truncate">
+                        <h3 className="text-lg font-bold text-base-content truncate group-hover:text-secondary transition-colors">
+                            {t("adapters.card.title", { version })}
+                        </h3>
+                        <div className="flex items-center gap-3 mt-1">
                             {available_local ? (
-                                <span className="flex items-center gap-1">
-                  <CheckCircle size={14} className="text-success" /> {t("adapters.local")}
-                </span>
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-success uppercase tracking-wide">
+                                    <CheckCircle size={14} strokeWidth={3} />
+                                    {t("adapters.local")}
+                                </span>
                             ) : (
-                                <span className="flex items-center gap-1">
-                  <CloudOff size={14} className="text-warning" /> {t("adapters.notLocal")}
-                </span>
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-info uppercase tracking-wide">
+                                    <Cloud size={14} strokeWidth={3} />
+                                    {t("adapters.notLocal")}
+                                </span>
                             )}
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2">
+                {/* Right Side: Action Button */}
+                <div className="flex items-center shrink-0">
                     {available_local ? (
-                        <button className="btn btn-ghost btn-sm" disabled>
-                            {t("adapters.local")}
-                        </button>
+                        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-success/5 text-success font-bold text-sm border border-success/10">
+                            <CheckCircle size={16} />
+                            Installato
+                        </div>
                     ) : (
                         <button
-                            className="btn btn-primary btn-sm gap-2"
                             onClick={() => onDownload(version)}
                             disabled={isDownloading}
-                            aria-label={t("adapters.download")}
+                            className={`
+                                btn btn-md sm:btn-lg rounded-2xl
+                                ${isDownloading ? 'btn-ghost' : 'btn-secondary'} 
+                                shadow-lg shadow-secondary/20 hover:scale-105 transition-all
+                                px-6
+                            `}
                         >
-                            <Download size={14} /> {t("adapters.download")}
+                            {isDownloading ? (
+                                <span className="loading loading-spinner" />
+                            ) : (
+                                <>
+                                    <Download size={20} className="mr-2" />
+                                    <span className="hidden sm:inline">{t("adapters.download")}</span>
+                                </>
+                            )}
                         </button>
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 };
