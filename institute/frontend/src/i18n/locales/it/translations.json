@@ -1,11 +1,16 @@
 {
   "header": {
+    "logoInitials": "IS",
     "title": "Innosuisse AI Assistant",
     "nav": {
       "home": "Home",
       "documents": "Documenti",
-      "chat": "Chat AI"
+      "chat": "Chat AI",
+      "adapters": "Adapters"
     },
+    "navLabel": "Navigazione principale",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
     "language": {
       "label": "Lingua",
       "it": "Italiano",
@@ -34,181 +39,147 @@
       "privacy": "Privacy"
     },
     "contact": {
-      "title": "Contatti"
+      "title": "Contatti",
+      "description": "Contattaci per collaborazioni o domande.",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
     },
-    "copyright": "Innosuisse AI Assistant. Tutti i diritti riservati.",
-    "masterThesis": "Progetto Master in Computer Science"
+    "copyright": "Innosuisse AI Assistant. Tutti i diritti riservati."
   },
   "home": {
     "hero": {
-      "title": "Assistente AI per Progetti Innosuisse",
-      "subtitle": "Carica i tuoi documenti e lascia che l'AI ti aiuti a scrivere e migliorare i tuoi progetti di ricerca con tecnologie avanzate di Federated Learning",
+      "title": "Chat intelligente sui documenti per ricerca e studio",
+      "subtitle": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
       "cta": {
         "documents": "Gestisci Documenti",
-        "chat": "Inizia una Chat"
+        "chat": "Apri Chat"
       }
     },
     "features": {
-      "title": "Funzionalità Principali",
-      "subtitle": "Tutto quello che ti serve per creare progetti Innosuisse di qualità",
+      "title": "Funzionalità principali",
+      "subtitle": "Tutto il necessario per esperimenti rapidi e Q&A affidabili.",
       "upload": {
-        "title": "Caricamento Documenti",
-        "description": "Carica facilmente i tuoi PDF di progetti Innosuisse approvati per alimentare il sistema"
+        "title": "Carica Documenti",
+        "description": "Importa PDF, testo e risorse da usare come contesto."
       },
       "finetune": {
-        "title": "Fine-Tuning Intelligente",
-        "description": "Il modello impara dai tuoi documenti utilizzando Federated Learning e LoRA per prestazioni ottimali"
+        "title": "Fine-tune",
+        "description": "Crea adapter personalizzati (LoRA) per specializzare i modelli."
       },
       "chat": {
-        "title": "Chat AI Avanzata",
-        "description": "Interagisci con un assistente AI specializzato nella scrittura di progetti Innosuisse"
+        "title": "Interfaccia Chat",
+        "description": "Conversazioni iterative con il modello."
       },
       "federated": {
-        "title": "Privacy Garantita",
-        "description": "I tuoi dati rimangono privati grazie all'utilizzo di Federated Learning"
+        "title": "Privato e Sicuro",
+        "description": "Esegui e memorizza modelli localmente per privacy e conformità."
       },
       "collaborative": {
         "title": "Collaborazione",
-        "description": "Lavora insieme al team mantenendo tutti i documenti organizzati e accessibili"
+        "description": "Condividi upload e adapter con il team."
       },
       "improve": {
         "title": "Miglioramento Continuo",
-        "description": "Il modello migliora continuamente imparando dai nuovi documenti caricati"
+        "description": "Raccogli feedback e migliora le prestazioni degli adapter."
       }
     },
     "howItWorks": {
-      "title": "Come Funziona",
+      "title": "Come funziona",
       "step1": {
-        "title": "Carica i Documenti",
-        "description": "Inizia caricando i tuoi progetti Innosuisse approvati in formato PDF. Il sistema li processerà automaticamente."
+        "title": "Carica documenti",
+        "description": "Importa i tuoi PDF o file di testo nell'area di lavoro."
       },
       "step2": {
-        "title": "Training del Modello",
-        "description": "Il modello AI viene fine-tunato sui tuoi documenti utilizzando tecniche avanzate di Federated Learning e LoRA."
+        "title": "Scegli o scarica adapter",
+        "description": "Seleziona l'adapter o il modello più adatto al tuo task."
       },
       "step3": {
-        "title": "Ottieni Assistenza",
-        "description": "Chatta con l'AI per ottenere aiuto nella scrittura, revisione e miglioramento dei tuoi progetti di ricerca."
+        "title": "Chatta e affina",
+        "description": "Fai domande, affina i prompt ed esporta i risultati."
       }
     }
   },
   "documents": {
-    "title": "Gestione Documenti",
-    "subtitle": "Carica, visualizza e gestisci i tuoi progetti Innosuisse",
+    "title": "Documenti",
+    "subtitle": "Tutti i documenti caricati sono elencati qui.",
     "uploadButton": "Carica Documento",
     "search": {
       "placeholder": "Cerca documenti..."
     },
-    "stats": {
-      "total": "Totale Documenti",
-      "ready": "Pronti",
-      "processing": "In Elaborazione",
-      "storage": "Spazio Utilizzato"
+    "list": {
+      "error": {
+        "title": "Impossibile caricare i documenti",
+        "description": "Si è verificato un errore durante il recupero dei documenti. Riprova più tardi."
+      },
+      "empty": {
+        "title": "Nessun documento",
+        "noDocuments": "Non hai ancora caricato documenti.",
+        "noResults": "Nessun documento corrisponde alla ricerca."
+      },
+      "deleteConfirm": "Sei sicuro di voler eliminare questo documento? Questa azione non può essere annullata.",
+      "deleteSuccess": "Documento eliminato con successo.",
+      "deleteError": "Impossibile eliminare il documento.",
+      "actions": {
+        "delete": "Elimina"
+      }
     },
     "upload": {
-      "title": "Carica Nuovo Documento",
-      "dragDrop": "Trascina qui il tuo file PDF",
+      "title": "Carica Documento",
+      "dragDrop": "Trascina qui un PDF",
       "or": "oppure",
-      "browse": "Sfoglia File",
-      "info": "Carica solo file PDF di progetti Innosuisse approvati. Dimensione massima: 50MB",
-      "uploading": "Caricamento in corso...",
-      "confirm": "Carica Documento",
-      "success": "Documento caricato con successo!",
+      "browse": "Sfoglia file",
+      "info": "Sono accettati solo file PDF. Il file verrà processato per estrarre il testo da usare nella chat.",
+      "confirm": "Carica",
+      "uploading": "Caricamento...",
+      "success": "Documento caricato con successo",
       "error": {
-        "invalidType": "Formato file non valido. Carica solo file PDF.",
-        "failed": "Errore durante il caricamento. Riprova."
+        "invalidType": "Tipo di file non valido. Accettati solo PDF.",
+        "failed": "Caricamento fallito. Riprova."
       }
-    },
-    "list": {
-      "empty": {
-        "title": "Nessun Documento",
-        "noDocuments": "Non hai ancora caricato documenti. Inizia caricando il tuo primo progetto Innosuisse!",
-        "noResults": "Nessun documento trovato con i criteri di ricerca selezionati."
-      },
-      "error": {
-        "title": "Errore nel Caricamento",
-        "description": "Non è stato possibile recuperare i documenti. Riprova più tardi."
-      },
-      "actions": {
-        "view": "Visualizza",
-        "download": "Scarica",
-        "delete": "Elimina"
-      },
-      "deleteConfirm": "Sei sicuro di voler eliminare questo documento?",
-      "deleteSuccess": "Documento eliminato con successo",
-      "deleteError": "Errore durante l'eliminazione del documento",
-      "downloadStart": "Download avviato"
-    },
-    "details": {
-      "title": "Dettagli Documento",
-      "size": "Dimensione",
-      "uploadDate": "Data Caricamento",
-      "id": "ID Documento",
-      "processingInfo": "Il documento è attualmente in elaborazione. Potrai utilizzarlo nella chat una volta completato.",
-      "readyInfo": "Il documento è pronto e disponibile per essere utilizzato dall'AI."
     }
   },
+  "adapters": {
+    "title": "Adapters",
+    "subtitle": "Gestisci gli adapter dei modelli (LoRA) e scaricali localmente.",
+    "local": "Locale",
+    "download": "Scarica",
+    "filter": {
+      "localOnly": "Mostra solo locali",
+      "searchPlaceholder": "Cerca adapter..."
+    },
+    "toast": {
+      "downloading": "Avvio download...",
+      "downloaded": "Adapter scaricato con successo",
+      "error": "Impossibile scaricare l'adapter"
+    },
+    "errorFetch": "Impossibile recuperare gli adapter. Riprova più tardi.",
+    "notLocal": "Non locale"
+  },
   "chat": {
-    "title": "Chat AI Assistant",
-    "subtitle": "Assistente specializzato per progetti Innosuisse",
-    "thinking": "L'AI sta pensando...",
-    "disclaimer": "L'AI può commettere errori. Verifica sempre le informazioni importanti.",
-    "error": {
-      "failedToSend": "Si è verificato un errore durante l'invio del messaggio. Riprova."
-    },
-    "input": {
-      "placeholder": "Scrivi il tuo messaggio... (Shift+Enter per andare a capo)",
-      "send": "Invia",
-      "stop": "Interrompi",
-      "attach": "Allega file"
-    },
-    "message": {
-      "copy": "Copia",
-      "copied": "Copiato negli appunti!",
-      "copyError": "Errore durante la copia"
+    "title": "Chat",
+    "subtitle": "Inizia una conversazione con un modello. Scegli un adapter o usa il modello base.",
+    "startPromptPlaceholder": "Scrivi una domanda o incolla un prompt...",
+    "sendButton": "Invia",
+    "sending": "Invio...",
+    "sampleReply": "Questa è una risposta di esempio. Sostituiscila con l'output reale.",
+    "emptyHint": "Avvia la chat inviando un messaggio.",
+    "errorInference": "Errore nell'esecuzione del modello. Riprova.",
+    "adapter": {
+      "selectLabel": "Adapter",
+      "baseModelLabel": "Modello base (nessun adapter)",
+      "local": "locale"
     },
     "sidebar": {
-      "newChat": "Nuova Chat",
-      "history": "Cronologia",
-      "noHistory": "Nessuna conversazione precedente",
-      "footer": "Powered by Federated Learning"
-    },
-    "welcome": {
-      "title": "Benvenuto nell'AI Assistant",
-      "subtitle": "Come posso aiutarti oggi con il tuo progetto Innosuisse?",
-      "hint": "Seleziona una delle opzioni sopra o inizia a scrivere la tua domanda",
-      "suggestions": {
-        "create": {
-          "title": "Crea Nuovo Progetto",
-          "description": "Inizia a scrivere un nuovo progetto di ricerca Innosuisse da zero",
-          "prompt": "Aiutami a creare un nuovo progetto Innosuisse. Da dove dovrei iniziare?"
-        },
-        "improve": {
-          "title": "Migliora Sezione",
-          "description": "Ottieni suggerimenti per migliorare una sezione specifica del tuo progetto",
-          "prompt": "Ho bisogno di migliorare la sezione metodologia del mio progetto. Puoi aiutarmi?"
-        },
-        "review": {
-          "title": "Revisione Completa",
-          "description": "Richiedi una revisione dettagliata del tuo progetto",
-          "prompt": "Puoi revisionare il mio progetto e darmi feedback costruttivo?"
-        },
-        "structure": {
-          "title": "Struttura Progetto",
-          "description": "Ottieni una struttura ottimale per il tuo progetto Innosuisse",
-          "prompt": "Qual è la migliore struttura per un progetto Innosuisse nel campo AI?"
-        }
-      }
+      "title": "Conversazioni",
+      "new": "Nuova",
+      "empty": "Ancora nessuna conversazione."
     }
   },
   "common": {
     "cancel": "Annulla",
+    "clear": "Pulisci",
     "close": "Chiudi",
-    "save": "Salva",
-    "delete": "Elimina",
-    "edit": "Modifica",
-    "loading": "Caricamento...",
-    "error": "Si è verificato un errore",
-    "success": "Operazione completata con successo"
+    "start": "Avvia"
   }
 }

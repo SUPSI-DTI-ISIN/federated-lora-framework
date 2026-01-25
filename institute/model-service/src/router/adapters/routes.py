@@ -16,6 +16,14 @@ tags = ["adapters"]
 async def get_available_adapters(model_key: str, adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service)):
     return adapter_registry_service.get_available_adapters(model_key=model_key)
 
+@router.get(
+    "/local",
+    status_code=status.HTTP_200_OK,
+    response_model=AvailableAdaptersDTO,
+    tags=tags
+)
+async def get_available_local_adapters(model_key: str, adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service)):
+    return adapter_registry_service.get_available_local_adapters(model_key=model_key)
 
 @router.post(
     "",

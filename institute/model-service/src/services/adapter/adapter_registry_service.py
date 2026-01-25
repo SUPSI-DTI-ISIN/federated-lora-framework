@@ -64,6 +64,31 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         return AvailableAdaptersDTO(model_key=model_key, adapters=adapters)
 
 
+    def get_available_local_adapters(self, model_key: str) -> AvailableAdaptersDTO:
+        adapters_version_local_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
+
+        if not os.path.exists(adapters_version_local_path):
+            return AvailableAdaptersDTO(
+                model_key=model_key
+            )
+
+        adapters_version_local = []
+        for entry in os.listdir(adapters_version_local_path):
+            version_path = os.path.join(adapters_version_local_path, entry)
+            if os.path.isdir(version_path) and entry.isdigit() and os.listdir(version_path):
+                adapters_version_local.append(int(entry))
+
+        if not adapters_version_local:
+            return AvailableAdaptersDTO(
+                model_key=model_key,
+            )
+
+        return AvailableAdaptersDTO(
+            model_key=model_key,
+            adapters=[AdapterDTO(version=int(adapter_version), available_local=True) for adapter_version in adapters_version_local]
+        )
+
+
     def download_remote_adapter(self, model_key: str, adapter_version: int) -> AdapterDTO:
         adapter_manifest = self.__mlflow_service_client.get_adapter_manifest(model_key=model_key, adapter_version=adapter_version)
 

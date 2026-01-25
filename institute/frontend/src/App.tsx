@@ -6,6 +6,7 @@ import { DocumentsPage } from "./pages/DocumentsPage";
 import { ChatPage } from "./pages/ChatPage";
 import {Header} from "./components/common/Header.tsx";
 import {Footer} from "./components/common/Footer.tsx";
+import {AdaptersPage} from "./pages/AdaptersPage.tsx";
 
 const App = () => {
     return (
@@ -23,6 +24,7 @@ const App = () => {
                     <Route path="/" element={<Home/>}/>
                     <Route path="/documents" element={<DocumentsPage/>}/>
                     <Route path="/chat" element={<ChatPage/>}/>
+                    <Route path="/adapters" element={<AdaptersPage/>}/>
                 </Routes>
             </main>
             <Footer />

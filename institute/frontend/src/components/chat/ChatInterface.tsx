@@ -1,140 +1,106 @@
-import { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Loader2 } from 'lucide-react';
-import { ChatMessage } from './ChatMessage';
-import { ChatInput } from './ChatInput';
-import { useInferenceModel } from '../../hooks/inference/useInferenceModel.ts';
-import type {QueryResponseDTO} from "@isin/inference-service-client";
+import {useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
+import toast from "react-hot-toast";
+import {ChatComposer} from "./ChatComposer";
+import {type InferenceModelParams, useInferenceModel} from "../../hooks/inference/useInferenceModel.ts";
+
+type Message = {
+    id: string;
+    from: "user" | "assistant" | "system";
+    text: string;
+    modelKey?: string;
+    adapterVersion?: number | null;
+};
 
 interface ChatInterfaceProps {
-    initialPrompt: string;
+    modelKey: string;
 }
 
-export const ChatInterface = ({ initialPrompt }: ChatInterfaceProps) => {
-    const { t } = useTranslation();
+export const ChatInterface = ({
+                                  modelKey,
+                              }: ChatInterfaceProps) => {
 
-    const [inputValue, setInputValue] = useState('');
-    const [userPrompt, setUserPrompt] = useState<string | null>(null);
-    const [modelResponse, setModelResponse] = useState<QueryResponseDTO | null>(null);
-    const [isQueryingModel, setIsQueryingModel] = useState(false);
+    const {t} = useTranslation();
+    const [messages, setMessages] = useState<Message[]>([]);
+    const scrollRef = useRef<HTMLDivElement | null>(null);
 
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-
-    const { mutateAsync: inferenceModel } = useInferenceModel();
-
-    useEffect(() => {
-        if (!initialPrompt) return;
-
-        let isMounted = true;
-
-        const runInitialInference = async () => {
-            try {
-                setIsQueryingModel(true);
-                setUserPrompt(initialPrompt);
-                setModelResponse(null);
-
-                const response = await inferenceModel(initialPrompt);
-                if (isMounted) {
-                    setModelResponse(response);
-                }
-            } catch (error) {
-                console.error('Initial inference error:', error);
-            } finally {
-                if (isMounted) {
-                    setIsQueryingModel(false);
-                }
-            }
-        };
-
-        runInitialInference();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [initialPrompt, inferenceModel]);
+    const [isRunningInference, setIsRunningInference] = useState<boolean>(false);
+    const {mutateAsync: runInference} = useInferenceModel();
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [userPrompt, modelResponse, isQueryingModel]);
-
-    const handleSendMessage = async () => {
-        if (!inputValue.trim() || isQueryingModel) return;
-
-        const prompt = inputValue.trim();
-        setInputValue('');
-        setUserPrompt(prompt);
-        setModelResponse(null);
-
-        try {
-            setIsQueryingModel(true);
-            const response = await inferenceModel(prompt);
-            setModelResponse(response);
-        } catch (error) {
-            console.error('Error sending message:', error);
-        } finally {
-            setIsQueryingModel(false);
+        if (scrollRef.current) {
+            scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
-    };
+    }, [messages]);
 
-    const handleStopGeneration = () => {
-        console.log('Stop generation requested');
+    const appendMessage = (m: Message) => setMessages((prev) => [...prev, m]);
+
+    const handleSend = async (inferenceParams: InferenceModelParams) => {
+        const userId = String(Date.now());
+        appendMessage({id: userId, from: "user", text: inferenceParams.prompt});
+
+        setIsRunningInference(true);
+        try {
+            const res = await runInference({
+                modelKey: inferenceParams.modelKey,
+                adapterVersion: inferenceParams.adapterVersion,
+                prompt: inferenceParams.prompt
+            });
+
+            appendMessage({
+                id: userId + "-r",
+                from: "assistant",
+                text: res.response,
+                modelKey: res.model_key,
+                adapterVersion: res.adapter_version,
+            });
+        } catch (err: any) {
+            console.error(err);
+            toast.error(t("chat.errorInference"));
+            appendMessage({
+                id: userId + "-r",
+                from: "assistant",
+                text: t("chat.errorInference"),
+            });
+        } finally {
+            setIsRunningInference(false);
+        }
     };
 
     return (
         <div className="h-full flex flex-col">
-            {/* Messages Area */}
-            <div className="flex-1 overflow-y-auto px-4 py-6">
-                <div className="max-w-4xl mx-auto space-y-6">
-                    <AnimatePresence mode="popLayout">
-                        {userPrompt && (
-                            <ChatMessage
-                                key="user"
-                                message={{ role: 'user', content: userPrompt }}
-                                index={0}
-                            />
-                        )}
+            {/* Messages */}
+            <div className="flex-1 overflow-auto p-6 space-y-4" ref={scrollRef} role="log" aria-live="polite">
+                {messages.length === 0 && (
+                    <div className="text-center text-base-content/60">{t("chat.emptyHint")}</div>
+                )}
 
-                        {modelResponse && (
-                            <ChatMessage
-                                key="assistant"
-                                message={{ role: 'assistant', content: modelResponse.response }}
-                                index={1}
-                            />
-                        )}
-                    </AnimatePresence>
-
-                    {isQueryingModel && (
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center gap-3 text-base-content/60"
+                {messages.map((message) => (
+                    <div key={message.id} className={`max-w-3xl ${message.from === "user" ? "ml-auto text-right" : ""}`}>
+                        <div
+                            className={`inline-block p-3 rounded-lg wrap-break-word ${
+                                message.from === "user" ? "bg-primary text-primary-content" : "bg-base-200"
+                            }`}
                         >
-                            <Loader2 className="animate-spin" size={20} />
-                            <span>{t('chat.thinking')}</span>
-                        </motion.div>
-                    )}
-
-                    <div ref={messagesEndRef} />
-                </div>
+                            {message.text}
+                            {message.from === "assistant" && message.modelKey && (
+                                <div className="text-xs text-base-content/50 mt-1">
+                                    {message.adapterVersion !== null
+                                        ? `${message.modelKey} (v${message.adapterVersion})`
+                                        : `${message.modelKey} (base)`}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                ))}
             </div>
 
-            {/* Input Area */}
-            <div className="border-t border-base-300 bg-base-200/50 backdrop-blur-sm">
-                <div className="max-w-4xl mx-auto px-4 py-4">
-                    <ChatInput
-                        value={inputValue}
-                        onChange={setInputValue}
-                        onSend={handleSendMessage}
-                        isLoading={isQueryingModel}
-                        onStop={handleStopGeneration}
-                    />
-
-                    <p className="text-xs text-center text-base-content/50 mt-2">
-                        {t('chat.disclaimer')}
-                    </p>
-                </div>
-            </div>
+            {/* Composer */}
+            <ChatComposer
+                modelKey={modelKey}
+                onSubmit={handleSend}
+                isSubmitting={isRunningInference}
+            />
         </div>
     );
 };

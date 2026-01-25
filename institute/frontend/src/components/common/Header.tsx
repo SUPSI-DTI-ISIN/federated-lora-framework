@@ -1,97 +1,123 @@
-import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
-import { FileText, MessageSquare, Home } from 'lucide-react';
-import { motion } from 'framer-motion';
-import {LanguageSwitcher} from "../header/LanguageSwitcher.tsx";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { NavLink, Link } from "react-router-dom";
+import { Home, FileText, MessageSquare, Menu, X, Microchip } from "lucide-react";
+import { motion } from "framer-motion";
+import { LanguageSwitcher } from "../header/LanguageSwitcher";
 
 export const Header = () => {
     const { t } = useTranslation();
-    const location = useLocation();
+    const [mobileOpen, setMobileOpen] = useState(false);
 
     const navigationLinks = [
-        { path: '/', label: 'header.nav.home', icon: Home },
-        { path: '/documents', label: 'header.nav.documents', icon: FileText },
-        { path: '/chat', label: 'header.nav.chat', icon: MessageSquare },
+        { path: "/", labelKey: "header.nav.home", icon: Home },
+        { path: "/documents", labelKey: "header.nav.documents", icon: FileText },
+        { path: "/chat", labelKey: "header.nav.chat", icon: MessageSquare },
+        { path: "/adapters", labelKey: "header.nav.adapters", icon: Microchip },
     ];
 
-    const isActive = (path: string) => location.pathname === path;
-
     return (
-        <header className="sticky top-0 z-50 bg-base-200 shadow-lg">
-            <div className="navbar max-w-7xl mx-auto px-4">
-                <div className="navbar-start">
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <motion.div
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex items-center gap-2"
+        <header className="sticky top-0 z-50 bg-base-200/80 backdrop-blur-sm border-b border-base-300">
+            <div className="max-w-7xl mx-auto px-4">
+                <div className="navbar h-16">
+                    {/* START: Brand */}
+                    <div className="navbar-start">
+                        <Link to="/" className="flex items-center gap-3">
+                            <motion.div
+                                initial={{ scale: 1 }}
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.97 }}
+                                className="flex items-center gap-3"
+                            >
+                                <div
+                                    aria-hidden
+                                    className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-content font-semibold"
+                                >
+                                    {t("header.logoInitials")}
+                                </div>
+                                <span className="hidden sm:inline text-lg font-semibold text-base-content">
+                  {t("header.title")}
+                </span>
+                            </motion.div>
+                        </Link>
+                    </div>
+
+                    {/* CENTER: Desktop nav */}
+                    <div className="navbar-center hidden lg:flex">
+                        <nav aria-label={t("header.navLabel") as string}>
+                            <ul className="menu menu-horizontal px-1 gap-2">
+                                {navigationLinks.map((link) => {
+                                    const Icon = link.icon;
+                                    return (
+                                        <li key={link.path}>
+                                            <NavLink
+                                                to={link.path}
+                                                className={({ isActive }) =>
+                                                    `flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                                                        isActive ? "bg-primary text-primary-content" : "hover:bg-base-300"
+                                                    }`
+                                                }
+                                            >
+                                                <Icon size={16} />
+                                                <span>{t(link.labelKey)}</span>
+                                            </NavLink>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </nav>
+                    </div>
+
+                    {/* END: actions (mobile menu + language switcher) */}
+                    <div className="navbar-end flex items-center gap-3">
+                        {/* Mobile menu toggle visible on small screens */}
+                        <button
+                            className="lg:hidden btn btn-ghost btn-circle"
+                            aria-label={mobileOpen ? t("header.closeMenu") : t("header.openMenu")}
+                            onClick={() => setMobileOpen((s) => !s)}
                         >
-                            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-primary-content font-bold text-xl">
-                                IS
-                            </div>
-                            <span className="text-xl font-bold text-base-content group-hover:text-primary transition-colors">
-                                {t('header.title')}
-                            </span>
-                        </motion.div>
-                    </Link>
-                </div>
+                            {mobileOpen ? <X size={18} /> : <Menu size={18} />}
+                        </button>
 
-                <div className="navbar-center hidden lg:flex">
-                    <ul className="menu menu-horizontal px-1 gap-2">
-                        {navigationLinks.map((navigationLink) => {
-                            const Icon = navigationLink.icon;
-                            const active = isActive(navigationLink.path);
-
-                            return (
-                                <li key={navigationLink.path}>
-                                    <Link
-                                        to={navigationLink.path}
-                                        className={`flex items-center gap-2 ${
-                                            active
-                                                ? 'bg-primary text-primary-content'
-                                                : 'hover:bg-base-300'
-                                        }`}
-                                    >
-                                        <Icon size={18} />
-                                        {t(navigationLink.label)}
-                                    </Link>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                </div>
-
-                <div className="navbar-end">
-                    {/* Mobile Menu */}
-                    <div className="dropdown dropdown-end lg:hidden">
-                        <label tabIndex={0} className="btn btn-ghost btn-circle">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h7" />
-                            </svg>
-                        </label>
-                        <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-1 p-2 shadow bg-base-200 rounded-box w-52">
-                            {navigationLinks.map((navigationLink) => {
-                                const Icon = navigationLink.icon;
-                                const active = isActive(navigationLink.path);
-
-                                return (
-                                    <li key={navigationLink.path}>
-                                        <Link to={navigationLink.path} className={`flex items-center gap-2 ${
-                                            active
-                                                ? 'bg-primary text-primary-content'
-                                                : 'hover:bg-base-300'
-                                        }`}>
-                                            <Icon size={18} />
-                                            {t(navigationLink.label)}
-                                        </Link>
-                                    </li>
-                                );
-                            })}
-                        </ul>
+                        {/* Language switcher component (kept as your existing one) */}
+                        <div className="hidden sm:block">
+                            <LanguageSwitcher />
+                        </div>
                     </div>
                 </div>
 
-                <LanguageSwitcher />
+                {/* Mobile nav panel */}
+                {mobileOpen && (
+                    <div className="lg:hidden border-t border-base-300 bg-base-100/90">
+                        <div className="px-4 py-3 space-y-2">
+                            <nav aria-label={t("header.navLabel") as string}>
+                                {navigationLinks.map((link) => {
+                                    const Icon = link.icon;
+                                    return (
+                                        <NavLink
+                                            key={link.path}
+                                            to={link.path}
+                                            onClick={() => setMobileOpen(false)}
+                                            className={({ isActive }) =>
+                                                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                                                    isActive ? "bg-primary text-primary-content" : "hover:bg-base-200"
+                                                }`
+                                            }
+                                        >
+                                            <Icon size={16} />
+                                            <span>{t(link.labelKey)}</span>
+                                        </NavLink>
+                                    );
+                                })}
+                            </nav>
+
+                            {/* Language switcher shown also inside mobile menu */}
+                            <div className="pt-2">
+                                <LanguageSwitcher />
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </header>
     );
