@@ -1,7 +1,7 @@
-from .environment import Environment
+from .model_response_utils import ModelResponseUtils
 
 __all__ = [
-    'Environment'
+    'ModelResponseUtils'
 ]
 
 __version__ = "1.0.0"

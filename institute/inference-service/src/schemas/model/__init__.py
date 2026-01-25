@@ -1,7 +1,9 @@
-from .model_path_dto import ModelPathDTO
+from .model_cache_key import ModelCacheKey
+from .loaded_model import LoadedModel
 
 __all__ = [
-    'ModelPathDTO'
+    'ModelCacheKey',
+    'LoadedModel'
 ]
 
 __version__ = "1.0.0"

@@ -13,4 +13,6 @@ dependencies = [
     "alembic>=1.17.2",
     "dotenv>=0.9.9",
     "requests>=2.32.5",
+    "torch>=2.10.0",
+    "peft>=0.18.1",
 ]

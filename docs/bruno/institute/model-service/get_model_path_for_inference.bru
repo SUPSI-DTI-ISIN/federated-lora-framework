@@ -1,17 +1,20 @@
 meta {
-  name: get_model_path_for_adapter
+  name: get_model_path_for_inference
   type: http
   seq: 4
 }
 
 get {
-  url: http://localhost:8090/api_model/model/:model_key/adapters/:adapter_version
+  url: http://localhost:8090/api_model/model/:model_key/path?adapter_version=1
   body: none
   auth: inherit
 }
 
-params:path {
+params:query {
   adapter_version: 1
+}
+
+params:path {
   model_key: llama-2-7b
 }
 
