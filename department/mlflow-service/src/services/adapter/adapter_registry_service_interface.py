@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import Optional
 
-from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO, ManifestDTO
+from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
 
 
 class AdapterRegistryServiceInterface(ABC):
@@ -10,7 +11,11 @@ class AdapterRegistryServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_new_adapter_path(self, model_key: str) -> NewAdapterPathDTO:
+    def get_new_adapter_path(self, model_key: str) -> str:
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_latest_adapter_path(self, model_key: str) -> Optional[str]:
         raise NotImplementedError
 
     @abstractmethod

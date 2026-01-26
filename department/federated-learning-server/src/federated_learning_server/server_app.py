@@ -1,25 +1,29 @@
+import os
+import torch
+
 from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
 
+from federated_learning_server.clients.mlflow import MlFlowServiceClientInterface, MlFlowServiceClient
+from federated_learning_server.config import settings
 from federated_learning_common.services.model import ModelService
-from federated_learning_common.config import settings
 
 app = ServerApp()
 
 @app.main()
 def main(grid: Grid, context: Context) -> None:
+    mlflow_service_client: MlFlowServiceClientInterface = MlFlowServiceClient.get_instance(mlflow_service_url=settings.mlflow_service_url)
+    federated_data_dto = mlflow_service_client.get_federated_data(model_key=settings.model_key)
+    print(federated_data_dto)
 
-    print(context.run_config)
-
-    model_name: str = context.run_config["model-name"]
+    device_map: str = settings.device_map
     fraction_train: float = context.run_config["fraction-train"]
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["lr"]
-    device: str = context.run_config["device"]
 
-    global_model = ModelService.load_model(model_name=model_name, device=device, lora_config=settings.lora_config)
+    global_model = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=device_map)
     ModelService.print_trainable_parameters(model=global_model)
     peft_state = get_peft_model_state_dict(global_model)
 
@@ -37,5 +41,5 @@ def main(grid: Grid, context: Context) -> None:
     print("\nSaving final model to disk...")
     state_dict = result.arrays.to_torch_state_dict()
 
-    #os.makedirs(os.path.normpath("./output"), exist_ok=True)
-    #torch.save(state_dict, "final_model.pt")
+    os.makedirs(federated_data_dto.new_adapter_path, exist_ok=True)
+    torch.save(state_dict, "final_model.pt")

@@ -19,11 +19,14 @@ dependencies = [
 publisher = "luca.fanto"
 
 [tool.flwr.app.components]
-serverapp = "server_app.server_app:app"
-clientapp = "client_app.client_app:app"
+#serverapp = "server_app.server_app:app"
+#clientapp = "client_app.client_app:app"
+serverapp = "server_app_test:server_app_test"
+clientapp = "client_app_test:client_app_test"
+
 
 [tool.flwr.app.config]
-model-name = "distilbert/distilgpt2"
+model-name = "llama-2-7b"
 device = "cpu"
 data-service-url = "http://localhost:8080"
 num-server-rounds = 3

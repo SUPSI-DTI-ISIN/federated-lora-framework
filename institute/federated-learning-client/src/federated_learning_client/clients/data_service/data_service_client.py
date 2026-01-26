@@ -22,7 +22,7 @@ class DataServiceClient(DataServiceClientInterface):
     def get_documents(self) -> List[DocumentDTO]:
         documents_url: str = f"{self._data_service_url}/api_data/documents"
         try:
-            resp = requests.get(documents_url, timeout=5, headers={"Accept": "application/json"})
+            resp = requests.get(documents_url, headers={"Accept": "application/json"})
             resp.raise_for_status()
         except requests.exceptions.HTTPError as err:
             raise RuntimeError(err)

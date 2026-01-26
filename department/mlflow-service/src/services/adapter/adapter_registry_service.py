@@ -1,8 +1,9 @@
 import os
 from pathlib import Path
+from typing import Optional
 
 from commons import ModelPathUtils, ManifestUtils, FileUtils
-from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO, ManifestDTO
+from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
 from .adapter_registry_service_interface import AdapterRegistryServiceInterface
 
 
@@ -19,7 +20,7 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
     def get_adapters_version(self, model_key: str) -> ModelAdaptersVersionDTO:
         model_adapters_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
 
-        if not os.path.exists(model_adapters_path):
+        if not Path(model_adapters_path).exists():
             return ModelAdaptersVersionDTO(
                 model_key=model_key
             )
@@ -43,21 +44,38 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         )
 
 
-    def get_new_adapter_path(self, model_key: str) -> NewAdapterPathDTO:
+    def get_new_adapter_path(self, model_key: str) -> str:
         model_adapters_path = ModelPathUtils.get_model_adapters_path(
             model_key=model_key
         )
 
         if not os.path.exists(model_adapters_path):
-            raise FileNotFoundError(f"No adapters found for model '{model_key}'")
-
-        if not os.path.isdir(model_adapters_path):
-            return NewAdapterPathDTO(new_adapter_path=os.path.join(model_adapters_path, "1"))
+            return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)
 
         adapters_versions = self.get_adapters_version(model_key)
+        if adapters_versions.adapters_version is None:
+            return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)
+
         next_version = max(adapters_versions.adapters_version) + 1
 
-        return NewAdapterPathDTO(new_adapter_path=os.path.join(model_adapters_path, str(next_version)))
+        return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=next_version)
+
+
+    def get_latest_adapter_path(self, model_key: str) -> Optional[str]:
+        model_adapters_path = ModelPathUtils.get_model_adapters_path(
+            model_key=model_key
+        )
+
+        if not os.path.exists(model_adapters_path):
+            return None
+
+        adapters_versions = self.get_adapters_version(model_key)
+        if adapters_versions.adapters_version is None:
+            return None
+
+        latest_version = max(adapters_versions.adapters_version)
+
+        return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=latest_version)
 
 
     def get_adapter_manifest(self, model_key: str, adapter_version: int) -> ManifestDTO:

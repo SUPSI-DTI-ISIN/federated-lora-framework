@@ -1,7 +1,7 @@
 from fastapi import status, Depends, HTTPException, APIRouter
 from fastapi.responses import FileResponse
 
-from schemas.model import ModelAdaptersVersionDTO, NewAdapterPathDTO, ManifestDTO
+from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
 from services.adapter import AdapterRegistryServiceInterface
 from .dependencies import get_adapter_registry_service
 
@@ -16,19 +16,6 @@ tags = ["model", "adapter"]
 )
 async def get_adapters_version(model_key: str, adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service)):
     return adapter_registry_service.get_adapters_version(model_key=model_key)
-
-
-@router.get(
-    "/new-adapter-path",
-    status_code=status.HTTP_200_OK,
-    response_model=NewAdapterPathDTO,
-    tags=tags
-)
-async def get_new_adapter_path(model_key: str, adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service)):
-    try:
-        return adapter_registry_service.get_new_adapter_path(model_key=model_key)
-    except FileNotFoundError as ex:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ex))
 
 
 @router.get(

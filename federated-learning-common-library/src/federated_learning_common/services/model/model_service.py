@@ -1,15 +1,19 @@
 import torch
 
-from peft import PeftModel, get_peft_model, LoraConfig
+from peft import PeftModel, get_peft_model
 from torch import nn
-from transformers import AutoTokenizer, AutoModelForCausalLM
+from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer
+
+from federated_learning_common.config import settings
+
 
 class ModelService:
     @staticmethod
-    def load_model(model_name: str, device: str, lora_config: LoraConfig) -> PeftModel:
+    def load_model(model_path: str, device_map: str) -> PeftModel:
         model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            device_map=device
+            model_path,
+            device_map=device_map,
+            local_files_only=True
         )
 
         for param in model.parameters():
@@ -25,16 +29,16 @@ class ModelService:
 
         model.lm_head = CastOutputToFloat(model.lm_head)
 
-        model = get_peft_model(model, lora_config)
+        model = get_peft_model(model, settings.lora_config)
 
-        model.to(device)
+        model.to(device_map)
         model.eval()
 
         return model
 
     @staticmethod
-    def load_tokenizer(model_name: str) -> AutoTokenizer:
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
+    def load_tokenizer(model_path: str) -> PreTrainedTokenizer:
+        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
         tokenizer.pad_token = tokenizer.eos_token
         return tokenizer
 

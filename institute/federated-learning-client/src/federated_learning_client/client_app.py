@@ -1,14 +1,11 @@
-from typing import List
-
 from flwr.app import Context, Message, RecordDict
 from flwr.clientapp import ClientApp
 from flwr.common import ArrayRecord, MetricRecord
 from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
-from domain.document import DocumentDTO
-from domain.training import TrainingDataset
+from config import settings
+from clients.data_service import DataServiceClientInterface, DataServiceClient
 from services.dataset import DatasetService
-from services.document import DocumentService
 from services.training import TrainingService
 
 from federated_learning_common.config import settings as commons_settings
@@ -20,12 +17,13 @@ app = ClientApp()
 def lifespan(context: Context):
     print("Enter lifespan...")
 
-    data_service_url: str = context.run_config["data-service-url"]
+    #data_service_url: str = context.run_config["data-service-url"]
+    data_service_url = settings.data_service_url
 
-    document_service: DocumentService = DocumentService.get_instance(data_service_url=data_service_url)
-    documents: List[DocumentDTO] = document_service.get_documents()
+    document_service: DataServiceClientInterface = DataServiceClient.get_instance(data_service_url=data_service_url)
+    documents = document_service.get_documents()
 
-    training_dataset: TrainingDataset = DatasetService.build_dataset_from_documents(documents=documents)
+    training_dataset = DatasetService.build_dataset_from_documents(documents=documents)
     DatasetService.save_dataset_to_jsonl(training_dataset=training_dataset)
 
     yield
@@ -35,11 +33,11 @@ def lifespan(context: Context):
 @app.train()
 def train(msg: Message, context: Context):
     print("Client App called")
-    model_name: str = context.run_config["model-name"]
-    device: str = context.run_config["device"]
+    model_name = settings.model_key
+    device_map = settings.device_map
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
-    model = ModelService.load_model(model_name=model_name, device=device, lora_config=commons_settings.lora_config)
+    model = ModelService.load_model(model_name=model_name, device=device_map, lora_config=commons_settings.lora_config)
     tokenizer = ModelService.load_tokenizer(model_name=model_name)
     set_peft_model_state_dict(model, peft_state)
     model.train()
@@ -66,7 +64,7 @@ def train(msg: Message, context: Context):
     metric_record = MetricRecord(metrics)
 
     content = RecordDict({"arrays": arrays, "metrics": metric_record})
-    return Message(content=RecordDict(), reply_to=msg)
+    return Message(content=content, reply_to=msg)
 
 
 @app.evaluate()
