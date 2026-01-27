@@ -39,13 +39,13 @@ class TrainingService:
             mlm=False
         )
 
-        training_folder = os.path.join("./output", "training")
-        adapter_folder = os.path.join("./output", "adapter")
-        os.makedirs(training_folder, exist_ok=True)
-        os.makedirs(adapter_folder, exist_ok=True)
+        #training_folder = os.path.join("./output", "training")
+        #adapter_folder = os.path.join("./output", "adapter")
+        #os.makedirs(training_folder, exist_ok=True)
+        #os.makedirs(adapter_folder, exist_ok=True)
 
         training_args = TrainingArguments(
-            output_dir=training_folder,
+            output_dir=None,
 
             per_device_train_batch_size=1,
             per_device_eval_batch_size=1,
@@ -75,8 +75,8 @@ class TrainingService:
         train_output = trainer.train()
         eval_metrics = trainer.evaluate()
 
-        model.save_pretrained(adapter_folder)
-        tokenizer.save_pretrained(adapter_folder)
+        #model.save_pretrained(adapter_folder)
+        #tokenizer.save_pretrained(adapter_folder)
 
         metrics = {
             "train_loss": float(train_output.training_loss) if hasattr(train_output, "training_loss") else None,

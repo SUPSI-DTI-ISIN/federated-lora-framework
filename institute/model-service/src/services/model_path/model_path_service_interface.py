@@ -6,5 +6,5 @@ from schemas.model import ModelPathDTO
 
 class ModelPathServiceInterface(ABC):
     @abstractmethod
-    def get_model_path_for_inference(self, model_key: str, adapter_version: Optional[int]) -> ModelPathDTO:
+    def get_model_path(self, model_key: str, adapter_version: Optional[int]) -> ModelPathDTO:
         raise NotImplementedError

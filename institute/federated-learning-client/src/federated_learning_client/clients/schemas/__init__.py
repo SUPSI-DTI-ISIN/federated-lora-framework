@@ -1,9 +1,11 @@
-from federated_learning_client.clients.schemas.document_dto import DocumentDTO
-from federated_learning_client.clients.schemas.section_dto import SectionDTO
+from .document_dto import DocumentDTO
+from .section_dto import SectionDTO
+from .model_path_dto import ModelPathDTO
 
 __all__ = [
     'DocumentDTO',
-    'SectionDTO'
+    'SectionDTO',
+    'ModelPathDTO'
 ]
 
 __version__ = "1.0.0"

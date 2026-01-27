@@ -23,7 +23,7 @@ def main(grid: Grid, context: Context) -> None:
     num_rounds: int = context.run_config["num-server-rounds"]
     lr: float = context.run_config["lr"]
 
-    global_model = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=device_map)
+    global_model = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=device_map, access_token=settings.hf_token)
     ModelService.print_trainable_parameters(model=global_model)
     peft_state = get_peft_model_state_dict(global_model)
 

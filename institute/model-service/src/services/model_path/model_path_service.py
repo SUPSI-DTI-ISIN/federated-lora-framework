@@ -16,7 +16,7 @@ class ModelPathService(ModelPathServiceInterface):
         return cls.__INSTANCE
 
 
-    def get_model_path_for_inference(self, model_key: str, adapter_version: Optional[int]) -> ModelPathDTO:
+    def get_model_path(self, model_key: str, adapter_version: Optional[int]) -> ModelPathDTO:
         model_base_path = ModelPathUtils.get_model_base_path(model_key=model_key)
         adapter_path = ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=adapter_version) if adapter_version is not None else adapter_version
 

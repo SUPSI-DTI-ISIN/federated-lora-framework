@@ -5,6 +5,8 @@ class Settings(BaseSettings):
 
     # Actually it takes this value from .toml value inside federated-learning-service (where simulation start and there is main .toml for FL service)
     data_service_url: str
+    model_service_url: str
+    hf_token: str
     device_map: str = "auto"
     model_key: str = "llama-2-7b"
     dataset_output_folder: str = "./output"

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import torch
 
 from peft import PeftModel, get_peft_model
@@ -9,11 +11,12 @@ from federated_learning_common.config import settings
 
 class ModelService:
     @staticmethod
-    def load_model(model_path: str, device_map: str) -> PeftModel:
+    def load_model(model_path: str, device_map: str, access_token: Optional[str]) -> PeftModel:
         model = AutoModelForCausalLM.from_pretrained(
-            model_path,
+            "meta-llama/Llama-2-7b-hf",
             device_map=device_map,
-            local_files_only=True
+            token=access_token
+            # local_files_only=True
         )
 
         for param in model.parameters():
@@ -37,8 +40,11 @@ class ModelService:
         return model
 
     @staticmethod
-    def load_tokenizer(model_path: str) -> PreTrainedTokenizer:
-        tokenizer = AutoTokenizer.from_pretrained(model_path, local_files_only=True)
+    def load_tokenizer(model_path: str, access_token: Optional[str]) -> PreTrainedTokenizer:
+        tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf",
+                                                  token=access_token
+                                                  # local_files_only=True
+                                                  )
         tokenizer.pad_token = tokenizer.eos_token
         return tokenizer
 
@@ -51,4 +57,5 @@ class ModelService:
             if param.requires_grad:
                 trainable_params += param.numel()
 
-        print(f"Trainable parameters: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param:.2f}%")
+        print(
+            f"Trainable parameters: {trainable_params} || all params: {all_param} || trainable%: {100 * trainable_params / all_param:.2f}%")

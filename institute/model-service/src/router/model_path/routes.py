@@ -15,8 +15,8 @@ tags = ["path"]
     response_model=ModelPathDTO,
     tags=tags
 )
-async def get_model_path_for_inference(model_key: str, adapter_version: Optional[int] = None, model_path_service: ModelPathServiceInterface = Depends(get_model_path_service)):
+async def get_model_path(model_key: str, adapter_version: Optional[int] = None, model_path_service: ModelPathServiceInterface = Depends(get_model_path_service)):
     try:
-        return model_path_service.get_model_path_for_inference(model_key=model_key, adapter_version=adapter_version)
+        return model_path_service.get_model_path(model_key=model_key, adapter_version=adapter_version)
     except FileNotFoundError as ex:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ex))

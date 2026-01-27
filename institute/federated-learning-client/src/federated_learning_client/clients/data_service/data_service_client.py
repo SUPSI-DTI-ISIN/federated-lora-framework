@@ -4,14 +4,14 @@ import requests
 from pydantic import ValidationError
 
 from .data_service_client_interface import DataServiceClientInterface
-from ..schemas import DocumentDTO
+from federated_learning_client.clients.schemas import DocumentDTO
 
 
 class DataServiceClient(DataServiceClientInterface):
     _INSTANCE = None
 
     def __init__(self, data_service_url: str):
-        self._data_service_url = data_service_url
+        self.__data_service_url = data_service_url
 
     @classmethod
     def get_instance(cls, data_service_url: str):
@@ -20,7 +20,7 @@ class DataServiceClient(DataServiceClientInterface):
         return cls._INSTANCE
 
     def get_documents(self) -> List[DocumentDTO]:
-        documents_url: str = f"{self._data_service_url}/api_data/documents"
+        documents_url: str = f"{self.__data_service_url}/api_data/documents"
         try:
             resp = requests.get(documents_url, headers={"Accept": "application/json"})
             resp.raise_for_status()

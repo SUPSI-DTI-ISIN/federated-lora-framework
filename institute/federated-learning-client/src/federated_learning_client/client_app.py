@@ -3,12 +3,12 @@ from flwr.clientapp import ClientApp
 from flwr.common import ArrayRecord, MetricRecord
 from peft import set_peft_model_state_dict, get_peft_model_state_dict
 
-from config import settings
-from clients.data_service import DataServiceClientInterface, DataServiceClient
-from services.dataset import DatasetService
-from services.training import TrainingService
+from federated_learning_client.config import settings
+from federated_learning_client.clients.data_service import DataServiceClientInterface, DataServiceClient
+from federated_learning_client.clients.model_service import ModelServiceClientInterface, ModelServiceClient
+from federated_learning_client.services.dataset import DatasetService
+from federated_learning_client.services.training import TrainingService
 
-from federated_learning_common.config import settings as commons_settings
 from federated_learning_common.services.model import ModelService
 
 app = ClientApp()
@@ -33,12 +33,17 @@ def lifespan(context: Context):
 @app.train()
 def train(msg: Message, context: Context):
     print("Client App called")
-    model_name = settings.model_key
+    model_key = settings.model_key
     device_map = settings.device_map
+    model_service_url = settings.model_service_url
+
+    model_service_client: ModelServiceClientInterface = ModelServiceClient.get_instance(model_service_url=model_service_url)
+    model_path_dto = model_service_client.get_model_path(model_key=model_key)
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
-    model = ModelService.load_model(model_name=model_name, device=device_map, lora_config=commons_settings.lora_config)
-    tokenizer = ModelService.load_tokenizer(model_name=model_name)
+    model = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map, access_token=settings.hf_token)
+    tokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path, access_token=settings.hf_token)
+
     set_peft_model_state_dict(model, peft_state)
     model.train()
 
@@ -53,7 +58,7 @@ def train(msg: Message, context: Context):
 
     print(f"Train metrics: {train_metrics}")
 
-    peft_state_out = get_peft_model_state_dict(model.model)
+    peft_state_out = get_peft_model_state_dict(model)
     arrays = ArrayRecord(peft_state_out)
 
     metrics = {
