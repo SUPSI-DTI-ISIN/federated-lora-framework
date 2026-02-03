@@ -93,9 +93,9 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-    depends_on:
-      mlflow:
-        condition: service_started
+#    depends_on:
+#      mlflow:
+#        condition: service_started
     volumes:
       - models-department:/models
 
@@ -114,10 +114,10 @@ services:
         condition: service_healthy
 
 volumes:
-  mlflow-postgres-data:
-    driver: local
-  mlflow-minio-data:
-    driver: local
+#  mlflow-postgres-data:
+#    driver: local
+#  mlflow-minio-data:
+#    driver: local
   models-department:
     driver: local
     driver_opts:

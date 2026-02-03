@@ -33,13 +33,10 @@ class ModelService(ModelServiceInterface):
 
         if cache_key in self.__model_cache:
             self.__model_cache.move_to_end(key=cache_key)
-            print("Gia presente in cache")
             return self.__model_cache[cache_key]
 
         if len(self.__model_cache) >= self.__max_cached_models:
             self.__evict_least_recently_used()
-
-        print("Non presente in cache")
 
         if adapter_version is None:
             loaded_model = self.__load_base_model(model_key=model_key)

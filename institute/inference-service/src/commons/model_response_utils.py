@@ -14,10 +14,6 @@ class ModelResponseUtils:
         with torch.no_grad():
             outputs = loaded_model.model.generate(
                 **inputs,
-                max_new_tokens=256,
-                temperature=0.7,
-                do_sample=True,
-                top_p=0.9
             )
 
         response = loaded_model.tokenizer.decode(

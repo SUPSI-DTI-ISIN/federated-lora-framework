@@ -131,6 +131,10 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.pypirc
+!.pypirc.template
+.netrc
+!.netrc.template
 
 # Spyder project settings
 .spyderproject
