@@ -14,9 +14,9 @@ class DocumentsServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, document_id: str) -> DocumentDTO:
+    async def get_by_id(self, document_id: int) -> DocumentDTO:
         raise NotImplementedError
 
     @abstractmethod
-    async def delete_by_id(self, document_id: str) -> None:
+    async def delete_by_id(self, document_id: int) -> None:
         raise NotImplementedError

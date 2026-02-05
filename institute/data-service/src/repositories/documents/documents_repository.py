@@ -29,10 +29,19 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         except SQLAlchemyError as exc:
             raise exc
 
-    async def get_by_id(self, document_id: str) -> Optional[DocumentModel]:
+    async def get_by_id(self, document_id: int) -> Optional[DocumentModel]:
         try:
             model = await self._db_session.get(DocumentModel, document_id)
             return model
+        except SQLAlchemyError as exc:
+            raise exc
+
+    async def get_by_number(self, document_number: str) -> Optional[DocumentModel]:
+        try:
+            result = await self._db_session.execute(
+                select(DocumentModel).where(DocumentModel.number == document_number)
+            )
+            return result.scalar_one_or_none()
         except SQLAlchemyError as exc:
             raise exc
 

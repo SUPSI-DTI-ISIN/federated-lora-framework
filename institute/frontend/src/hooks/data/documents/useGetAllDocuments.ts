@@ -1,5 +1,5 @@
 import {useQuery} from "@tanstack/react-query";
-import {documentsApi} from "../../config/dataServiceClient.ts";
+import {documentsApi} from "../../../config/dataServiceClient.ts";
 import type {DocumentDTO} from "@isin/data-service-client";
 
 export const useGetAllDocuments = () => {

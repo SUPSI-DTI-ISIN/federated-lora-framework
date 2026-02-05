@@ -14,7 +14,11 @@ class DocumentsRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, document_id: str) -> Optional[DocumentModel]:
+    async def get_by_id(self, document_id: int) -> Optional[DocumentModel]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_by_number(self, document_number: str) -> Optional[DocumentModel]:
         raise NotImplementedError
 
     @abstractmethod

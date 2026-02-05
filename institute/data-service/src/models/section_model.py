@@ -8,7 +8,7 @@ class SectionModel(BaseModel):
     __tablename__ = "sections"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    document_id: Mapped[str] = mapped_column(ForeignKey("documents.id"))
+    document_id: Mapped[int] = mapped_column(ForeignKey("documents.id"))
     title: Mapped[str] = mapped_column(String(255))
     content: Mapped[str] = mapped_column(Text)
 

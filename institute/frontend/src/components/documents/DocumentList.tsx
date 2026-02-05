@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "framer-motion";
 import { AlertCircle, FileIcon } from "lucide-react";
 
-import { useGetAllDocuments } from "../../hooks/documents/useGetAllDocuments";
+import { useGetAllDocuments } from "../../hooks/data/documents/useGetAllDocuments.ts";
 import { DocumentRow } from "./DocumentRow";
 
 interface DocumentListProps {
@@ -50,9 +50,9 @@ export const DocumentList = ({ searchQuery = "" }: DocumentListProps) => {
     const filtered = docs.filter((document) => {
         const query = searchQuery.trim().toLowerCase();
         if (!query) return true;
-        const id = (document.id ?? "").toLowerCase();
+        const number = (document.number ?? "").toLowerCase();
         const title = (document.title ?? "").toLowerCase();
-        return id.includes(query) || title.includes(query);
+        return number.includes(query) || title.includes(query);
     });
 
     if (filtered.length === 0) {
