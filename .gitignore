@@ -135,6 +135,7 @@ venv.bak/
 !.pypirc.template
 .netrc
 !.netrc.template
+*.fab
 
 # Spyder project settings
 .spyderproject
