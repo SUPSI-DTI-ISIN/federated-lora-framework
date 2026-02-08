@@ -21,11 +21,12 @@ Check this file before assigning ports to new services.
 
 ## Institute Stack
 
-| Port | Service           | Purpose / Notes              |
-|------|-------------------|------------------------------|
-| 3306 | MySQL             | Institute main database      |
-| 8095 | Inference Service | Model inference API          |
-| 8080 | Data Service      | Data access & management API |
-| 8081 | Chat Service      | Chat handler API             |
-| 8090 | Model Service     | Model orchestration API      |
-| 80   | Frontend          | Web UI                       |
+| Port  | Service           | Purpose / Notes              |
+|-------|-------------------|------------------------------|
+| 3306  | MySQL             | Documents main database      |
+| 33061 | MySQL             | Chats main database          |
+| 8095  | Inference Service | Model inference API          |
+| 8080  | Data Service      | Data access & management API |
+| 8081  | Chat Service      | Chat handler API             |
+| 8090  | Model Service     | Model orchestration API      |
+| 80    | Frontend          | Web UI                       |

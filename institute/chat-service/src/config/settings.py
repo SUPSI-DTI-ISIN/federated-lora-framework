@@ -6,6 +6,10 @@ from commons import Environment
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
+    keycloak_url: str
+    institute_name: str
+    inference_service_url: str = "http://localhost:8095"
+
     database_url: str = "mysql+aiomysql://root:root@localhost:33061/chats"
     frontend_url: str = "http://localhost:3000"
     environment: str = Environment.DEV
