@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
 

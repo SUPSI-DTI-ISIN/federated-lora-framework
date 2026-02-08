@@ -72,3 +72,4 @@ publish_sdk() {
 publish_sdk "../data-service" "data-service-client"
 publish_sdk "../inference-service" "inference-service-client"
 publish_sdk "../model-service" "model-service-client"
+publish_sdk "../chat-service" "chat-service-client"

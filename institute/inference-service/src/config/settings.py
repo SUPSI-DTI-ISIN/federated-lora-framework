@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     institute_name: str
     keycloak_url: str
 
+    mock_llm_usage: bool = False
+
     max_cached_models: int = 2
     device_map: str = "auto"
     frontend_url: str = "http://localhost:3000"
