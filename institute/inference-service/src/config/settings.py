@@ -5,6 +5,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
+    institute_name: str
+    keycloak_url: str
+
     max_cached_models: int = 2
     device_map: str = "auto"
     frontend_url: str = "http://localhost:3000"
