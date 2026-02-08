@@ -22,7 +22,7 @@ const App = () => {
             <Header/>
             <Routes>
                 <Route path="/" element={<Home/>}/>
-                <Route path="/documents" element={<Outlet />}>
+                <Route path="/documents" element={<Outlet/>}>
                     <Route index element={<DocumentsPage/>}/>
                     <Route path=":documentId/sections" element={<SectionsPage/>}/>
                 </Route>
