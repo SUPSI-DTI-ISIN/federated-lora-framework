@@ -8,6 +8,7 @@ import {Header} from "./components/common/Header.tsx";
 import {Footer} from "./components/common/Footer.tsx";
 import {AdaptersPage} from "./pages/AdaptersPage.tsx";
 import {SectionsPage} from "./pages/SectionsPage.tsx";
+import {ProtectedRoute} from "./routes/ProtectedRoute.tsx";
 
 const App = () => {
     return (
@@ -21,13 +22,42 @@ const App = () => {
             />
             <Header/>
             <Routes>
-                <Route path="/" element={<Home/>}/>
-                <Route path="/documents" element={<Outlet/>}>
+                <Route
+                    path="/"
+                    element={
+                        <Home/>
+                    }
+                />
+
+                <Route
+                    path="/documents"
+                    element={
+                        <ProtectedRoute>
+                            <Outlet/>
+                        </ProtectedRoute>
+                    }
+                >
                     <Route index element={<DocumentsPage/>}/>
                     <Route path=":documentId/sections" element={<SectionsPage/>}/>
                 </Route>
-                <Route path="/chat" element={<ChatPage/>}/>
-                <Route path="/adapters" element={<AdaptersPage/>}/>
+
+                <Route
+                    path="/chat"
+                    element={
+                        <ProtectedRoute>
+                            <ChatPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/adapters"
+                    element={
+                        <ProtectedRoute>
+                            <AdaptersPage/>
+                        </ProtectedRoute>
+                    }
+                />
             </Routes>
             <Footer/>
         </>

@@ -1,5 +1,5 @@
-import {type ReactNode, useCallback, useEffect, useMemo} from "react";
-import {useAuth} from "react-oidc-context";
+import {type ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import {hasAuthParams, useAuth} from "react-oidc-context";
 import {AuthWrapperContext} from "../../contexts/auth/authWrapperContext.ts";
 import {setAuthToken} from "../../config/axios.ts";
 import {useQueryClient} from "@tanstack/react-query";
@@ -11,6 +11,7 @@ interface AuthWrapperProviderProps {
 export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const auth = useAuth();
     const queryClient = useQueryClient();
+    const [hasTriedSignin, setHasTriedSignin] = useState(false);
 
     const isLoading = useMemo(() => {
         const authBusy =
@@ -25,6 +26,22 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
         setAuthToken(token);
         queryClient.invalidateQueries();
     }, [auth.user?.access_token, queryClient]);
+
+    useEffect(() => {
+        if (
+            !hasAuthParams() &&
+            !auth.user &&
+            !auth.activeNavigator &&
+            !auth.isLoading &&
+            !hasTriedSignin
+        ) {
+            auth.signinSilent()
+                .catch(() => {})
+                .finally(() => {
+                    setHasTriedSignin(true);
+                });
+        }
+    }, [auth, hasTriedSignin]);
 
     const login = useCallback(async () => {
         try {

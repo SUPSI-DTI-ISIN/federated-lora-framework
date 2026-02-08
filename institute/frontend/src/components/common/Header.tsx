@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {NavLink, Link, useLocation} from "react-router-dom";
 import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut} from "lucide-react";
@@ -15,12 +15,22 @@ export const Header = () => {
     const {isAuthenticated, isLoading, login, logout, user} = useAuthWrapper();
     const profileRef = useRef<HTMLDivElement | null>(null);
 
-    const navigationLinks = [
-        {path: "/", labelKey: "header.nav.home", icon: Home},
-        {path: "/documents", labelKey: "header.nav.documents", icon: FileText},
-        {path: "/chat", labelKey: "header.nav.chat", icon: MessageSquare},
-        {path: "/adapters", labelKey: "header.nav.adapters", icon: Microchip},
+    const publicLinks = [
+        { path: "/", labelKey: "header.nav.home", icon: Home },
     ];
+
+    const protectedLinks = [
+        { path: "/documents", labelKey: "header.nav.documents", icon: FileText },
+        { path: "/chat", labelKey: "header.nav.chat", icon: MessageSquare },
+        { path: "/adapters", labelKey: "header.nav.adapters", icon: Microchip },
+    ];
+
+    const visibleLinks = useMemo(() => {
+        if (isLoading) return publicLinks;
+        return isAuthenticated
+            ? [...publicLinks, ...protectedLinks]
+            : publicLinks;
+    }, [isAuthenticated, isLoading]);
 
     useEffect(() => {
         function handleClick(e: MouseEvent) {
@@ -59,7 +69,7 @@ export const Header = () => {
                     <div className="navbar-center hidden lg:flex">
                         <nav aria-label={t("header.navLabel")}>
                             <ul className="flex items-center gap-1 p-0">
-                                {navigationLinks.map((link) => {
+                                {visibleLinks.map((link) => {
                                     const Icon = link.icon;
                                     const isActive = location.pathname === link.path;
                                     return (
@@ -169,7 +179,7 @@ export const Header = () => {
                         className="overflow-hidden lg:hidden border-t border-base-content/10 bg-base-100"
                     >
                         <nav className="flex flex-col gap-1 p-4" aria-label={t("header.navLabel")}>
-                            {navigationLinks.map((link) => {
+                            {visibleLinks.map((link) => {
                                 const Icon = link.icon;
                                 return (
                                     <NavLink
