@@ -15,6 +15,7 @@ dependencies = [
     "requests>=2.32.5",
     "aiomysql>=0.3.2",
     "shared-auth-library",
+    "httpx>=0.28.1",
 ]
 
 [tool.uv.sources]

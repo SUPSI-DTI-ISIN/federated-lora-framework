@@ -5,8 +5,7 @@ from shared_auth_library.entities import User
 
 from auth import jwt_validator
 
-from schemas.chat import ChatDTO
-from schemas.chat.chat_creation_request_dto import ChatCreationRequestDTO
+from schemas.chat import ChatDTO, ChatCreationRequestDTO
 from services.chat import ChatServiceInterface
 from .dependencies import get_chat_service
 

@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@isin/chat-service-client": "file:../chat-service/sdks/chat-service-client",
     "@isin/data-service-client": "file:../data-service/sdks/data-service-client",
-    "@isin/inference-service-client": "file:../inference-service/sdks/inference-service-client",
     "@isin/model-service-client": "file:../model-service/sdks/model-service-client",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",

@@ -18,33 +18,23 @@ export const useSaveNewAdapter = () => {
                 version: adapterVersion
             }
         ).then(response => response.data),
-        onSuccess: (newAdapterDTO: AdapterDTO, {modelKey}) => {
-            queryClient.setQueryData(
-                ["adapters"],
-                (oldData: AvailableAdaptersDTO) => {
-                    if (!oldData) return { model_key: modelKey, adapters: [newAdapterDTO] };
+        onSuccess: (newAdapter: AdapterDTO, {modelKey}) => {
+            const updater = (old: AvailableAdaptersDTO | undefined): AvailableAdaptersDTO => ({
+                model_key: modelKey,
+                adapters: old?.adapters
+                    ? [newAdapter, ...old.adapters]
+                    : [newAdapter],
+            });
 
-                    return {
-                        ...oldData,
-                        adapters: oldData.adapters ? [newAdapterDTO, ...oldData.adapters] : [newAdapterDTO],
-                    };
-                }
+            queryClient.setQueryData<AvailableAdaptersDTO>(
+                ["adapters"],
+                updater
             );
 
             queryClient.setQueryData<AvailableAdaptersDTO>(
                 ["adapters", "local"],
-                (oldData) => {
-                    if (!oldData) return { model_key: modelKey, adapters: [newAdapterDTO] };
-
-                    return {
-                        ...oldData,
-                        adapters: oldData.adapters ? [newAdapterDTO, ...oldData.adapters] : [newAdapterDTO],
-                    };
-                }
+                updater
             );
-
-            queryClient.invalidateQueries({queryKey: ["adapters"]})
-            queryClient.invalidateQueries({queryKey: ["adapters", "local"]})
         }
     })
 }

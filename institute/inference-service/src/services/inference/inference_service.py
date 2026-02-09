@@ -15,6 +15,8 @@ class InferenceService(InferenceServiceInterface):
 
 
     async def inference_model(self, query_request_dto: QueryRequestDTO, loaded_model: LoadedModel) -> QueryResponseDTO:
+        print(query_request_dto.conversation_history)
+
         if settings.mock_llm_usage:
             return QueryResponseDTO(
                 prompt=query_request_dto.prompt,

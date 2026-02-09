@@ -1,3 +1,4 @@
+import httpx
 import requests
 from pydantic import ValidationError
 
@@ -17,12 +18,17 @@ class InferenceServiceClient(InferenceServiceClientInterface):
             cls.__INSTANCE = cls(inference_service_url=inference_service_url)
         return cls.__INSTANCE
 
-    def inference_model(self, query_request_dto: QueryRequestDTO) -> QueryResponseDTO:
+    async def inference_model(self, query_request_dto: QueryRequestDTO) -> QueryResponseDTO:
         inference_url = f"{self.__inference_service_url}/api_inference/inference"
 
         try:
-            resp = requests.post(inference_url, headers={"Accept": "application/json", "Content-Type": "application/json",}, json=query_request_dto.model_dump())
-            resp.raise_for_status()
+            async with httpx.AsyncClient() as client:
+                resp = await client.post(
+                    inference_url,
+                    headers={"Accept": "application/json", "Content-Type": "application/json"},
+                    json=query_request_dto.model_dump()
+                )
+                resp.raise_for_status()
         except requests.exceptions.HTTPError as err:
             raise RuntimeError(err)
 

@@ -12,6 +12,6 @@ sync_dev_api() {
 }
 
 sync_dev_api "../data-service" "data-service-client"
-sync_dev_api "../inference-service" "inference-service-client"
+#sync_dev_api "../inference-service" "inference-service-client"
 sync_dev_api "../model-service" "model-service-client"
 sync_dev_api "../chat-service" "chat-service-client"

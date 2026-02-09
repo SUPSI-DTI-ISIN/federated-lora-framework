@@ -27,6 +27,7 @@ class ChatRepository(ChatRepositoryInterface):
             stmt = (
                 select(ChatModel)
                 .where(ChatModel.user_id == user_id)
+                .order_by(ChatModel.updated_at.desc())
             )
             result = await self._db_session.execute(stmt)
             return list(result.scalars().all())

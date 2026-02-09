@@ -4,10 +4,15 @@ from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
+from entities import MessageRole
+from schemas.chat import ConversationDTO
 
-from schemas.message import MessageDTO, InferenceRequestDTO
+from schemas.message import MessageDTO, InferenceRequestDTO, MessageCreationRequestDTO
+from services.chat import ChatServiceInterface
+from services.inference import InferenceServiceInterface
 from services.message import MessageServiceInterface
-from .dependencies import get_message_service
+from .dependencies import get_message_service, get_inference_service
+import router.chat.dependencies as chat_dependencies
 
 router = APIRouter(prefix="/chat/{chat_id}/messages")
 
@@ -23,80 +28,42 @@ async def send_message(
         chat_id: int,
         inference_request_dto: InferenceRequestDTO,
         message_service: MessageServiceInterface = Depends(get_message_service),
-        user: User = Depends(jwt_validator.get_current_user_required)
+        inference_service: InferenceServiceInterface = Depends(get_inference_service),
+        chat_service: ChatServiceInterface = Depends(chat_dependencies.get_chat_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
-    return "ok"
-    """
-    chat = db.query(models.Chat) \
-        .filter(models.Chat.id == chat_id, models.Chat.user_id == current_user_id) \
-        .first()
-
-    if not chat:
-        raise HTTPException(status_code=404, detail="Chat not found")
-
-    # Save user message
-    user_message = models.Message(
+    user_message = MessageCreationRequestDTO(
         chat_id=chat_id,
-        role=models.MessageRole.USER,
-        content=message.content
+        role=MessageRole.USER,
+        content=inference_request_dto.prompt,
+        model_key=inference_request_dto.model_key,
+        adapter_version=inference_request_dto.adapter_version
     )
-    db.add(user_message)
-    db.commit()
-    db.refresh(user_message)
 
-    # Get conversation history (last N messages)
-    history = db.query(models.Message) \
-        .filter(models.Message.chat_id == chat_id) \
-        .order_by(models.Message.created_at.desc()) \
-        .limit(10) \
-        .all()
+    user_message_created = await message_service.create_new_message(message_creation_request_dto=user_message)
+
+    chat_messages = await message_service.get_all_by_chat(chat_id=chat_id)
 
     conversation_history = [
-        {"role": msg.role.value, "content": msg.content}
-        for msg in reversed(history[:-1])  # Exclude the message we just added
+        ConversationDTO(role=message.role, content=message.content)
+        for message in reversed(chat_messages[:-1])
     ]
 
-    # Call inference service
-    try:
-        async with httpx.AsyncClient() as client:
-            inference_request = schemas.InferenceRequest(
-                chat_id=chat_id,
-                user_message=message.content,
-                conversation_history=conversation_history
-            )
+    inference_response_dto = await inference_service.inference_model(user_message=user_message_created, conversation_history=conversation_history)
 
-            response = await client.post(
-                f"{INFERENCE_SERVICE_URL}/inference",
-                json=inference_request.dict(),
-                timeout=60.0
-            )
-            response.raise_for_status()
-            inference_result = schemas.InferenceResponse(**response.json())
-
-    except httpx.HTTPError as e:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Inference service error: {str(e)}"
-        )
-
-    # Save AI response
-    ai_message = models.Message(
+    assistant_message = MessageCreationRequestDTO(
         chat_id=chat_id,
-        role=models.MessageRole.ASSISTANT,
-        content=inference_result.response,
-        tokens=inference_result.tokens_used,
-        model_version=inference_result.model_version
+        role=MessageRole.ASSISTANT,
+        content=inference_response_dto.response,
+        model_key=inference_request_dto.model_key,
+        adapter_version=inference_request_dto.adapter_version
     )
-    db.add(ai_message)
 
-    # Update chat timestamp
-    chat.updated_at = datetime.utcnow()
+    assistant_message_created = await message_service.create_new_message(message_creation_request_dto=assistant_message)
 
-    db.commit()
-    db.refresh(ai_message)
+    await chat_service.update_chat_modification_date(chat_id=chat_id)
 
-    return ai_message
-    """
+    return assistant_message_created
 
 @router.get(
     "",

@@ -26,6 +26,7 @@ echo "Generating TypeScript client..."
 SDKS_ABS_PATH=$(cd "$SDKS_DIR" && pwd)
 
 docker run --rm \
+    -u $(id -u):$(id -g) \
     -v "${SDKS_ABS_PATH}:/local" \
     openapitools/openapi-generator-cli generate \
     -i /local/openapi.json \

@@ -1,21 +1,28 @@
 import {useState} from "react";
 import {Menu} from "lucide-react";
-
-import {ChatInterface} from "../components/chat/ChatInterface";
 import {ChatSidebar} from "../components/chat/ChatSidebar";
 import {getModelKey} from "../utils/envUtils.ts";
+import {useGetAllChats} from "../hooks/chat/useGetAllChats.ts";
+import {ChatInterfaceWrapper} from "../components/chat/ChatInterfaceWrapper.tsx";
 
 export const ChatPage = () => {
-    // const { t } = useTranslation();
     const modelKey = getModelKey();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const {data: chats, isLoading: isLoadingChats, error: errorLoadingChats} = useGetAllChats();
+    const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
 
     return (
         <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-base-100">
             <ChatSidebar
                 isOpen={isSidebarOpen}
                 onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
+                chats={chats}
+                errorLoadingChats={errorLoadingChats}
+                isLoadingChats={isLoadingChats}
+                selectedChatId={selectedChatId}
+                onSelectChat={(chatId: number | null) => setSelectedChatId(chatId)}
             />
+
 
             <main className="flex flex-1 flex-col relative overflow-hidden">
                 <header className="flex h-14 items-center justify-between border-b border-base-content/5 px-6 bg-base-100/50 backdrop-blur-md">
@@ -25,14 +32,13 @@ export const ChatPage = () => {
                                 <Menu size={18} />
                             </button>
                         )}
-                        <h2 className="text-sm font-bold tracking-tight uppercase opacity-50">
-                            {modelKey}
-                        </h2>
+                        <h2 className="text-sm font-bold tracking-tight uppercase opacity-50">{modelKey}</h2>
                     </div>
                 </header>
 
+
                 <div className="flex-1 overflow-hidden">
-                    <ChatInterface modelKey={modelKey} />
+                    <ChatInterfaceWrapper modelKey={modelKey} chatId={selectedChatId} />
                 </div>
             </main>
         </div>

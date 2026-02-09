@@ -14,22 +14,19 @@ export const useDeleteSection = () => {
     return useMutation<void, Error, UseDeleteSectionParams>({
         mutationFn: async ({sectionId}: UseDeleteSectionParams) => sectionsApi.deleteSectionByIdApiDataSectionsSectionIdDelete(sectionId).then(response => response.data),
         onSuccess: (_, {sectionId, documentId}: UseDeleteSectionParams) => {
-            console.log(queryClient.getQueryData(['documents', documentId]))
-            queryClient.setQueryData(
-                ['documents', documentId],
-                (oldData: DocumentDTO) => {
-                    if (!oldData) return oldData;
+            queryClient.setQueryData<DocumentDTO>(
+                ["documents", documentId],
+                (old) => {
+                    if (!old) return old;
 
                     return {
-                        ...oldData,
-                        sections: oldData.sections.filter(
+                        ...old,
+                        sections: old.sections.filter(
                             (section) => section.id !== sectionId
                         ),
                     };
                 }
             );
-            console.log(queryClient.getQueryData(['documents', documentId]))
-            queryClient.invalidateQueries({queryKey: ['documents', documentId]})
         }
     })
 }

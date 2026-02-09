@@ -17,6 +17,20 @@ class MessageRepository(MessageRepositoryInterface):
             stmt = (
                 select(MessageModel)
                 .where(MessageModel.chat_id == chat_id)
+                .order_by(MessageModel.created_at.desc())
+            )
+            result = await self._db_session.execute(stmt)
+            return list(result.scalars().all())
+        except SQLAlchemyError as exc:
+            raise exc
+
+    async def get_all_by_chat_with_limit(self, chat_id: int, limit: int) -> List[MessageModel]:
+        try:
+            stmt = (
+                select(MessageModel)
+                .where(MessageModel.chat_id == chat_id)
+                .order_by(MessageModel.created_at.desc())
+                .limit(limit)
             )
             result = await self._db_session.execute(stmt)
             return list(result.scalars().all())

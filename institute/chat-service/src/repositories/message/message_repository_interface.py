@@ -10,5 +10,9 @@ class MessageRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_all_by_chat_with_limit(self, chat_id: int, limit: int) -> List[MessageModel]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def save_message(self, message_model: MessageModel) -> None:
         raise NotImplementedError

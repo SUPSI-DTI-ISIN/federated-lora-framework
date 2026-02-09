@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
-from schemas.message import MessageDTO, InferenceRequestDTO
+from schemas.message import MessageDTO, InferenceRequestDTO, MessageCreationRequestDTO
 
 
 class MessageServiceInterface(ABC):
     @abstractmethod
-    async def create_new_message(self, message_dto: MessageDTO) -> MessageDTO:
+    async def create_new_message(self, message_creation_request_dto: MessageCreationRequestDTO) -> MessageDTO:
         raise NotImplementedError
 
     @abstractmethod

@@ -7,8 +7,10 @@ export const useUploadDocument = () => {
 
     return useMutation<DocumentDTO, Error, File>({
         mutationFn: async (file: File) => documentsApi.uploadApiDataDocumentsUploadPost(file).then(response => response.data),
-        onSuccess: (_uploadedDocument: DocumentDTO) => {
-            queryClient.invalidateQueries({queryKey: ["documents"]})
+        onSuccess: (uploadedDocument: DocumentDTO) => {
+            queryClient.setQueryData<DocumentDTO[]>(["documents"], (old) =>
+                old ? [...old, uploadedDocument] : [uploadedDocument]
+            );
         }
     })
 }

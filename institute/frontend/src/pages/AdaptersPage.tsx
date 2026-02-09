@@ -58,7 +58,7 @@ export const AdaptersPage = () => {
         )
     }
 
-    if (errorLoadingAdapters || !adapters) {
+    if (errorLoadingAdapters) {
         return (
             <div className="card bg-base-100 shadow p-4 text-red-600">
                 <div>{t("adapters.errorFetch")}</div>

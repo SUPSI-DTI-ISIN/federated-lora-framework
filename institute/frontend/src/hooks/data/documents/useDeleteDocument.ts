@@ -8,17 +8,9 @@ export const useDeleteDocument = () => {
     return useMutation<void, Error, number>({
         mutationFn: async (documentId: number) => documentsApi.deleteByIdApiDataDocumentsDocumentIdDelete(documentId).then(response => response.data),
         onSuccess: (_, documentId: number) => {
-            queryClient.setQueryData(
-                ["documents"],
-                (oldData: DocumentDTO[]) => {
-                    if (!oldData) return oldData;
-
-                    return oldData.filter(
-                        (document) => document.id !== documentId
-                    );
-                }
+            queryClient.setQueryData<DocumentDTO[]>(["documents"], (old) =>
+                old ? old.filter((document) => document.id !== documentId) : old
             );
-            queryClient.invalidateQueries({queryKey: ["documents"]})
         }
     })
 }

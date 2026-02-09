@@ -2,7 +2,7 @@ import torch
 
 from typing import Optional
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timezone
 
 from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -33,13 +33,13 @@ class ModelService(ModelServiceInterface):
 
         if cache_key in self.__model_cache:
             self.__model_cache.move_to_end(key=cache_key)
-            print("Gia presente in cache")
+            print("In cache")
             return self.__model_cache[cache_key]
 
         if len(self.__model_cache) >= self.__max_cached_models:
             self.__evict_least_recently_used()
 
-        print("Non presente in cache")
+        print("Not in cache")
 
         if adapter_version is None:
             loaded_model = self.__load_base_model(model_key=model_key)
@@ -81,7 +81,7 @@ class ModelService(ModelServiceInterface):
             model=model,
             tokenizer=tokenizer,
             has_adapter=False,
-            loaded_at=datetime.now()
+            loaded_at=datetime.now(timezone.utc)
         )
 
     def __load_model_with_adapter(self, model_key: str, adapter_version: int) -> LoadedModel:
@@ -104,5 +104,5 @@ class ModelService(ModelServiceInterface):
             model=model,
             tokenizer=tokenizer,
             has_adapter=True,
-            loaded_at=datetime.now()
+            loaded_at=datetime.now(timezone.utc)
         )

@@ -11,6 +11,10 @@ class ChatServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def update_chat_modification_date(self, chat_id: int) -> ChatDTO:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_all_by_user(self, user_id: str) -> List[ChatDTO]:
         raise NotImplementedError
 
