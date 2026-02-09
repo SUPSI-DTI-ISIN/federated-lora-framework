@@ -1,4 +1,5 @@
 from commons import ModelResponseUtils
+from config import settings
 from schemas.inference import QueryResponseDTO, QueryRequestDTO
 from schemas.model import LoadedModel
 from services.inference.inference_service_interface import InferenceServiceInterface
@@ -14,6 +15,16 @@ class InferenceService(InferenceServiceInterface):
 
 
     async def inference_model(self, query_request_dto: QueryRequestDTO, loaded_model: LoadedModel) -> QueryResponseDTO:
+        print(query_request_dto.conversation_history)
+
+        if settings.mock_llm_usage:
+            return QueryResponseDTO(
+                prompt=query_request_dto.prompt,
+                adapter_version=query_request_dto.adapter_version if loaded_model.has_adapter else None,
+                response=f"Llm response mocked for prompt",
+                model_key=query_request_dto.model_key
+            )
+
         response = ModelResponseUtils.generate_model_response(loaded_model=loaded_model, prompt=query_request_dto.prompt)
 
         return QueryResponseDTO(

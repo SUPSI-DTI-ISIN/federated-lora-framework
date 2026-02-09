@@ -10,9 +10,11 @@ dependencies = [
     "fastapi>=0.127.0",
     "uvicorn>=0.40.0",
     "python-multipart>=0.0.21",
-    "alembic>=1.17.2",
-    "dotenv>=0.9.9",
     "requests>=2.32.5",
     "torch>=2.10.0",
     "peft>=0.18.1",
+    "shared-auth-library",
 ]
+
+[tool.uv.sources]
+shared-auth-library = { path = "../shared-auth-library" }

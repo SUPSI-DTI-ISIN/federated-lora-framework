@@ -8,7 +8,8 @@ from .base_model import BaseModel
 class DocumentModel(BaseModel):
     __tablename__ = "documents"
 
-    id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    number: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     title: Mapped[str] = mapped_column(String(255))
 
     sections: Mapped[List["SectionModel"]] = relationship(

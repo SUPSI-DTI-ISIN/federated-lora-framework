@@ -6,11 +6,19 @@ import { Files, Plus } from "lucide-react";
 import { DocumentUpload } from "../components/documents/DocumentUpload";
 import { DocumentList } from "../components/documents/DocumentList";
 import { DocumentFilterBar } from "../components/documents/DocumentFilterBar";
+import { useNavigate } from "react-router-dom";
 
 export const DocumentsPage = () => {
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");
     const [showUpload, setShowUpload] = useState(false);
+    const navigate = useNavigate();
+
+    const handleCloseDocumentUploader = (documentId?: number) => {
+        setShowUpload(false);
+        if (documentId)
+            navigate(`/documents/${documentId}/sections`);
+    }
 
     return (
         <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
@@ -59,7 +67,7 @@ export const DocumentsPage = () => {
             </div>
 
             <AnimatePresence>
-                {showUpload && <DocumentUpload onClose={() => setShowUpload(false)} />}
+                {showUpload && <DocumentUpload onClose={handleCloseDocumentUploader} />}
             </AnimatePresence>
         </div>
     );

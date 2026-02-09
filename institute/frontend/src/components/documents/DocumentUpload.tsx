@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Upload, X, FileText } from "lucide-react";
 import toast from "react-hot-toast";
-import { useUploadDocument } from "../../hooks/documents/useUploadDocument";
+import { useUploadDocument } from "../../hooks/data/documents/useUploadDocument.ts";
 
 interface DocumentUploadProps {
-    onClose: () => void;
+    onClose: (documentId?: number) => void;
 }
 
 export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
@@ -55,9 +55,9 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
         if (!selectedFile) return;
         setIsUploading(true);
         try {
-            await uploadDocument(selectedFile);
+            const uploadedDocument = await uploadDocument(selectedFile);
             toast.success(t("documents.upload.success"));
-            onClose();
+            onClose(uploadedDocument.id);
         } catch (e) {
             console.error(e);
             toast.error(t("documents.upload.error.failed"));
@@ -89,7 +89,7 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
                                 <Upload className="text-primary" />
                                 {t("documents.upload.title")}
                             </h3>
-                            <button onClick={onClose} className="btn btn-ghost btn-sm btn-circle"><X size={20} /></button>
+                            <button onClick={() => onClose()} className="btn btn-ghost btn-sm btn-circle"><X size={20} /></button>
                         </div>
 
                         <div
@@ -133,7 +133,7 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
                         </div>
 
                         <div className="flex gap-3 mt-8">
-                            <button onClick={onClose} className="btn flex-1 bg-base-200 border-none" disabled={isUploading}>
+                            <button onClick={() => onClose()} className="btn flex-1 bg-base-200 border-none" disabled={isUploading}>
                                 {t("common.cancel")}
                             </button>
                             <button

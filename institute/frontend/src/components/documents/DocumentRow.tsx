@@ -1,8 +1,8 @@
 import { useState } from "react";
 import type { DocumentDTO } from "@isin/data-service-client";
 import { motion } from "framer-motion";
-import {FileText, Trash2} from "lucide-react";
-import { useDeleteDocument } from "../../hooks/documents/useDeleteDocument";
+import {FileText, Trash2, InspectIcon} from "lucide-react";
+import { useDeleteDocument } from "../../hooks/data/documents/useDeleteDocument.ts";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
 
-    const handleDelete = async (documentId: string) => {
+    const handleDelete = async (documentId: number) => {
         if (!window.confirm(t("documents.list.deleteConfirm"))) return;
 
         setIsDeleting(true);
@@ -31,6 +31,10 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
             toast.error(t("documents.list.deleteError"));
             setIsDeleting(false);
         }
+    };
+
+    const handleNavigateToSections = () => {
+        navigate(`/documents/${document.id}/sections`);
     };
 
     return (
@@ -47,19 +51,25 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
 
             <div className="flex-1 min-w-0">
                 <h3 className="text-base font-bold text-base-content truncate group-hover:text-primary transition-colors">
-                    {document.title ?? document.id}
+                    {document.title}
                 </h3>
                 <div className="flex items-center gap-3 mt-0.5">
                     <span className="text-xs font-mono text-base-content/40 bg-base-200 px-1.5 py-0.5 rounded">
-                        ID: {document.id.slice(0, 8)}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-wider font-bold text-base-content/30 italic">
-                        PDF Document
+                        Number: {document.number.slice(0, 8)}
                     </span>
                 </div>
             </div>
 
             <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                <button
+                    onClick={handleNavigateToSections}
+                    disabled={isDeleting}
+                    className="btn btn-circle btn-sm btn-ghost text-error hover:bg-error/10"
+                    title={t("documents.list.actions.details")}
+                >
+                    <InspectIcon size={18} />
+                </button>
+
                 <button
                     onClick={() => handleDelete(document.id)}
                     disabled={isDeleting}

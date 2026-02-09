@@ -7,6 +7,7 @@ from .section_dto import SectionDTO
 
 class DocumentDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
-    id: str
+    id: int
+    number: str
     title: str
     sections: List[SectionDTO]

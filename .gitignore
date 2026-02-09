@@ -174,3 +174,5 @@ sdks/
 output/
 pdf-innosuisse/
 models/
+.netrc
+.pypirc

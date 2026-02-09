@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import List
 from pymupdf import Page
 
-from schemas.documents import DocumentDTO
+from commons.documents import ParsedDocument
 from .extractor import SectionExtractor, ProjectTitleExtractor, ProjectNumberExtractor
 
 
@@ -26,9 +26,9 @@ class PdfParserService:
         self._close()
         return
 
-    def get_document(self) -> DocumentDTO:
-        return DocumentDTO(
-            id=self._project_number,
+    def get_document(self) -> ParsedDocument:
+        return ParsedDocument(
+            number=self._project_number,
             title=self._project_title,
             sections=SectionExtractor.extract_document_sections(text=self._full_text, project_number=self._project_number)
         )

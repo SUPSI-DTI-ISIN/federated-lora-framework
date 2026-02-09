@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File, Path
 
 from schemas.documents import DocumentDTO
-from services import DocumentsServiceInterface
+from services.documents import DocumentsServiceInterface
 from .dependencies import get_documents_service
 
 router = APIRouter(prefix="/documents")
@@ -53,7 +53,7 @@ async def get_all(documents_service: DocumentsServiceInterface = Depends(get_doc
     tags=tags
 )
 async def get_by_id(
-        document_id: str = Path(..., description="Document id", min_length=1, max_length=50),
+        document_id: int,
         service: DocumentsServiceInterface = Depends(get_documents_service)
 ):
     return await service.get_by_id(document_id=document_id)
@@ -66,7 +66,7 @@ async def get_by_id(
     tags=tags
 )
 async def delete_by_id(
-        document_id: str = Path(..., description="Document id", min_length=1, max_length=50),
+        document_id: int,
         service: DocumentsServiceInterface = Depends(get_documents_service)
 ):
     await service.delete_by_id(document_id=document_id)

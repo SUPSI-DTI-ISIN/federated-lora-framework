@@ -1,0 +1,22 @@
+[project]
+name = "chat-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "setuptools>=80.9.0",
+    "pydantic-settings>=2.12.0",
+    "fastapi>=0.127.0",
+    "uvicorn>=0.40.0",
+    "python-multipart>=0.0.21",
+    "alembic>=1.17.2",
+    "dotenv>=0.9.9",
+    "requests>=2.32.5",
+    "aiomysql>=0.3.2",
+    "shared-auth-library",
+    "httpx>=0.28.1",
+]
+
+[tool.uv.sources]
+shared-auth-library = { path = "../shared-auth-library" }

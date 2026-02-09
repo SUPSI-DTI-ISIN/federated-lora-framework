@@ -1,11 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiChevronDown, FiGlobe } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
 import i18n from "../../i18n/i18n.ts";
 import ReactCountryFlag from "react-country-flag";
 
-export const LanguageSwitcher: React.FC = () => {
+export const LanguageSwitcher = () => {
     const { t } = useTranslation();
     const currentLang = i18n.language as string;
     const supportedLngs = (i18n.options.supportedLngs as string[]).filter(l => l !== "cimode");

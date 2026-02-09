@@ -2,7 +2,7 @@ import re
 from dataclasses import dataclass
 
 from typing import List, Optional
-from schemas.documents import SectionDTO
+from commons.documents import ParsedSection
 
 @dataclass
 class SectionUtil:
@@ -25,12 +25,12 @@ class SectionExtractor:
             )
 
     @classmethod
-    def extract_document_sections(cls, text: str, project_number: str) -> List[SectionDTO]:
+    def extract_document_sections(cls, text: str, project_number: str) -> List[ParsedSection]:
         sections: List[SectionUtil] = cls._get_raw_sections(text)
 
         sections = cls._remove_non_valid_sections(raw_sections=sections, project_number=project_number)
 
-        sections_dto: List[SectionDTO] = cls._get_content_for_sections(sections, text)
+        sections_dto: List[ParsedSection] = cls._get_content_for_sections(sections, text)
 
         return sections_dto
 
@@ -51,14 +51,14 @@ class SectionExtractor:
         return result
 
     @staticmethod
-    def _get_content_for_sections(sections: List[SectionUtil], text: str) -> List[SectionDTO]:
-        result: List[SectionDTO] = []
+    def _get_content_for_sections(sections: List[SectionUtil], text: str) -> List[ParsedSection]:
+        result: List[ParsedSection] = []
 
         for index, section in enumerate(sections):
             start = section.start_content_pos
             end = sections[index + 1].start_pos if index + 1 < len(sections) else len(text)
             content = text[start:end].strip()
-            result.append(SectionDTO(
+            result.append(ParsedSection(
                 title=section.title,
                 content=content
             ))

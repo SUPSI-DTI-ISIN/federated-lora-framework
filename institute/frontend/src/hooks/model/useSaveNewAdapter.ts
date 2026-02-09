@@ -1,6 +1,6 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {adaptersApi} from "../../config/modelServiceClient.ts";
-import type {AdapterDTO} from "@isin/model-service-client";
+import type {AdapterDTO, AvailableAdaptersDTO} from "@isin/model-service-client";
 
 
 interface SaveNewAdapterParams {
@@ -18,9 +18,23 @@ export const useSaveNewAdapter = () => {
                 version: adapterVersion
             }
         ).then(response => response.data),
-        onSuccess: (_newAdapterDTO: AdapterDTO) => {
-            queryClient.invalidateQueries({queryKey: ["adapters"]})
-            queryClient.invalidateQueries({queryKey: ["adapters", "local"]})
+        onSuccess: (newAdapter: AdapterDTO, {modelKey}) => {
+            const updater = (old: AvailableAdaptersDTO | undefined): AvailableAdaptersDTO => ({
+                model_key: modelKey,
+                adapters: old?.adapters
+                    ? [newAdapter, ...old.adapters]
+                    : [newAdapter],
+            });
+
+            queryClient.setQueryData<AvailableAdaptersDTO>(
+                ["adapters"],
+                updater
+            );
+
+            queryClient.setQueryData<AvailableAdaptersDTO>(
+                ["adapters", "local"],
+                updater
+            );
         }
     })
 }
