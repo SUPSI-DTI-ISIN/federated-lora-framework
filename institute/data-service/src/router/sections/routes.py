@@ -1,5 +1,7 @@
 from fastapi import APIRouter, status, Depends
+from shared_auth_library.entities import User
 
+from auth import jwt_validator
 from services.sections import SectionsServiceInterface
 from .dependencies import get_sections_service
 
@@ -15,6 +17,7 @@ tags = ["sections"]
 )
 async def delete_section_by_id(
         section_id: int,
-        service: SectionsServiceInterface = Depends(get_sections_service)
+        service: SectionsServiceInterface = Depends(get_sections_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     await service.delete_by_id(section_id=section_id)

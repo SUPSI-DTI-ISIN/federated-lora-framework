@@ -6,6 +6,9 @@ from commons import Environment
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
+    keycloak_url: str
+    institute_name: str
+
     database_url: str = "mysql+aiomysql://root:root@localhost:3306/documents"
     frontend_url: str = "http://localhost:3000"
     environment: str = Environment.DEV

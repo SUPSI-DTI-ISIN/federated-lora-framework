@@ -1,7 +1,9 @@
 from typing import List
 
 from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File, Path
+from shared_auth_library.entities import User
 
+from auth import jwt_validator
 from schemas.documents import DocumentDTO
 from services.documents import DocumentsServiceInterface
 from .dependencies import get_documents_service
@@ -18,7 +20,8 @@ tags = ["documents"]
 )
 async def upload(
         file: UploadFile = File(..., description="PDF file to upload"),
-        service: DocumentsServiceInterface = Depends(get_documents_service)
+        service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     if not file:
         raise HTTPException(
@@ -42,7 +45,10 @@ async def upload(
     response_model=List[DocumentDTO],
     tags=tags
 )
-async def get_all(documents_service: DocumentsServiceInterface = Depends(get_documents_service)):
+async def get_all(
+        documents_service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
     return await documents_service.get_all()
 
 
@@ -54,10 +60,10 @@ async def get_all(documents_service: DocumentsServiceInterface = Depends(get_doc
 )
 async def get_by_id(
         document_id: int,
-        service: DocumentsServiceInterface = Depends(get_documents_service)
+        service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await service.get_by_id(document_id=document_id)
-
 
 
 @router.delete(
@@ -67,6 +73,7 @@ async def get_by_id(
 )
 async def delete_by_id(
         document_id: int,
-        service: DocumentsServiceInterface = Depends(get_documents_service)
+        service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     await service.delete_by_id(document_id=document_id)

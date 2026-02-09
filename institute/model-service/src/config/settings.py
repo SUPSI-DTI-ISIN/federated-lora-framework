@@ -4,7 +4,10 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
+    keycloak_url: str
+    institute_name: str
     model_key: str
+
     model_base_path: str = "./model"
     frontend_url: str = "http://localhost:3000"
     department_service_url: str = "http://localhost:81"

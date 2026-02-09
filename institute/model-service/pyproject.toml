@@ -12,4 +12,8 @@ dependencies = [
     "python-multipart>=0.0.21",
     "requests>=2.32.5",
     "tqdm>=4.67.1",
+    "shared-auth-library",
 ]
+
+[tool.uv.sources]
+shared-auth-library = { path = "../shared-auth-library" }
