@@ -8,6 +8,7 @@ from federated_learning_client.clients.data_service import DataServiceClientInte
 from federated_learning_client.clients.model_service import ModelServiceClientInterface, ModelServiceClient
 from federated_learning_client.services.dataset import DatasetService
 from federated_learning_client.services.training import TrainingService
+from federated_learning_client.utils import FileUtils
 
 from federated_learning_common.services.model import ModelService
 
@@ -19,12 +20,13 @@ def lifespan(context: Context):
 
     #data_service_url: str = context.run_config["data-service-url"]
     data_service_url = settings.data_service_url
+    partition_id = context.node_config["partition-id"]
 
     document_service: DataServiceClientInterface = DataServiceClient.get_instance(data_service_url=data_service_url)
     documents = document_service.get_documents()
 
     training_dataset = DatasetService.build_dataset_from_documents(documents=documents)
-    DatasetService.save_dataset_to_jsonl(training_dataset=training_dataset)
+    DatasetService.save_dataset_to_jsonl(training_dataset=training_dataset, partition_id=partition_id)
 
     yield
 
@@ -37,23 +39,28 @@ def train(msg: Message, context: Context):
     device_map = settings.device_map
     model_service_url = settings.model_service_url
 
+    partition_id = context.node_config["partition-id"]
+
     model_service_client: ModelServiceClientInterface = ModelServiceClient.get_instance(model_service_url=model_service_url)
     model_path_dto = model_service_client.get_model_path(model_key=model_key)
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
-    model = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map, access_token=settings.hf_token)
-    tokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path, access_token=settings.hf_token)
+    model = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map)
+    tokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path)
+    #model = ModelService.load_model(model_path=model_key, device_map=device_map, access_token=settings.hf_token)
+    #tokenizer = ModelService.load_tokenizer(model_path=model_key, access_token=settings.hf_token)
 
     set_peft_model_state_dict(model, peft_state)
     model.train()
 
-    train_dataset, eval_dataset = DatasetService.load_data()
+    train_dataset, eval_dataset = DatasetService.load_data(partition_id=partition_id)
 
     train_metrics = TrainingService.train(
         model=model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset
+        eval_dataset=eval_dataset,
+        training_folder=FileUtils.get_training_folder(partition_id=partition_id)
     )
 
     print(f"Train metrics: {train_metrics}")

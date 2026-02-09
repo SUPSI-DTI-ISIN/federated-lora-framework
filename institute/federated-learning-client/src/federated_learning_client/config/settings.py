@@ -7,6 +7,6 @@ class Settings(BaseSettings):
     data_service_url: str
     model_service_url: str
     hf_token: str
-    device_map: str = "auto"
+    device_map: str = "cuda"
     model_key: str = "llama-2-7b"
     dataset_output_folder: str = "./output"

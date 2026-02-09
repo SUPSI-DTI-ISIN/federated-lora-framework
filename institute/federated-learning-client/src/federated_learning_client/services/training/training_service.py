@@ -4,7 +4,7 @@ from transformers import TrainingArguments, Trainer, IntervalStrategy, DataColla
 
 class TrainingService:
     @staticmethod
-    def train(model, tokenizer, train_dataset, eval_dataset):
+    def train(model, tokenizer, train_dataset, eval_dataset, training_folder):
         def preprocess(examples):
             prompts = []
             for i in range(len(examples['instruction'])):
@@ -39,13 +39,10 @@ class TrainingService:
             mlm=False
         )
 
-        #training_folder = os.path.join("./output", "training")
-        #adapter_folder = os.path.join("./output", "adapter")
-        #os.makedirs(training_folder, exist_ok=True)
         #os.makedirs(adapter_folder, exist_ok=True)
 
         training_args = TrainingArguments(
-            output_dir=None,
+            output_dir=training_folder,
 
             per_device_train_batch_size=1,
             per_device_eval_batch_size=1,

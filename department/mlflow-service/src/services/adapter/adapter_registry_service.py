@@ -50,15 +50,15 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         )
 
         if not os.path.exists(model_adapters_path):
-            return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)
+            return str(Path(ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)).resolve())
 
         adapters_versions = self.get_adapters_version(model_key)
         if adapters_versions.adapters_version is None:
-            return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)
+            return str(Path(ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=1)).resolve())
 
         next_version = max(adapters_versions.adapters_version) + 1
 
-        return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=next_version)
+        return str(Path(ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=next_version)).resolve())
 
 
     def get_latest_adapter_path(self, model_key: str) -> Optional[str]:
@@ -75,7 +75,7 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
 
         latest_version = max(adapters_versions.adapters_version)
 
-        return ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=latest_version)
+        return str(Path(ModelPathUtils.get_model_adapter_path_by_version(model_key=model_key, version=latest_version)).resolve())
 
 
     def get_adapter_manifest(self, model_key: str, adapter_version: int) -> ManifestDTO:

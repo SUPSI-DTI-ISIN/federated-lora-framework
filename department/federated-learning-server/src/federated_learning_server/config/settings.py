@@ -6,4 +6,4 @@ class Settings(BaseSettings):
     mlflow_service_url: str
     hf_token: str
     model_key: str = "llama-2-7b"
-    device_map: str = "auto"
+    device_map: str = "cuda"

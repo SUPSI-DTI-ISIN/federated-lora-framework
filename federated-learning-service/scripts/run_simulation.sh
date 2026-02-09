@@ -1,6 +1,15 @@
 #!/bin/bash
 set -e
 
+set -a
+source .env
+set +a
+uv sync --reinstall
+
 cd ..
-export PYTHONPATH=$PYTHONPATH:$(pwd)/src
-uv run --env-file .env flwr run .
+
+set -a
+source .env
+set +a
+
+uv run --active flwr run .

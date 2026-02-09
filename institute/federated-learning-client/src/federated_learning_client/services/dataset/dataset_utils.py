@@ -22,7 +22,7 @@ class DatasetUtils:
                 output=section.content,
                 section_title=section.title,
                 document_title=document.title,
-                document_project_number=document.id
+                document_project_number=document.number
             )
             training_rows.append(training_row)
 

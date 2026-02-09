@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from typing import Optional
 
 from commons import ModelPathUtils
@@ -25,13 +26,13 @@ class ModelPathService(ModelPathServiceInterface):
 
         if adapter_path is None:
             return ModelPathDTO(
-                model_base_path=model_base_path
+                model_base_path=str(Path(model_base_path).resolve())
             )
 
         if not os.path.exists(adapter_path):
             raise FileNotFoundError(f"Adapter with version {adapter_version} for model {model_key} does not exist")
 
         return ModelPathDTO(
-            model_base_path=model_base_path,
-            adapter_path=adapter_path
+            model_base_path=str(Path(model_base_path).resolve()),
+            adapter_path=str(Path(adapter_path).resolve())
         )

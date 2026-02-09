@@ -21,8 +21,8 @@ publisher = "luca.fanto"
 [tool.flwr.app.components]
 #serverapp = "server_app.server_app:app"
 #clientapp = "client_app.client_app:app"
-serverapp = "server_app_test:server_app_test"
-clientapp = "client_app_test:client_app_test"
+serverapp = "src.server_app_test:server_app_test"
+clientapp = "src.client_app_test:client_app_test"
 
 
 [tool.flwr.app.config]
@@ -49,15 +49,14 @@ insecure = true
 address = "<SUPERLINK-ADDRESS>:<PORT>"
 insecure = true  # Remove this line to enable TLS
 
+#[tool.uv.sources]
+#federated-learning-server = { path = "../department/federated-learning-server" }
+#federated-learning-client = { path = "../institute/federated-learning-client" }
+
 # root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup
 
-
-[tool.uv.sources]
-federated-learning-server = { path = "../department/federated-learning-server" }
-federated-learning-client = { path = "../institute/federated-learning-client" }
-
-#[[tool.uv.index]]
-#name = "gitlab"
-#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-#authenticate = "always"
-#cache-control = { api = "no-cache" }
+[[tool.uv.index]]
+name = "gitlab"
+url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+authenticate = "always"
+cache-control = { api = "no-cache" }

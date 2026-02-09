@@ -23,13 +23,16 @@ class DatasetService:
         return training_dataset
 
     @staticmethod
-    def save_dataset_to_jsonl(training_dataset: TrainingDataset, dataset_output_file: str = FileUtils.get_dataset_output_file()):
+    def save_dataset_to_jsonl(training_dataset: TrainingDataset, partition_id: int):
+        dataset_output_file = FileUtils.get_dataset_output_file(partition_id=partition_id)
         with open(dataset_output_file, 'w', encoding='utf-8') as output:
             for training_row in training_dataset.training_rows:
                 output.write(json.dumps(asdict(training_row), ensure_ascii=False) + '\n')
 
     @staticmethod
-    def load_data(dataset_file_path: str = FileUtils.get_dataset_output_file(), test_size: float = 0.25):
+    def load_data(partition_id: int, test_size: float = 0.25):
+        dataset_file_path = FileUtils.get_dataset_output_file(partition_id=partition_id)
+
         dataset = load_dataset("json", data_files={"train": dataset_file_path}, split=Split.TRAIN)
 
         dataset = dataset.train_test_split(test_size=test_size)

@@ -47,7 +47,7 @@ async def upload(
 )
 async def get_all(
         documents_service: DocumentsServiceInterface = Depends(get_documents_service),
-        _: User = Depends(jwt_validator.get_current_user_required)
+        #_: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await documents_service.get_all()
 
