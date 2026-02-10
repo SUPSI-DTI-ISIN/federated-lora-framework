@@ -12,6 +12,7 @@ rm -rf "$SDKS_DIR"
 mkdir -p "$SDKS_DIR"
 
 echo "Generating OpenAPI json..."
+uv sync --reinstall
 uv run --env-file ../.env.dev ../src/extract_openapi.py --output "$OPENAPI_JSON_PATH"
 
 if [ ! -f "$OPENAPI_JSON_PATH" ]; then

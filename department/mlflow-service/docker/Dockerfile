@@ -21,7 +21,7 @@ COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 COPY $ENV_PATH .env
 
-RUN uv sync --locked
+RUN uv sync
 
 EXPOSE 9010
 ENV UV_ENV_FILE=.env

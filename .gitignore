@@ -124,7 +124,7 @@ celerybeat.pid
 
 # Environments
 *.env*
-!.env.template
+!*.template
 .venv
 env/
 venv/
@@ -174,5 +174,3 @@ sdks/
 output/
 pdf-innosuisse/
 models/
-.netrc
-.pypirc

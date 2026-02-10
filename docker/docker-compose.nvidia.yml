@@ -1,0 +1,350 @@
+services:
+  superlink:
+    image: flwr/superlink:1.25.0
+    container_name: superlink
+    command:
+      - --insecure
+      - --isolation
+      - process
+    ports:
+      - "9091:9091"
+      - "9092:9092"
+      - "9093:9093"
+    networks:
+      - internal-department
+      - external
+
+  superexec-serverapp:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/superexec:nvidia
+    container_name: superexec-serverapp
+    command:
+      - --insecure
+      - --plugin-type
+      - serverapp
+      - --appio-api-address
+      - superlink:9091
+    restart: always
+    depends_on:
+      - superlink
+    volumes:
+      - models-department:/models-department
+    networks:
+      - internal-department
+
+  keycloak-postgres-db:
+    image: postgres:15
+    container_name: keycloak-postgres
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $KEYCLOAK_POSTGRES_USER || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal-department
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres-db:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_HTTP_PORT: 8085
+
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+    ports:
+      - "8085:8085"
+    command:
+      - start-dev
+    depends_on:
+      keycloak-postgres-db:
+        condition: service_healthy
+#    healthcheck:
+#      test: [ "CMD", "curl", "--head", "-fsS", "http://localhost:8085/health/ready" ]
+#      interval: 20s
+#      timeout: 5s
+#      retries: 10
+    networks:
+      - internal-department
+      - external
+
+  mlflow-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/mlflow-service:nvidia
+    restart: always
+    ports:
+      - "9010:9010"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - models-department:/models-department
+    networks:
+      - internal-department
+      - external
+
+  nginx-department-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/nginx:nvidia
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+      PORT: 81
+    restart: always
+    ports:
+      - "81:81"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+    networks:
+      - internal-department
+      - external
+
+  documents-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DOCUMENTS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DOCUMENTS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DOCUMENTS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - documents-mysql-data:/var/lib/mysql
+    networks:
+      - internal-institute
+
+  chats-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CHATS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${CHATS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${CHATS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - chats-mysql-data:/var/lib/mysql
+    networks:
+      - internal-institute
+
+
+  inference-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/inference-service:nvidia
+    environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      FRONTEND_URL: http://frontend:80
+      MODEL_SERVICE_URL: http://model-service:8090
+    restart: always
+    ports:
+      - "8095:8095"
+    depends_on:
+      keycloak:
+        condition: service_started
+      model-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8095/api_inference/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+
+  data-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/data-service:nvidia
+    environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
+      DB_HOST: documents-mysql-db
+      DB_PORT: 3306
+      FRONTEND_URL: http://frontend:80
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      keycloak:
+        condition: service_started
+      documents-mysql-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api_data/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+
+  model-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/model-service:nvidia
+    environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      FRONTEND_URL: http://frontend:80
+      DEPARTMENT_SERVICE_URL: http://nginx-department-service:81
+    restart: always
+    ports:
+      - "8090:8090"
+    depends_on:
+      keycloak:
+        condition: service_started
+      nginx-department-service:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/api_model/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - models-institute:/models-institute
+    networks:
+      - internal-institute
+      - external
+
+  chat-service:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/chat-service:nvidia
+    environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      INFERENCE_SERVICE_URL: http://inference-service:8095
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DB_HOST: chats-mysql-db
+      DB_PORT: 3306
+      FRONTEND_URL: http://frontend:80
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      keycloak:
+        condition: service_started
+      chats-mysql-db:
+        condition: service_healthy
+      inference-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/api_chat/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
+
+  frontend:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/frontend:nvidia
+    environment:
+      CHAT_SERVICE_URL: http://chat-service:8081
+      DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
+      PORT: 80
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      chat-service:
+        condition: service_healthy
+      data-service:
+        condition: service_healthy
+      model-service:
+        condition: service_healthy
+    networks:
+      - internal-institute
+      - external
+
+  supernode-1:
+    image: flwr/supernode:1.25.0
+    container_name: supernode-1
+    ports:
+      - "9094:9094"
+    command:
+      - --insecure
+      - --superlink
+      - superlink:9092
+      - --clientappio-api-address
+      - 0.0.0.0:9094
+      - --isolation
+      - process
+    depends_on:
+      - superlink
+    networks:
+      - internal-institute
+      - external
+
+  superexec-clientapp-1:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/superexec:nvidia
+    container_name: superexec-clientapp-1
+    command:
+      - --insecure
+      - --plugin-type
+      - clientapp
+      - --appio-api-address
+      - supernode-1:9094
+    stop_signal: SIGINT
+    depends_on:
+      - supernode-1
+    volumes:
+      - models-institute:/models-institute
+    networks:
+      - internal-institute
+
+volumes:
+  keycloak-data:
+    driver: local
+  documents-mysql-data:
+    driver: local
+  chats-mysql-data:
+    driver: local
+  models-department:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/admin/decentralised-ai-docker/models-department
+  models-institute:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/admin/decentralised-ai-docker/models-institute
+
+networks:
+  internal-department:
+    driver: bridge
+    internal: true
+  internal-institute:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false

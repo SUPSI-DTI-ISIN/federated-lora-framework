@@ -43,4 +43,4 @@ for i in 1 2 3; do
 done
 
 echo "Starting application..."
-uv run src/data_service.py -p 8080
+exec "$@"

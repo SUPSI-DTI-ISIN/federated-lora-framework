@@ -29,8 +29,8 @@ http {
         try_files $uri $uri/ /index.html;
     }
 
-    location /api_inference {
-      proxy_pass ${INFERENCE_SERVICE_URL};
+    location /api_chat {
+      proxy_pass ${CHAT_SERVICE_URL};
 
       proxy_connect_timeout  60s;
       proxy_send_timeout     15m;

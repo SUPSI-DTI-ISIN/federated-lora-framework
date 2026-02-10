@@ -1,88 +1,4 @@
 services:
-#  postgres:
-#    image: postgres:15
-#    container_name: mlflow-postgres
-#    restart: always
-#    environment:
-#      POSTGRES_USER: ${POSTGRES_USER}
-#      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      POSTGRES_DB: ${POSTGRES_DB}
-#    ports:
-#      - "5432:5432"
-#    healthcheck:
-#      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} || exit 1" ]
-#      interval: 20s
-#      timeout: 5s
-#      retries: 10
-#    volumes:
-#      - mlflow-postgres-data:/var/lib/postgresql/data
-#    networks:
-#      - internal-department
-#
-#  minio:
-#    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
-#    container_name: mlflow-minio
-#    restart: always
-#    environment:
-#      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-#      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-#    healthcheck:
-#      test: [ "CMD", "mc", "ready", "local" ]
-#      interval: 5s
-#      timeout: 5s
-#      retries: 5
-#    command: server /data --console-address ":9001"
-#    volumes:
-#      - mlflow-minio-data:/data
-#    ports:
-#      - "9000:9000"
-#      - "9001:9001"
-#    networks:
-#      - internal-department
-#      - external
-#
-#  minio_mc:
-#    build:
-#      context: ../department/minio
-#      dockerfile: Dockerfile
-#    depends_on:
-#      minio:
-#        condition: service_healthy
-#    environment:
-#      MINIO_SERVICE_URL: http://minio:9000
-#      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-#      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
-#      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-#      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-#    networks:
-#      - internal-department
-#
-#  mlflow:
-#    build:
-#      context: ../department/mlflow
-#      dockerfile: Dockerfile
-#    container_name: mlflow-server
-#    restart: always
-#    environment:
-#      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-#      MLFLOW_DEFAULT_ARTIFACT_ROOT: s3://flow-bucket
-#      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-#      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-#      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
-#    command: >
-#      mlflow server
-#      --host 0.0.0.0
-#      --port 5000
-#    ports:
-#      - "5000:5000"
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
-#      minio:
-#        condition: service_healthy
-#    networks:
-#      - internal-department
-
   superlink:
     image: flwr/superlink:1.25.0
     container_name: superlink
@@ -100,23 +16,8 @@ services:
 
   superexec-serverapp:
     build:
-      context: ../department/federated-learning-server
-      dockerfile_inline: |
-        FROM flwr/superexec:1.25.0
-
-        USER root
-        RUN apt-get update \
-            && apt-get -y --no-install-recommends install \
-            build-essential \
-            && rm -rf /var/lib/apt/lists/*
-        USER app
-
-        WORKDIR /app
-        COPY --chown=app:app pyproject.toml .
-        RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml \
-          && python -m pip install -U --no-cache-dir .
-
-        ENTRYPOINT ["flower-superexec"]
+      context: ../federated-learning-service
+      dockerfile: docker/superexec.Dockerfile
     container_name: superexec-serverapp
     command:
       - --insecure
@@ -128,9 +29,60 @@ services:
     depends_on:
       - superlink
     volumes:
-      - models-department:/models
+      - models-department:/models-department
     networks:
       - internal-department
+
+  keycloak-postgres-db:
+    image: postgres:15
+    container_name: keycloak-postgres
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $KEYCLOAK_POSTGRES_USER || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal-department
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres-db:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_HTTP_PORT: 8085
+
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+    ports:
+      - "8085:8085"
+    command:
+      - start-dev
+    depends_on:
+      keycloak-postgres-db:
+        condition: service_healthy
+#    healthcheck:
+#      test: [ "CMD", "curl", "--head", "-fsS", "http://localhost:8085/health/ready" ]
+#      interval: 20s
+#      timeout: 5s
+#      retries: 10
+    networks:
+      - internal-department
+      - external
 
   mlflow-service:
     build:
@@ -139,11 +91,6 @@ services:
       args:
         ENV_PATH: .env.local
     restart: always
-#    environment:
-#      MLFLOW_TRACKING_URI: http://mlflow:5000
-#      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
-#      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
-#      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
     ports:
       - "9010:9010"
     healthcheck:
@@ -151,11 +98,8 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
-#    depends_on:
-#      mlflow:
-#        condition: service_started
     volumes:
-      - models-department:/models
+      - models-department:/models-department
     networks:
       - internal-department
       - external
@@ -182,10 +126,10 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DOCUMENTS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DOCUMENTS_MYSQL_DATABASE}
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DOCUMENTS_MYSQL_ROOT_PASSWORD}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -194,19 +138,43 @@ services:
     networks:
       - internal-institute
 
+  chats-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CHATS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${CHATS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${CHATS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - chats-mysql-data:/var/lib/mysql
+    networks:
+      - internal-institute
+
+
   inference-service:
     build:
       context: ../institute/inference-service
       dockerfile: docker/Dockerfile
       args:
         ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
     environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
       FRONTEND_URL: http://frontend:80
       MODEL_SERVICE_URL: http://model-service:8090
     restart: always
     ports:
       - "8095:8095"
     depends_on:
+      keycloak:
+        condition: service_started
       model-service:
         condition: service_healthy
     healthcheck:
@@ -223,9 +191,13 @@ services:
       dockerfile: docker/Dockerfile
       args:
         ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
     environment:
-      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${MYSQL_DATABASE}
-      DATABASE_URL: mysql+aiomysql://root:${MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${MYSQL_DATABASE}
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
       DB_HOST: documents-mysql-db
       DB_PORT: 3306
       FRONTEND_URL: http://frontend:80
@@ -233,6 +205,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
+      keycloak:
+        condition: service_started
       documents-mysql-db:
         condition: service_healthy
     healthcheck:
@@ -249,13 +223,19 @@ services:
       dockerfile: docker/Dockerfile
       args:
         ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
     environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
       FRONTEND_URL: http://frontend:80
       DEPARTMENT_SERVICE_URL: http://nginx-department-service:81
     restart: always
     ports:
       - "8090:8090"
     depends_on:
+      keycloak:
+        condition: service_started
       nginx-department-service:
         condition: service_started
     healthcheck:
@@ -264,10 +244,45 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models-institute:/models
+      - models-institute:/models-institute
     networks:
       - internal-institute
       - external
+
+  chat-service:
+    build:
+      context: ../institute/chat-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    environment:
+      INSTITUTE_NAME: ISIN
+      KEYCLOAK_URL: http://keycloak:8085
+      INFERENCE_SERVICE_URL: http://inference-service:8095
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DB_HOST: chats-mysql-db
+      DB_PORT: 3306
+      FRONTEND_URL: http://frontend:80
+    restart: always
+    ports:
+      - "8081:8081"
+    depends_on:
+      keycloak:
+        condition: service_started
+      chats-mysql-db:
+        condition: service_healthy
+      inference-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/api_chat/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal-institute
 
   frontend:
     build:
@@ -277,7 +292,7 @@ services:
         NPM_TOKEN: ${GITLAB_TOKEN}
         ENV_PATH: .env.local
     environment:
-      INFERENCE_SERVICE_URL: http://inference-service:8095
+      CHAT_SERVICE_URL: http://chat-service:8081
       DATA_SERVICE_URL: http://data-service:8080
       MODEL_SERVICE_URL: http://model-service:8090
       PORT: 80
@@ -285,7 +300,7 @@ services:
     ports:
       - "80:80"
     depends_on:
-      inference-service:
+      chat-service:
         condition: service_healthy
       data-service:
         condition: service_healthy
@@ -316,23 +331,8 @@ services:
 
   superexec-clientapp-1:
     build:
-      context: ../institute/federated-learning-client
-      dockerfile_inline: |
-        FROM flwr/superexec:1.25.0
-
-        USER root
-        RUN apt-get update \
-            && apt-get -y --no-install-recommends install \
-            build-essential \
-            && rm -rf /var/lib/apt/lists/*
-        USER app
-
-        WORKDIR /app
-        COPY --chown=app:app pyproject.toml .
-        RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml \
-          && python -m pip install -U --no-cache-dir .
-
-        ENTRYPOINT ["flower-superexec"]
+      context: ../federated-learning-service
+      dockerfile: docker/superexec.Dockerfile
     container_name: superexec-clientapp-1
     command:
       - --insecure
@@ -344,29 +344,29 @@ services:
     depends_on:
       - supernode-1
     volumes:
-      - models-institute:/models
+      - models-institute:/models-institute
     networks:
       - internal-institute
 
 volumes:
+  keycloak-data:
+    driver: local
   documents-mysql-data:
     driver: local
-#  mlflow-postgres-data:
-#    driver: local
-#  mlflow-minio-data:
-#    driver: local
+  chats-mysql-data:
+    driver: local
   models-department:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ../../models/department
+      device: ../models/department
   models-institute:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ../../models/institute
+      device: ../models/institute
 
 networks:
   internal-department:

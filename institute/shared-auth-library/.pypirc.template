@@ -1,0 +1,8 @@
+[distutils]
+index-servers =
+    gitlab
+
+[gitlab]
+repository = https://<GITLAB_HOST>/api/v4/projects/<GITLAB_PROJECT_ID>/packages/pypi
+username = <TOKEN_USERNAME>
+password = <TOKEN>
