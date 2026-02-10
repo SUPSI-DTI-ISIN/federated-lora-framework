@@ -17,14 +17,13 @@ package-dir = { "" = "src" }
 [tool.setuptools.packages.find]
 where = ["src"]
 
-#[[tool.uv.index]]
-#name = "gitlab"
-#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-#authenticate = "always"
-#cache-control = { api = "no-cache" }
+[[tool.uv.index]]
+name = "gitlab"
+url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+authenticate = "always"
 
-[tool.uv.sources]
-federated-learning-common-library = { path = "../../federated-learning-common-library" }
+#[tool.uv.sources]
+#federated-learning-common-library = { path = "../../federated-learning-common-library" }
 
 
 [build-system]

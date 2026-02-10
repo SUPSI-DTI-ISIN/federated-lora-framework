@@ -5,6 +5,7 @@ from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from peft import get_peft_model_state_dict
+from transformers import PreTrainedModel
 
 from federated_learning_server.clients.mlflow import MlFlowServiceClientInterface, MlFlowServiceClient
 from federated_learning_server.config import settings
@@ -22,10 +23,13 @@ def main(grid: Grid, context: Context) -> None:
     num_rounds: int = context.run_config.get("num-server-rounds", 3)
     lr: float = context.run_config.get("lr", 0.01)
 
-    global_model = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=settings.device_map)
+    pretrained_global_model: PreTrainedModel = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=settings.device_map)
     #global_model = ModelService.load_model(model_path=settings.model_key, device_map=settings.device_map, access_token=settings.hf_token)
-    ModelService.print_trainable_parameters(model=global_model)
-    peft_state = get_peft_model_state_dict(global_model)
+    peft_model = ModelService.get_peft_model(model=pretrained_global_model)
+    del pretrained_global_model
+
+    ModelService.print_trainable_parameters(model=peft_model)
+    peft_state = get_peft_model_state_dict(peft_model)
 
     arrays = ArrayRecord(peft_state)
 

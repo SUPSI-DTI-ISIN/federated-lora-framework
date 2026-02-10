@@ -8,8 +8,8 @@ uv sync --reinstall
 
 cd ..
 
-set -a
-source .env
-set +a
-
-uv run --active flwr run .
+export PYTHONPATH=src
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+#export RAY_DISABLE_METRICS=1
+export RAY_DEDUP_LOGS=0
+uv run --link-mode=copy --active flwr run .

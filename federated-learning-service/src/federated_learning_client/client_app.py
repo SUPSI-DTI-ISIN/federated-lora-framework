@@ -1,7 +1,11 @@
+import gc
+
+import torch.cuda
 from flwr.app import Context, Message, RecordDict
 from flwr.clientapp import ClientApp
 from flwr.common import ArrayRecord, MetricRecord
-from peft import set_peft_model_state_dict, get_peft_model_state_dict
+from peft import set_peft_model_state_dict, get_peft_model_state_dict, prepare_model_for_kbit_training
+from transformers import PreTrainedModel, PreTrainedTokenizer
 
 from federated_learning_client.config import settings
 from federated_learning_client.clients.data_service import DataServiceClientInterface, DataServiceClient
@@ -40,24 +44,25 @@ def train(msg: Message, context: Context):
 
     partition_id = context.node_config["partition-id"]
 
+    peft_state = msg.content["arrays"].to_torch_state_dict()
+
     model_service_client: ModelServiceClientInterface = ModelServiceClient.get_instance(model_service_url=model_service_url)
     model_path_dto = model_service_client.get_model_path(model_key=model_key)
 
-    peft_state = msg.content["arrays"].to_torch_state_dict()
-    model = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map)
-    tokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path)
-    #model = ModelService.load_model(model_path=model_key, device_map=device_map, access_token=settings.hf_token)
-    #tokenizer = ModelService.load_tokenizer(model_path=model_key, access_token=settings.hf_token)
+    pretrained_model: PreTrainedModel = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map)
+    tokenizer: PreTrainedTokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path)
 
-    ModelService.print_trainable_parameters(model)
+    pretrained_model = prepare_model_for_kbit_training(pretrained_model)
+    peft_model = ModelService.get_peft_model(model=pretrained_model)
 
-    set_peft_model_state_dict(model, peft_state)
-    model.train()
+    ModelService.print_trainable_parameters(peft_model)
+
+    set_peft_model_state_dict(peft_model, peft_state)
 
     train_dataset, eval_dataset = DatasetService.load_data(partition_id=partition_id)
 
     train_metrics = TrainingService.train(
-        model=model,
+        model=peft_model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
@@ -66,7 +71,12 @@ def train(msg: Message, context: Context):
 
     print(f"Train metrics: {train_metrics}")
 
-    peft_state_out = get_peft_model_state_dict(model)
+    peft_state_out = get_peft_model_state_dict(peft_model)
+
+    del peft_model
+    torch.cuda.empty_cache()
+    gc.collect()
+
     arrays = ArrayRecord(peft_state_out)
 
     metrics = {

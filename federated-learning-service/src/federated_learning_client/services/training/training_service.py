@@ -48,20 +48,28 @@ class TrainingService:
         training_args = TrainingArguments(
             output_dir=training_folder,
 
+            num_train_epochs=3,
             per_device_train_batch_size=1,
-            per_device_eval_batch_size=1,
-            gradient_accumulation_steps=8,
-
-            num_train_epochs=2,
-            max_steps=200,
-
+            gradient_accumulation_steps=16,
             learning_rate=2e-4,
-            warmup_steps=100,
 
             fp16=False,
-            bf16=False,
+            bf16=True,
+            gradient_checkpointing=True,
 
-            eval_strategy=IntervalStrategy.EPOCH,
+            optim="paged_adamw_32bit",
+            weight_decay=0.01,
+            warmup_ratio=0.03,
+            lr_scheduler_type="cosine",
+
+            # Logging and saving
+            logging_steps=10,
+            save_strategy="epoch",
+            save_total_limit=3,
+
+            # Performance settings
+            max_grad_norm=0.3,
+            group_by_length=True,
         )
 
         trainer = Trainer(
@@ -69,19 +77,17 @@ class TrainingService:
             args=training_args,
             train_dataset=train_dataset,
             eval_dataset=eval_dataset,
-            data_collator=data_collator
+            data_collator=data_collator,
+            packing=True,
         )
 
-        model.config.use_cache=False
         train_output = trainer.train()
-        eval_metrics = trainer.evaluate()
 
         model.save_pretrained(adapter_folder)
         tokenizer.save_pretrained(adapter_folder)
 
         metrics = {
             "train_loss": float(train_output.training_loss) if hasattr(train_output, "training_loss") else None,
-            "eval_loss": eval_metrics.get("eval_loss"),
             "hf_train_metrics": train_output.metrics if hasattr(train_output, "metrics") else None,
         }
 

@@ -440,9 +440,9 @@ dependencies = [
     { name = "setuptools" },
     { name = "torch" },
 ]
-sdist = { url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/files/fdf8bfe7140895952f390ded00a6c042b48737fd5ef86a48dc6ca9e0ff5e303f/federated_learning_common_library-0.1.0.tar.gz", hash = "sha256:fdf8bfe7140895952f390ded00a6c042b48737fd5ef86a48dc6ca9e0ff5e303f" }
+sdist = { url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/files/f59e5e5f8aaa5807f33c6810d0d5101b67b7db7b1f3f1db683e01b162376e093/federated_learning_common_library-0.1.0.tar.gz", hash = "sha256:f59e5e5f8aaa5807f33c6810d0d5101b67b7db7b1f3f1db683e01b162376e093" }
 wheels = [
-    { url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/files/f1f893b34c8f321276bd540532fa9e367145aa7271f73e1a898b236180f6998e/federated_learning_common_library-0.1.0-py3-none-any.whl", hash = "sha256:f1f893b34c8f321276bd540532fa9e367145aa7271f73e1a898b236180f6998e" },
+    { url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/files/cbed8ac4e68990aade9722943c45791931f8dc31847b1db4bc980ccc54786c90/federated_learning_common_library-0.1.0-py3-none-any.whl", hash = "sha256:cbed8ac4e68990aade9722943c45791931f8dc31847b1db4bc980ccc54786c90" },
 ]
 
 [[package]]

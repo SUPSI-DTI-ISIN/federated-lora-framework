@@ -4,9 +4,10 @@ version = "0.1.0"
 description = "Federated Learning service which contains client app and server app to orchestrate FL fine tuning"
 requires-python = ">=3.12.12"
 dependencies = [
+    "bitsandbytes>=0.49.1",
     "datasets>=4.4.2",
-    "federated-learning-client",
-    "federated-learning-server",
+    #"federated-learning-client",
+    #"federated-learning-server",
     "flwr[simulation]>=1.25.0",
     "peft>=0.18.0",
     "pydantic>=2.12.5",
@@ -21,14 +22,11 @@ publisher = "luca.fanto"
 [tool.flwr.app.components]
 #serverapp = "server_app.server_app:app"
 #clientapp = "client_app.client_app:app"
-serverapp = "src.server_app_test:server_app_test"
-clientapp = "src.client_app_test:client_app_test"
+serverapp = "server_app_test:server_app_test"
+clientapp = "client_app_test:client_app_test"
 
 
 [tool.flwr.app.config]
-model-name = "llama-2-7b"
-device = "cpu"
-data-service-url = "http://localhost:8080"
 num-server-rounds = 3
 fraction-train = 0.5
 local-epochs = 1
@@ -49,14 +47,13 @@ insecure = true
 address = "<SUPERLINK-ADDRESS>:<PORT>"
 insecure = true  # Remove this line to enable TLS
 
+# root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup
+
 #[tool.uv.sources]
 #federated-learning-server = { path = "../department/federated-learning-server" }
 #federated-learning-client = { path = "../institute/federated-learning-client" }
 
-# root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup
-
-[[tool.uv.index]]
-name = "gitlab"
-url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-authenticate = "always"
-cache-control = { api = "no-cache" }
+#[[tool.uv.index]]
+#name = "gitlab"
+#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+#authenticate = "always"
