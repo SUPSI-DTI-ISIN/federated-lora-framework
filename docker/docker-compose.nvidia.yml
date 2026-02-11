@@ -31,6 +31,13 @@ services:
       - models-department:/models-department
     networks:
       - internal-department
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   keycloak-postgres-db:
     image: postgres:15
@@ -71,6 +78,7 @@ services:
       - "8085:8085"
     command:
       - start-dev
+      - --import-realm
     depends_on:
       keycloak-postgres-db:
         condition: service_healthy
@@ -79,6 +87,8 @@ services:
 #      interval: 20s
 #      timeout: 5s
 #      retries: 10
+    volumes:
+      - keycloak-initial-configuration:/opt/keycloak/data/import
     networks:
       - internal-department
       - external
@@ -157,6 +167,7 @@ services:
     environment:
       INSTITUTE_NAME: ISIN
       KEYCLOAK_URL: http://keycloak:8085
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: http://10.11.13.6:8085
       FRONTEND_URL: http://frontend:80
       MODEL_SERVICE_URL: http://model-service:8090
     restart: always
@@ -172,8 +183,18 @@ services:
       interval: 20s
       timeout: 5s
       retries: 10
+    volumes:
+      - models-institute:/models-institute
     networks:
       - internal-institute
+      - external
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   data-service:
     platform: linux/arm64/v8
@@ -181,6 +202,7 @@ services:
     environment:
       INSTITUTE_NAME: ISIN
       KEYCLOAK_URL: http://keycloak:8085
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: http://10.11.13.6:8085
       ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
       DATABASE_URL: mysql+aiomysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
       DB_HOST: documents-mysql-db
@@ -201,6 +223,7 @@ services:
       retries: 10
     networks:
       - internal-institute
+      - external
 
   model-service:
     platform: linux/arm64/v8
@@ -208,6 +231,7 @@ services:
     environment:
       INSTITUTE_NAME: ISIN
       KEYCLOAK_URL: http://keycloak:8085
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: http://10.11.13.6:8085
       FRONTEND_URL: http://frontend:80
       DEPARTMENT_SERVICE_URL: http://nginx-department-service:81
     restart: always
@@ -235,6 +259,7 @@ services:
     environment:
       INSTITUTE_NAME: ISIN
       KEYCLOAK_URL: http://keycloak:8085
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: http://10.11.13.6:8085
       INFERENCE_SERVICE_URL: http://inference-service:8095
       ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
       DATABASE_URL: mysql+aiomysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
@@ -258,6 +283,7 @@ services:
       retries: 10
     networks:
       - internal-institute
+      - external
 
   frontend:
     platform: linux/arm64/v8
@@ -317,6 +343,13 @@ services:
       - models-institute:/models-institute
     networks:
       - internal-institute
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
 volumes:
   keycloak-data:
@@ -325,6 +358,12 @@ volumes:
     driver: local
   chats-mysql-data:
     driver: local
+  keycloak-initial-configuration:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/admin/decentralised-ai-docker/keycloak-initial-configuration
   models-department:
     driver: local
     driver_opts:

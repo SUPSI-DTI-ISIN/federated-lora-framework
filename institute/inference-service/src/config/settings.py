@@ -7,6 +7,7 @@ class Settings(BaseSettings):
 
     institute_name: str
     keycloak_url: str
+    keycloak_global_hostname_url: str = None
 
     mock_llm_usage: bool = False
 

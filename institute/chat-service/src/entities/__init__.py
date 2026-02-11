@@ -1,12 +1,12 @@
 from .base_model import BaseModel
-from .message_role import MessageRole
 from .chat_model import ChatModel
+from .message_role import MessageRole
 from .message_model import MessageModel
 
 __all__ = [
     'BaseModel',
-    'MessageRole',
     'ChatModel',
+    'MessageRole',
     'MessageModel'
 ]
 

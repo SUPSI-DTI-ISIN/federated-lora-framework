@@ -8,6 +8,7 @@ class Settings(BaseSettings):
 
     keycloak_url: str
     institute_name: str
+    keycloak_global_hostname_url: str = None
     inference_service_url: str = "http://localhost:8095"
 
     database_url: str = "mysql+aiomysql://root:root@localhost:33061/chats"

@@ -5,7 +5,9 @@ if [ ! -f .env.config ]; then
   echo "Error: .env.config file not found"
   exit 1
 fi
+set -a
 source .env.config
+set +a
 
 publish_sdk() {
   local SERVICE_PATH=$1

@@ -6,8 +6,8 @@ export const getInstituteName = (): string => {
     return import.meta.env.VITE_INSTITUTE_NAME;
 }
 
-export const getAuthAuthority = (): string => {
-    return import.meta.env.VITE_AUTH_AUTHORITY;
+export const getKeycloakUrl = (): string => {
+    return import.meta.env.VITE_KEYCLOAK_URL;
 }
 
 export const getFrontendUrl = (): string => {

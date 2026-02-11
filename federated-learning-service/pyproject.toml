@@ -42,6 +42,10 @@ options.num-supernodes = 2
 address = "127.0.0.1:9093"
 insecure = true
 
+[tool.flwr.federations.nvidia-deployment]
+address = "10.11.13.6:9093"
+insecure = true
+
 # Remote federation example for use with SuperLink
 [tool.flwr.federations.remote-federation]
 address = "<SUPERLINK-ADDRESS>:<PORT>"

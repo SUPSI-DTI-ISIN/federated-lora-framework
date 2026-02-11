@@ -22,7 +22,7 @@ class InferenceServiceClient(InferenceServiceClientInterface):
         inference_url = f"{self.__inference_service_url}/api_inference/inference"
 
         try:
-            async with httpx.AsyncClient() as client:
+            async with httpx.AsyncClient(timeout=600) as client:
                 resp = await client.post(
                     inference_url,
                     headers={"Accept": "application/json", "Content-Type": "application/json"},

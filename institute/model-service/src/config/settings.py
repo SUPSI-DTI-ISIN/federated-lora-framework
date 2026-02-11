@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     keycloak_url: str
     institute_name: str
     model_key: str
+    keycloak_global_hostname_url: str = None
 
     model_base_path: str = "./model"
     frontend_url: str = "http://localhost:3000"

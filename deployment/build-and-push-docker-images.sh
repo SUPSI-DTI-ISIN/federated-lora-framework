@@ -5,6 +5,7 @@ set -o pipefail
 IMAGE_TAG="latest"
 PLATFORM_ARG=""
 SERVICES_ENV_PATH=".env.local"
+FRONTEND_ENV_PATH=".env.local"
 
 usage() {
   echo "Usage: $0 [--platform <platform>] [--tag <tag>]"
@@ -39,6 +40,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ "$IMAGE_TAG" == "nvidia" ]]; then
+  FRONTEND_ENV_PATH=".env.local-nvidia"
+fi
+
 if [ ! -f .env.config ]; then
   echo "Error: .env.config file not found"
   exit 1
@@ -68,7 +73,7 @@ docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_T
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
 docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}"
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/frontend/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../institute/frontend
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/frontend/docker/Dockerfile --build-arg ENV_PATH="$FRONTEND_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../institute/frontend
 docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}"
 
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/mlflow-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../department/mlflow-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" ../department/mlflow-service

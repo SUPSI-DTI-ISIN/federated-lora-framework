@@ -11,6 +11,6 @@ set -a
 source .env.docker
 set +a
 
-docker compose -f ../docker/docker-compose.dev.yml down -v
+docker compose -f ../docker/docker-compose.dev.yml down
 docker compose -f ../docker/docker-compose.dev.yml build
 docker compose -f ../docker/docker-compose.dev.yml up -d

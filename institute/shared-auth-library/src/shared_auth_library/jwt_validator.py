@@ -20,6 +20,7 @@ class JWTValidator:
             self,
             keycloak_url: str,
             realm: str,
+            keycloak_global_hostname_url: Optional[str] = None,
             client_id: Optional[str] = None,
             algorithms: list[str] = None
     ):
@@ -28,7 +29,7 @@ class JWTValidator:
         self.__client_id = client_id
         self.__algorithms = algorithms or ["RS256"]
         self.__jwks_uri = f"{keycloak_url}/realms/{realm}/protocol/openid-connect/certs"
-        self.__issuer = f"{keycloak_url}/realms/{realm}"
+        self.__issuer = f"{keycloak_url if keycloak_global_hostname_url is None else keycloak_global_hostname_url}/realms/{realm}"
 
         self.__jwks_client = PyJWKClient(self.__jwks_uri)
 
