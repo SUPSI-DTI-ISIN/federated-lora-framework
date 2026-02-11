@@ -1,7 +1,7 @@
 from typing import List
 
-from federated_learning_client.clients.schemas import DocumentDTO
-from federated_learning_client.domain.training import TrainingRow
+from src.federated_learning_client.clients.schemas import DocumentDTO
+from src.federated_learning_client.domain.training import TrainingRow
 
 
 class DatasetUtils:

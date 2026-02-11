@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from federated_learning_client.clients.schemas import ModelPathDTO
+from src.federated_learning_client.clients.schemas import ModelPathDTO
 
 
 class ModelServiceClientInterface(ABC):

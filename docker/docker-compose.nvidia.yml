@@ -351,6 +351,51 @@ services:
               count: all
               capabilities: [ gpu ]
 
+
+  supernode-2:
+    image: flwr/supernode:1.25.0
+    container_name: supernode-2
+    ports:
+      - "9095:9095"
+    command:
+      - --insecure
+      - --superlink
+      - superlink:9092
+      - --clientappio-api-address
+      - 0.0.0.0:9095
+      - --isolation
+      - process
+    depends_on:
+      - superlink
+    networks:
+      - internal-institute
+      - external
+
+  superexec-clientapp-2:
+    platform: linux/arm64/v8
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/superexec:nvidia
+    container_name: superexec-clientapp-2
+    command:
+      - --insecure
+      - --plugin-type
+      - clientapp
+      - --appio-api-address
+      - supernode-2:9095
+    stop_signal: SIGINT
+    depends_on:
+      - supernode-2
+    volumes:
+      - models-institute:/models-institute
+    networks:
+      - internal-institute
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
 volumes:
   keycloak-data:
     driver: local

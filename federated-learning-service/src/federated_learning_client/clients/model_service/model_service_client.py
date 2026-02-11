@@ -2,7 +2,7 @@ import requests
 from pydantic import ValidationError
 
 from .model_service_client_interface import ModelServiceClientInterface
-from federated_learning_client.clients.schemas import ModelPathDTO
+from src.federated_learning_client.clients.schemas import ModelPathDTO
 
 
 class ModelServiceClient(ModelServiceClientInterface):

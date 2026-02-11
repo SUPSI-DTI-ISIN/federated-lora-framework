@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from federated_learning_server.clients.schemas import FederatedDataDTO
+from src.federated_learning_server.clients.schemas import FederatedDataDTO
 
 
 class MlFlowServiceClientInterface(ABC):

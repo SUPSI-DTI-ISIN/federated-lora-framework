@@ -33,7 +33,9 @@ def main(grid: Grid, context: Context) -> None:
 
     arrays = ArrayRecord(peft_state)
 
-    strategy = FedAvg(fraction_train=fraction_train)
+    strategy = FedAvg(
+        fraction_train=fraction_train,
+    )
 
     result = strategy.start(
         grid=grid,

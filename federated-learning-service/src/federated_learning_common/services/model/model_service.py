@@ -4,7 +4,7 @@ from typing import Optional
 from peft import PeftModel, get_peft_model, LoraConfig
 from transformers import AutoTokenizer, AutoModelForCausalLM, PreTrainedTokenizer, BitsAndBytesConfig, PreTrainedModel
 
-from federated_learning_common.config import settings
+from src.federated_learning_common.config import settings
 
 
 class ModelService:

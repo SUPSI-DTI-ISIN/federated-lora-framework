@@ -2,7 +2,7 @@ import requests
 from pydantic import ValidationError
 
 from .mlflow_service_client_interface import MlFlowServiceClientInterface
-from federated_learning_server.clients.schemas import FederatedDataDTO
+from src.federated_learning_server.clients.schemas import FederatedDataDTO
 
 
 class MlFlowServiceClient(MlFlowServiceClientInterface):

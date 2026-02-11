@@ -1,6 +1,6 @@
 import os
 
-from federated_learning_client.config import settings
+from src.federated_learning_client.config import settings
 
 class FileUtils:
     @classmethod

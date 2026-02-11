@@ -2,7 +2,7 @@ import os
 
 from transformers import TrainingArguments, Trainer, IntervalStrategy, DataCollatorForLanguageModeling
 
-from federated_learning_client.utils import FileUtils
+from src.federated_learning_client.utils import FileUtils
 
 
 class TrainingService:

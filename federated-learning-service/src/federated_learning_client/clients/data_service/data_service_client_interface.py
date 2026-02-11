@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from federated_learning_client.clients.schemas import DocumentDTO
+from src.federated_learning_client.clients.schemas import DocumentDTO
 
 
 class DataServiceClientInterface(ABC):

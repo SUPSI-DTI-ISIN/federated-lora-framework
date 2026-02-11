@@ -4,7 +4,7 @@ import requests
 from pydantic import ValidationError
 
 from .data_service_client_interface import DataServiceClientInterface
-from federated_learning_client.clients.schemas import DocumentDTO
+from src.federated_learning_client.clients.schemas import DocumentDTO
 
 
 class DataServiceClient(DataServiceClientInterface):
