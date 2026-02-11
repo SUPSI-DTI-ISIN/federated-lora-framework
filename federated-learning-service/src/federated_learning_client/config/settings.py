@@ -8,4 +8,4 @@ class Settings(BaseSettings):
     model_service_url: str = "http://localhost:8090"
     device_map: str = "auto"
     model_key: str = "llama-2-7b"
-    dataset_output_folder: str = "./output"
+    dataset_output_folder: str = "/output"
