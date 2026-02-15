@@ -14,7 +14,7 @@ LOCAL_DOCKER_COMPOSE_ENV_FILE_PATH=".env.docker"
 REMOTE_USER="admin"
 REMOTE_HOST="10.11.13.6"
 
-REMOTE_BASE_PATH="/home/${REMOTE_USER}/decentralised-ai-docker"
+REMOTE_BASE_PATH="/home/${REMOTE_USER}/decentralised-ai"
 
 scp -i "${SSH_KEY}" "${LOCAL_DOCKER_COMPOSE_ENV_FILE_PATH}" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BASE_PATH}/.env"
 scp -i "${SSH_KEY}" "${LOCAL_DOCKER_COMPOSE_PATH}" "${REMOTE_USER}@${REMOTE_HOST}:${REMOTE_BASE_PATH}/docker-compose.yml"

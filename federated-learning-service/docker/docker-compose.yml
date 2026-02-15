@@ -29,6 +29,13 @@ services:
       - superlink
     networks:
       - flwr-network
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   supernode-1:
     image: flwr/supernode:1.25.0
@@ -41,24 +48,6 @@ services:
       - superlink:9092
       - --clientappio-api-address
       - 0.0.0.0:9094
-      - --isolation
-      - process
-    depends_on:
-      - superlink
-    networks:
-      - flwr-network
-
-  supernode-2:
-    image: flwr/supernode:1.25.0
-    container_name: supernode-2
-    ports:
-      - "9095:9095"
-    command:
-      - --insecure
-      - --superlink
-      - superlink:9092
-      - --clientappio-api-address
-      - 0.0.0.0:9095
       - --isolation
       - process
     depends_on:
@@ -79,35 +68,16 @@ services:
       - supernode-1:9094
     deploy:
       resources:
-        limits:
-          cpus: "2"
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
     stop_signal: SIGINT
     depends_on:
       - supernode-1
     networks:
       - flwr-network
-
-  superexec-clientapp-2:
-    build:
-      context: ..
-      dockerfile: docker/superexec.Dockerfile
-    container_name: superexec-clientapp-2
-    command:
-      - --insecure
-      - --plugin-type
-      - clientapp
-      - --appio-api-address
-      - supernode-2:9095
-    deploy:
-      resources:
-        limits:
-          cpus: "2"
-    stop_signal: SIGINT
-    depends_on:
-      - supernode-2
-    networks:
-      - flwr-network
-
 
 networks:
   flwr-network:

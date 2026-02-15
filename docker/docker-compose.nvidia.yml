@@ -430,19 +430,19 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /home/admin/decentralised-ai-docker/keycloak-initial-configuration
+      device: /home/admin/decentralised-ai/keycloak-initial-configuration
   models-department:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/admin/decentralised-ai-docker/models-department
+      device: /home/admin/decentralised-ai/models-department
   models-institute:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /home/admin/decentralised-ai-docker/models-institute
+      device: /home/admin/decentralised-ai/models-institute
 
 networks:
   internal-department:

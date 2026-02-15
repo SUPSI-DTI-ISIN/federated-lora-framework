@@ -10,10 +10,18 @@ from src.federated_learning_common.config import settings
 class ModelService:
     @classmethod
     def load_model(cls, model_path: str, device_map: str, access_token: Optional[str] = None) -> PreTrainedModel:
+        print("cuda available:", torch.cuda.is_available())
+        if torch.cuda.is_available() and getattr(torch.cuda, "is_bf16_supported", lambda: False)():
+            compute_dtype = torch.bfloat16
+        else:
+            compute_dtype = torch.float16
+
+        print(f"Compute dtype: {compute_dtype}")
+
         bnb_config = BitsAndBytesConfig(
             load_in_4bit=True,
             bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.bfloat16,
+            bnb_4bit_compute_dtype=compute_dtype,
             bnb_4bit_use_double_quant=True,
             llm_int8_enable_fp32_cpu_offload=True
         )

@@ -1,7 +1,7 @@
 import json
 
 from dataclasses import asdict
-from typing import List
+from typing import List, Optional
 from datasets import load_dataset, Split
 
 from .dataset_utils import DatasetUtils
@@ -23,14 +23,14 @@ class DatasetService:
         return training_dataset
 
     @staticmethod
-    def save_dataset_to_jsonl(training_dataset: TrainingDataset, partition_id: int):
+    def save_dataset_to_jsonl(training_dataset: TrainingDataset, partition_id: Optional[int] = None):
         dataset_output_file = FileUtils.get_dataset_output_file(partition_id=partition_id)
         with open(dataset_output_file, 'w', encoding='utf-8') as output:
             for training_row in training_dataset.training_rows:
                 output.write(json.dumps(asdict(training_row), ensure_ascii=False) + '\n')
 
     @staticmethod
-    def load_data(partition_id: int, test_size: float = 0.25):
+    def load_data(test_size: float = 0.25, partition_id: Optional[int] = None):
         dataset_file_path = FileUtils.get_dataset_output_file(partition_id=partition_id)
 
         dataset = load_dataset("json", data_files={"train": dataset_file_path}, split=Split.TRAIN)

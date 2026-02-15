@@ -1,13 +1,49 @@
-import os
+import torch
 
-from transformers import TrainingArguments, Trainer, IntervalStrategy, DataCollatorForLanguageModeling
+from typing import Optional
+from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
 
 from src.federated_learning_client.utils import FileUtils
 
 
 class TrainingService:
     @staticmethod
-    def train(model, tokenizer, train_dataset, eval_dataset, partition_id: int):
+    def train(model, tokenizer, train_dataset, eval_dataset, partition_id: Optional[int] = None):
+
+        print("torch version:", torch.__version__)
+        print("cuda available:", torch.cuda.is_available())
+        if torch.cuda.is_available():
+            try:
+                props = torch.cuda.get_device_properties(0)
+                print("device name:", props.name)
+                print("total mem (GB):", props.total_memory / (1024**3))
+                print("compute capability:", props.major, props.minor)
+            except Exception as e:
+                print("Errore ottenendo properties:", e)
+
+        print("torch.cuda.is_bf16_supported:", getattr(torch.cuda, "is_bf16_supported", lambda: False)())
+
+
+        use_cpu = False
+        fp16 = False
+        bf16 = False
+        if not torch.cuda.is_available():
+            use_cpu = True
+        else:
+            try:
+                bf16_supported = getattr(torch.cuda, "is_bf16_supported", lambda: False)()
+            except Exception:
+                bf16_supported = False
+
+            if bf16_supported:
+                bf16 = True
+            else:
+                fp16 = True
+
+        print(f"use_cpu: {use_cpu}")
+        print(f"bf16: {bf16}")
+        print(f"fp16: {fp16}")
+
         def preprocess(examples):
             prompts = []
             for i in range(len(examples['instruction'])):
@@ -53,8 +89,9 @@ class TrainingService:
             gradient_accumulation_steps=16,
             learning_rate=2e-4,
 
-            fp16=False,
-            bf16=True,
+            fp16=fp16,
+            bf16=bf16,
+            use_cpu=use_cpu,
             gradient_checkpointing=True,
 
             optim="paged_adamw_32bit",

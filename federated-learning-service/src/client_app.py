@@ -23,7 +23,7 @@ def lifespan(context: Context):
 
     #data_service_url: str = context.run_config["data-service-url"]
     data_service_url = settings.data_service_url
-    partition_id = context.node_config["partition-id"]
+    partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
 
     document_service: DataServiceClientInterface = DataServiceClient.get_instance(data_service_url=data_service_url)
     documents = document_service.get_documents()
@@ -42,7 +42,7 @@ def train(msg: Message, context: Context):
     device_map = settings.device_map
     model_service_url = settings.model_service_url
 
-    partition_id = context.node_config["partition-id"]
+    partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
 

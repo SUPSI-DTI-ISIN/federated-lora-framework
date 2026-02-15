@@ -12,9 +12,21 @@ dependencies = [
     "peft>=0.18.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
-    "pymupdf>=1.26.7",
-    "torch>=2.9.1",
+    "torch>=2.9.0",
+    "transformers>=4.57.1",
+    "accelerate>=1.11.0"
 ]
+
+[tool.uv]
+index-strategy = "unsafe-best-match"
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
 
 [tool.flwr.app]
 publisher = "luca.fanto"
