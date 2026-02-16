@@ -52,3 +52,12 @@ async def get_adapter_file(model_key: str, adapter_version: int, file_name: str,
 
     except FileNotFoundError as ex:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ex))
+
+
+@router.delete(
+    "/{adapter_version}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=tags
+)
+async def delete_adapter_version(model_key: str, adapter_version: int, adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service)):
+    adapter_registry_service.delete_adapter_version(model_key=model_key, adapter_version=adapter_version)

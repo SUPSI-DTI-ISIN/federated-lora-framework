@@ -7,7 +7,7 @@ events {
 }
 
 http {
-  etag off;
+    etag off;
 
   include mime.types;
   default_type application/octet-stream;
@@ -21,9 +21,12 @@ http {
 
   server {
     listen ${PORT};
+    client_max_body_size 1M;
 
     location / {
-        return 404;
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
     }
 
     location /api_mlflow {
