@@ -20,7 +20,8 @@ def main(grid: Grid, context: Context) -> None:
     print(federated_data_dto)
 
     fraction_train: float = context.run_config.get("fraction-train", 0.5)
-    num_rounds: int = context.run_config.get("num-server-rounds", 3)
+    #num_rounds: int = context.run_config.get("num-server-rounds", 3)
+    num_rounds: int = 1
     lr: float = context.run_config.get("lr", 0.01)
 
     pretrained_global_model: PreTrainedModel = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=settings.device_map)

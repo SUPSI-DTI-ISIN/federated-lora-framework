@@ -4,7 +4,7 @@ import torch
 from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
-from peft import get_peft_model_state_dict
+from peft import get_peft_model_state_dict, set_peft_model_state_dict
 from transformers import PreTrainedModel
 
 from src.federated_learning_server.clients.mlflow import MlFlowServiceClientInterface, MlFlowServiceClient
@@ -47,5 +47,9 @@ def main(grid: Grid, context: Context) -> None:
     print("\nSaving final model to disk...")
     state_dict = result.arrays.to_torch_state_dict()
 
+    set_peft_model_state_dict(peft_model, state_dict)
+
     os.makedirs(federated_data_dto.new_adapter_path, exist_ok=True)
-    torch.save(state_dict, os.path.join(federated_data_dto.new_adapter_path, "final_model.pt"))
+    peft_model.save_pretrained(federated_data_dto.new_adapter_path)
+
+    print(f"Adapter salvato correttamente in: {federated_data_dto.new_adapter_path}")

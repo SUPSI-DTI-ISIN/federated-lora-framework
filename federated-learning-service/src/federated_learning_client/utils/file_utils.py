@@ -1,3 +1,5 @@
+import shutil
+
 import os
 
 from typing import Optional
@@ -22,3 +24,15 @@ class FileUtils:
         adapter_folder = os.path.join(settings.dataset_output_folder, str(partition_id), "adapter") if partition_id is not None else os.path.join(settings.dataset_output_folder, "adapter")
         os.makedirs(adapter_folder, exist_ok=True)
         return adapter_folder
+
+    @classmethod
+    def delete_output_folder(cls, partition_id: Optional[int]) -> bool:
+        partition_folder = os.path.join(settings.dataset_output_folder, str(partition_id)) if partition_id is not None else settings.dataset_output_folder
+        if os.path.exists(partition_folder):
+            try:
+                shutil.rmtree(partition_folder)
+                return True
+            except Exception:
+                return False
+
+        return False

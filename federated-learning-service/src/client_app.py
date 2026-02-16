@@ -12,6 +12,7 @@ from src.federated_learning_client.clients.data_service import DataServiceClient
 from src.federated_learning_client.clients.model_service import ModelServiceClientInterface, ModelServiceClient
 from src.federated_learning_client.services.dataset import DatasetService
 from src.federated_learning_client.services.training import TrainingService
+from src.federated_learning_client.utils import FileUtils
 
 from src.federated_learning_common.services.model import ModelService
 
@@ -32,6 +33,10 @@ def lifespan(context: Context):
     DatasetService.save_dataset_to_jsonl(training_dataset=training_dataset, partition_id=partition_id)
 
     yield
+
+    torch.cuda.empty_cache()
+    gc.collect()
+    FileUtils.delete_output_folder(partition_id=partition_id)
 
     print("Exit lifespan...")
 
@@ -59,13 +64,12 @@ def train(msg: Message, context: Context):
 
     set_peft_model_state_dict(peft_model, peft_state)
 
-    train_dataset, eval_dataset = DatasetService.load_data(partition_id=partition_id)
+    train_dataset, _ = DatasetService.load_data(partition_id=partition_id)
 
     train_metrics = TrainingService.train(
         model=peft_model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
         partition_id=partition_id
     )
 
@@ -74,17 +78,10 @@ def train(msg: Message, context: Context):
     peft_state_out = get_peft_model_state_dict(peft_model)
 
     del peft_model
-    torch.cuda.empty_cache()
-    gc.collect()
 
     arrays = ArrayRecord(peft_state_out)
 
-    metrics = {
-        "train_loss": train_metrics.get("train_loss", None),
-        "eval_loss": train_metrics.get("eval_loss", None),
-        "num-examples": int(len(train_dataset)),
-    }
-    metric_record = MetricRecord(metrics)
+    metric_record = MetricRecord(train_metrics)
 
     content = RecordDict({"arrays": arrays, "metrics": metric_record})
     return Message(content=content, reply_to=msg)
@@ -95,33 +92,42 @@ def evaluate(msg: Message, context: Context):
     """Evaluate the model on local data."""
 
     print("Start evaluation...")
+    model_key = settings.model_key
+    device_map = settings.device_map
+    model_service_url = settings.model_service_url
+    partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
 
-    """
-    model = Net()
-    model.load_state_dict(msg.content["arrays"].to_torch_state_dict())
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    model.to(device)
+    peft_state = msg.content["arrays"].to_torch_state_dict()
 
-    # Load the data
-    partition_id = context.node_config["partition-id"]
-    num_partitions = context.node_config["num-partitions"]
-    _, valloader = load_data(partition_id, num_partitions)
+    model_service_client: ModelServiceClientInterface = ModelServiceClient.get_instance(model_service_url=model_service_url)
+    model_path_dto = model_service_client.get_model_path(model_key=model_key)
 
-    # Call the evaluation function
-    eval_loss, eval_acc = test_fn(
-        model,
-        valloader,
-        device,
+    pretrained_model: PreTrainedModel = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map)
+    tokenizer: PreTrainedTokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path)
+
+    pretrained_model = prepare_model_for_kbit_training(pretrained_model)
+    peft_model = ModelService.get_peft_model(model=pretrained_model)
+
+    set_peft_model_state_dict(peft_model, peft_state)
+
+    _, eval_dataset = DatasetService.load_data(partition_id=partition_id)
+
+    eval_loss, eval_perplexity = TrainingService.evaluate(
+        model=peft_model,
+        tokenizer=tokenizer,
+        eval_dataset=eval_dataset
     )
 
-    # Construct and return reply Message
+    del peft_model
+
+    print(f"Eval metrics - Loss: {eval_loss:.4f}, Perplexity: {eval_perplexity:.4f}")
+
     metrics = {
         "eval_loss": eval_loss,
-        "eval_acc": eval_acc,
-        "num-examples": len(valloader.dataset),
+        "eval_perplexity": eval_perplexity,
+        "num_examples": len(eval_dataset),
     }
+    print(f"Metrics {metrics}")
     metric_record = MetricRecord(metrics)
     content = RecordDict({"metrics": metric_record})
     return Message(content=content, reply_to=msg)
-    """
-    return Message(content=RecordDict(), reply_to=msg)
