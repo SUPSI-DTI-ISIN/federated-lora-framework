@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 from typing import List
 
@@ -61,6 +62,11 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             for adapter_version in adapters_version_from_department_dto.adapters_version
         ]
 
+        local_only_adapters_version = adapters_version_local_set - set(adapters_version_from_department_dto.adapters_version)
+        print(f"Local only adapters version {local_only_adapters_version}")
+        for local_only_adapter_version in local_only_adapters_version:
+            AdapterRegistryService.__delete_adapter_version(model_key=model_key, adapter_version=local_only_adapter_version)
+
         return AvailableAdaptersDTO(model_key=model_key, adapters=adapters)
 
 
@@ -103,3 +109,17 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             version=adapter_version,
             available_local=True
         )
+
+    @staticmethod
+    def __delete_adapter_version(model_key: str, adapter_version: int):
+        adapter_version_path = Path(
+            ModelPathUtils.get_model_adapter_path_by_version(
+                model_key=model_key,
+                version=adapter_version
+            )
+        )
+
+        if not adapter_version_path.exists():
+            raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")
+
+        shutil.rmtree(adapter_version_path)

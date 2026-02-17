@@ -1,4 +1,4 @@
-import {Configuration, ManagementApi} from "@isin/federated-learniAdapterAping-management-service-client"
+import {Configuration, ManagementApi} from "@isin/federated-learning-management-service-client"
 import {axiosInstance} from "./axios.ts";
 
 const config = new Configuration({
