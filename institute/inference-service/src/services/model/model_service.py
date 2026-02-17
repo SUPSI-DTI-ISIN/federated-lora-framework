@@ -46,6 +46,8 @@ class ModelService(ModelServiceInterface):
         else:
             loaded_model = self.__load_model_with_adapter(model_key=model_key, adapter_version=adapter_version)
 
+        loaded_model.model.eval()
+
         self.__model_cache[cache_key] = loaded_model
 
         return loaded_model

@@ -1,3 +1,5 @@
+import math
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -168,31 +170,11 @@ class TrainingService:
         training_args = TrainingArguments(
                 output_dir=training_folder,
 
-                num_train_epochs=3,
-                per_device_train_batch_size=1,
-                gradient_accumulation_steps=16,
-                learning_rate=2e-4,
-
                 fp16=fp16,
                 bf16=bf16,
                 use_cpu=use_cpu,
-                gradient_checkpointing=True,
-
-                optim="paged_adamw_32bit",
-                weight_decay=0.01,
-                warmup_ratio=0.03,
-                lr_scheduler_type="cosine",
-
-                # Logging and saving
-                logging_steps=10,
-                save_strategy="epoch",
-                save_total_limit=3,
-
-                eval_strategy="epoch",
+                gradient_checkpointing=False,
                 per_device_eval_batch_size=2,
-
-                max_grad_norm=0.3,
-                group_by_length=True,
             )
 
         trainer = Trainer(
@@ -204,6 +186,11 @@ class TrainingService:
 
         evaluate_output = trainer.evaluate()
 
-        print(f"Evaluation output {evaluate_output}")
+        eval_loss = evaluate_output.get("eval_loss", float("inf"))
 
-        return evaluate_output
+        try:
+            eval_perplexity = math.exp(eval_loss)
+        except OverflowError:
+            eval_perplexity = float("inf")
+
+        return eval_loss, eval_perplexity

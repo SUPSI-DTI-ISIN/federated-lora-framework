@@ -10,9 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@isin/chat-service-client": "0.1.0-dev.1770806518",
-    "@isin/data-service-client": "0.1.0-dev.1770806491",
-    "@isin/model-service-client": "0.1.0-dev.1770806505",
+    "@isin/chat-service-client": "file:../chat-service/sdks/chat-service-client",
+    "@isin/data-service-client": "file:../data-service/sdks/data-service-client",
+    "@isin/model-service-client": "file:../model-service/sdks/model-service-client",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.26",

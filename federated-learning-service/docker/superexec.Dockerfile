@@ -6,10 +6,10 @@ RUN apt-get update \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-USER app
+#USER app
 
 WORKDIR /app
-COPY --chown=app:app pyproject.toml .
+COPY pyproject.toml .
 RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml \
     && python -m pip install --no-cache-dir --upgrade pip \
     && python -m pip install --no-cache-dir \

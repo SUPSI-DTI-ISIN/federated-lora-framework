@@ -22,6 +22,8 @@ app = ClientApp()
 def lifespan(context: Context):
     print("Enter lifespan...")
 
+    print(f"Client node id {context.node_id}")
+
     #data_service_url: str = context.run_config["data-service-url"]
     data_service_url = settings.data_service_url
     partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
@@ -92,9 +94,20 @@ def evaluate(msg: Message, context: Context):
     """Evaluate the model on local data."""
 
     print("Start evaluation...")
+
+    #NUMERI CASUALI GIUSTO PER TESTING
+    metrics = {
+        "eval_loss": 2.1,
+        "eval_acc": 1.5,
+        "num-examples": 30,
+    }
+    metric_record = MetricRecord(metrics)
+    content = RecordDict({"metrics": metric_record})
+    return Message(content=content, reply_to=msg)
     model_key = settings.model_key
     device_map = settings.device_map
     model_service_url = settings.model_service_url
+
     partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
 
     peft_state = msg.content["arrays"].to_torch_state_dict()
@@ -123,11 +136,11 @@ def evaluate(msg: Message, context: Context):
     print(f"Eval metrics - Loss: {eval_loss:.4f}, Perplexity: {eval_perplexity:.4f}")
 
     metrics = {
-        "eval_loss": eval_loss,
-        "eval_perplexity": eval_perplexity,
+        "eval_loss": float(eval_loss),
+        "eval_perplexity": float(eval_perplexity),
         "num_examples": len(eval_dataset),
     }
-    print(f"Metrics {metrics}")
+    print(metrics)
     metric_record = MetricRecord(metrics)
     content = RecordDict({"metrics": metric_record})
     return Message(content=content, reply_to=msg)

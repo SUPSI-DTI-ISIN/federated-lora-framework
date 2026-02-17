@@ -14,6 +14,10 @@ class ModelResponseUtils:
         with torch.no_grad():
             outputs = loaded_model.model.generate(
                 **inputs,
+                max_new_tokens=256,
+                do_sample=True,
+                temperature=0.7,
+                top_p=0.9,
             )
 
         response = loaded_model.tokenizer.decode(
@@ -21,7 +25,7 @@ class ModelResponseUtils:
             skip_special_tokens=True
         )
 
-        if response.startswith(prompt):
-            response = response[len(prompt):].strip()
+        #if response.startswith(prompt):
+        #    response = response[len(prompt):].strip()
 
         return response
