@@ -17,7 +17,8 @@ tags = ["inference"]
 )
 async def query(
         query_request_dto: QueryRequestDTO,
-        model_service: ModelServiceInterface = Depends(get_model_service), inference_service: InferenceServiceInterface = Depends(get_inference_service),
+        model_service: ModelServiceInterface = Depends(get_model_service),
+        inference_service: InferenceServiceInterface = Depends(get_inference_service),
 ):
     loaded_model = model_service.get_or_load_model(model_key=query_request_dto.model_key, adapter_version=query_request_dto.adapter_version)
 

@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: http://localhost:8095/api_inference/inference/query
+  url: http://localhost:8095/api_inference/inference
   body: json
   auth: inherit
 }
@@ -18,7 +18,8 @@ body:json {
   {
     "model_key": "llama-2-7b",
     "adapter_version": null,
-    "prompt": "Tell me what do you know about SUPSI"
+    "prompt": "What are the sections of an Innosuisse Project Proposal which start with 1.* as a title of the section (i want the response in English)?",
+    "conversation_history": []
   }
 }
 

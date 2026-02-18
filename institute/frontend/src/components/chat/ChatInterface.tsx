@@ -1,4 +1,4 @@
-import {useRef, useState} from "react";
+import {useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
 import {ChatComposer} from "./ChatComposer";
@@ -24,6 +24,15 @@ export const ChatInterface = ({
 
     const [isRunningInference, setIsRunningInference] = useState<boolean>(false);
     const {mutateAsync: runInference} = useInferenceModel();
+
+    const sortedMessages = useMemo(() => {
+        if (!messages) return [];
+        return [...messages].sort(
+            (msg1, msg2) =>
+                new Date(msg1.created_at).getTime() -
+                new Date(msg2.created_at).getTime()
+        );
+    }, [messages]);
 
     const handleSend = async (prompt: string, adapterVersion?: number | null) => {
         if (isRunningInference) return;
@@ -68,7 +77,7 @@ export const ChatInterface = ({
                     </div>
                 )}
 
-                {messages && messages.map((message) => {
+                {sortedMessages && sortedMessages.map((message) => {
                     const from = message.role === "user" ? "user" : "assistant";
                     return (
                         <div key={message.id} className={`flex gap-4 ${from === "user" ? "flex-row-reverse" : ""}`}>

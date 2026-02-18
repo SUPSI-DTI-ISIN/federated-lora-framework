@@ -1,14 +1,17 @@
+import gc
+
 import torch
 
 from typing import Optional
 from collections import OrderedDict
 from datetime import datetime, timezone
 
-from peft import PeftModel
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from clients.model_service import ModelServiceClientInterface
+from clients.schemas import ModelPathDTO
 from schemas.model import LoadedModel, ModelCacheKey
+from utils import TorchDtypeUtils, QuantizationUtils
 from .model_service_interface import ModelServiceInterface
 
 
@@ -33,18 +36,20 @@ class ModelService(ModelServiceInterface):
 
         if cache_key in self.__model_cache:
             self.__model_cache.move_to_end(key=cache_key)
-            print("In cache")
             return self.__model_cache[cache_key]
 
         if len(self.__model_cache) >= self.__max_cached_models:
             self.__evict_least_recently_used()
 
-        print("Not in cache")
+        model_paths = self.__model_service_client.get_model_path_for_inference(
+            model_key=model_key,
+            adapter_version=adapter_version
+        )
 
         if adapter_version is None:
-            loaded_model = self.__load_base_model(model_key=model_key)
+            loaded_model = self.__load_base_model(model_paths=model_paths)
         else:
-            loaded_model = self.__load_model_with_adapter(model_key=model_key, adapter_version=adapter_version)
+            loaded_model = self.__load_model_with_adapter(model_paths=model_paths, adapter_version=adapter_version)
 
         loaded_model.model.eval()
 
@@ -61,19 +66,16 @@ class ModelService(ModelServiceInterface):
 
         del oldest_model.model
         del oldest_model.tokenizer
+        gc.collect()
         torch.cuda.empty_cache()
 
 
-    def __load_base_model(self, model_key: str) -> LoadedModel:
-        model_paths = self.__model_service_client.get_model_path_for_inference(
-            model_key=model_key,
-            adapter_version=None
-        )
-
+    def __load_base_model(self, model_paths: ModelPathDTO) -> LoadedModel:
         model = AutoModelForCausalLM.from_pretrained(
             model_paths.model_base_path,
             device_map=self.__device_map,
-            torch_dtype=torch.float16,
+            quantization_config=QuantizationUtils.get_quantization_config(),
+            dtype=TorchDtypeUtils.get_torch_dtype(),
             use_safetensors=True
         )
 
@@ -86,21 +88,19 @@ class ModelService(ModelServiceInterface):
             loaded_at=datetime.now(timezone.utc)
         )
 
-    def __load_model_with_adapter(self, model_key: str, adapter_version: int) -> LoadedModel:
-        model_paths = self.__model_service_client.get_model_path_for_inference(
-            model_key=model_key,
-            adapter_version=adapter_version
-        )
-
-        base_model = AutoModelForCausalLM.from_pretrained(
+    def __load_model_with_adapter(self, model_paths: ModelPathDTO, adapter_version: int) -> LoadedModel:
+        model = AutoModelForCausalLM.from_pretrained(
             model_paths.model_base_path,
             device_map=self.__device_map,
-            torch_dtype=torch.float16,
+            quantization_config=QuantizationUtils.get_quantization_config(),
+            dtype=TorchDtypeUtils.get_torch_dtype(),
             use_safetensors=True
         )
 
-        model = PeftModel.from_pretrained(base_model, model_paths.adapter_path)
-        tokenizer = AutoTokenizer.from_pretrained(model_paths.adapter_path)
+        model.load_adapter(model_paths.adapter_path, adapter_name=f"v{adapter_version}")
+        model.set_adapter(f"v{adapter_version}")
+
+        tokenizer = AutoTokenizer.from_pretrained(model_paths.model_base_path)
 
         return LoadedModel(
             model=model,
