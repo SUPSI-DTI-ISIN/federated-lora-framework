@@ -9,12 +9,12 @@ dependencies = [
     #"federated-learning-client",
     #"federated-learning-server",
     "flwr[simulation]>=1.25.0",
-    "peft>=0.18.0",
+    "peft>=0.18.1",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.12.0",
-    "torch>=2.9.0",
-    "transformers==5.1.0",
-    "accelerate>=1.12.0"
+    "torch==2.9.1",
+    "transformers==4.57.2",
+    "accelerate==1.12.0",
 ]
 
 [tool.uv]
