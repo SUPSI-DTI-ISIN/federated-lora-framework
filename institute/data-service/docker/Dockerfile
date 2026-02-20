@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM python:3.13-slim
+FROM python:3.13-slim
 
 ARG ENV_PATH=.env.local
 ARG UV_INDEX_GITLAB_USERNAME

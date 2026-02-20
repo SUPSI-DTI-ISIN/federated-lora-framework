@@ -1,0 +1,153 @@
+services:
+  superlink:
+    image: flwr/superlink:1.25.0
+    container_name: superlink
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+    command:
+      - --insecure
+      - --isolation
+      - process
+    ports:
+      - "9091:9091"
+      - "9092:9092"
+      - "9093:9093"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  superexec-serverapp:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/superexec:${DOCKER_IMAGE_TAG}
+    container_name: superexec-serverapp
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+    command:
+      - --insecure
+      - --plugin-type
+      - serverapp
+      - --appio-api-address
+      - superlink:9091
+    restart: always
+    depends_on:
+      - superlink
+    volumes:
+      - models:/models-department
+    networks:
+      - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  keycloak-postgres-db:
+    image: postgres:15
+    container_name: keycloak-postgres
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $KEYCLOAK_POSTGRES_USER || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal-department
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres-db:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_HTTP_PORT: 8085
+
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+    ports:
+      - "8085:8085"
+    command:
+      - start-dev
+      - --import-realm
+    depends_on:
+      keycloak-postgres-db:
+        condition: service_healthy
+    #    healthcheck:
+    #      test: [ "CMD", "curl", "--head", "-fsS", "http://localhost:8085/health/ready" ]
+    #      interval: 20s
+    #      timeout: 5s
+    #      retries: 10
+    volumes:
+      - keycloak-initial-configuration:/opt/keycloak/data/import
+    networks:
+      - internal-department
+      - external
+
+  mlflow-service:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/mlflow-service:${DOCKER_IMAGE_TAG}
+    restart: always
+    ports:
+      - "9010:9010"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - models:/models-department
+    networks:
+      - internal
+      - external
+
+  frontend:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/nginx:${DOCKER_IMAGE_TAG}
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+      PORT: 81
+    restart: always
+    ports:
+      - "81:81"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+volumes:
+  keycloak-initial-configuration:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${KEYCLOAK_INITIAL_CONFIGURATION_PATH}
+  models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MODELS_INTERNAL_PATH}
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false

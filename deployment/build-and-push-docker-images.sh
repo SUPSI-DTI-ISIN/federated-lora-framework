@@ -3,7 +3,7 @@ set -e
 set -o pipefail
 
 IMAGE_TAG="latest"
-PLATFORM_ARG=""
+PLATFORM_ARG="--platform=linux/amd64,linux/arm64"
 SERVICES_ENV_PATH=".env.local"
 FRONTEND_ENV_PATH=".env.local"
 
@@ -61,26 +61,21 @@ GITLAB_DOCKER_REGISTRY_URL="${GITLAB_DOCKER_REGISTRY_HOST}${GITLAB_DOCKER_REGIST
 
 echo "$GITLAB_DOCKER_REGISTRY_TOKEN" | docker login "$GITLAB_DOCKER_REGISTRY_HOST" -u "$GITLAB_DOCKER_REGISTRY_USERNAME" --password-stdin
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/chat-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/chat-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}"
+docker buildx create --use --name multiarch-builder
+docker buildx inspect --bootstrap
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/data-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/data-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/data-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/data-service:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../institute/chat-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/chat-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/inference-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/inference-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/data-service:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../institute/data-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/data-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../institute/inference-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/inference-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../institute/frontend/docker/Dockerfile --build-arg ENV_PATH="$FRONTEND_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../institute/frontend
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/mlflow-service:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../department/mlflow-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" ../department/mlflow-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/department/mlflow-service:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/frontend:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../institute/frontend/docker/Dockerfile --build-arg ENV_PATH="$FRONTEND_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../institute/frontend
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/nginx:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../department/nginx-service/docker/Dockerfile ../department/nginx-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/department/nginx:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/mlflow-service:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../department/mlflow-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" ../department/mlflow-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --load -f ../federated-learning-service/docker/superexec.Dockerfile ../federated-learning-service
-docker push "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}"
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/nginx:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../department/nginx-service/docker/Dockerfile ../department/nginx-service
+
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../federated-learning-service/docker/superexec.Dockerfile ../federated-learning-service
