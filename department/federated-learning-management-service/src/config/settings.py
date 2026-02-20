@@ -1,0 +1,15 @@
+from typing import List
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(validate_default=False)
+
+    keycloak_url: str
+    realm_name: str
+    keycloak_global_hostname_url: str = None
+
+    frontend_url: str = "http://localhost:3001"
+
+    @property
+    def cors_origins(self) -> List[str]:
+        return [self.frontend_url]

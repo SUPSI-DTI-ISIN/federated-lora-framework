@@ -7,15 +7,16 @@ Check this file before assigning ports to new services.
 
 ## Department Stack
 
-| Port | Service                  | Purpose / Notes                 |
-|------|--------------------------|---------------------------------|
-| 5432 | PostgreSQL               | MLflow backend database         |
-| 9000 | MinIO API                | S3-compatible artifact storage  |
-| 9001 | MinIO Console            | MinIO web UI                    |
-| 5000 | MLflow Server            | MLflow tracking server          |
-| 9010 | MLflow Service API       | Department MLflow API           |
-| 81   | Department NGINX Gateway | Reverse proxy to MLflow service |
-| 8085 | Keycloak                 | Authentication Service          |
+| Port | Service                                   | Purpose / Notes                   |
+|------|-------------------------------------------|-----------------------------------|
+| 5432 | PostgreSQL                                | MLflow backend database           |
+| 9000 | MinIO API                                 | S3-compatible artifact storage    |
+| 9001 | MinIO Console                             | MinIO web UI                      |
+| 5000 | MLflow Server                             | MLflow tracking server            |
+| 9010 | MLflow Service API                        | Department MLflow API             |
+| 9015 | Federated Learning Management Service API | Federated Learning Management API |
+| 81   | Department NGINX Gateway                  | Reverse proxy to MLflow service   |
+| 8085 | Keycloak                                  | Authentication Service            |
 
 ---
 

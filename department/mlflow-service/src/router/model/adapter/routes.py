@@ -1,6 +1,8 @@
 from fastapi import status, Depends, HTTPException, APIRouter
 from fastapi.responses import FileResponse
+from shared_auth_library.entities import User
 
+from auth import jwt_validator
 from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
 from services.adapter import AdapterRegistryServiceInterface
 from .dependencies import get_adapter_registry_service
@@ -52,3 +54,17 @@ async def get_adapter_file(model_key: str, adapter_version: int, file_name: str,
 
     except FileNotFoundError as ex:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(ex))
+
+
+@router.delete(
+    "/{adapter_version}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=tags
+)
+async def delete_adapter_version(
+        model_key: str,
+        adapter_version: int,
+        adapter_registry_service: AdapterRegistryServiceInterface = Depends(get_adapter_registry_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
+    adapter_registry_service.delete_adapter_version(model_key=model_key, adapter_version=adapter_version)

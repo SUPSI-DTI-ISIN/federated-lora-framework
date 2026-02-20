@@ -25,3 +25,7 @@ class AdapterRegistryServiceInterface(ABC):
     @abstractmethod
     def get_adapter_file(self, model_key: str, adapter_version: int, file_name: str) -> Path:
         raise NotImplementedError
+
+    @abstractmethod
+    def delete_adapter_version(self, model_key: str, adapter_version: int):
+        raise NotImplementedError

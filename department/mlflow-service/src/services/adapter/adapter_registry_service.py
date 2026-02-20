@@ -1,3 +1,5 @@
+import shutil
+
 import os
 from pathlib import Path
 from typing import Optional
@@ -15,7 +17,6 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
         if cls.__INSTANCE is None:
             cls.__INSTANCE = cls()
         return cls.__INSTANCE
-
 
     def get_adapters_version(self, model_key: str) -> ModelAdaptersVersionDTO:
         model_adapters_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
@@ -94,3 +95,17 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")
 
         return FileUtils.join_paths(base_path=Path(adapter_version_path), file_name=file_name)
+
+
+    def delete_adapter_version(self, model_key: str, adapter_version: int):
+        adapter_version_path = Path(
+            ModelPathUtils.get_model_adapter_path_by_version(
+                model_key=model_key,
+                version=adapter_version
+            )
+        )
+
+        if not adapter_version_path.exists():
+            raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")
+
+        shutil.rmtree(adapter_version_path)
