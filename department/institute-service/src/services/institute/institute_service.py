@@ -3,7 +3,7 @@ from typing import List
 from entities import InstituteModel
 from repositories.institute import InstituteRepositoryInterface
 from schemas.institute import InstituteDTO, InstituteCreationRequestDTO
-from schemas.exceptions import InstituteNotFoundError
+from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError
 from .institute_service_interface import InstituteServiceInterface
 
 
@@ -30,6 +30,14 @@ class InstituteService(InstituteServiceInterface):
 
         if institute is None:
             raise InstituteNotFoundError(institute_id=institute_id)
+
+        return InstituteDTO.model_validate(institute)
+
+    async def get_by_name(self, institute_name: str) -> InstituteDTO:
+        institute = await self.__institute_repository.get_by_name(institute_name=institute_name)
+
+        if institute is None:
+            raise InstituteNameNotFoundError(institute_name=institute_name)
 
         return InstituteDTO.model_validate(institute)
 

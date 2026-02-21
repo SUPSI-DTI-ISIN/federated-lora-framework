@@ -36,6 +36,15 @@ class InstituteRepository(InstituteRepositoryInterface):
         except SQLAlchemyError as exc:
             raise exc
 
+    async def get_by_name(self, institute_name: str) -> Optional[InstituteModel]:
+        try:
+            query = select(InstituteModel).where(InstituteModel.name == institute_name)
+            result = await self._db_session.execute(query)
+            model = result.scalars().first()
+            return model
+        except SQLAlchemyError as exc:
+            raise exc
+
     async def delete_institute_by_id(self, institute_model: InstituteModel) -> None:
         try:
             await self._db_session.delete(institute_model)

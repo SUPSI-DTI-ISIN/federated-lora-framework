@@ -19,7 +19,7 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-shared-auth-library = { path = "../shared-auth-library" }
+shared-auth-library = { path = "../../shared-auth-library" }
 
 #[[tool.uv.index]]
 #name = "gitlab"

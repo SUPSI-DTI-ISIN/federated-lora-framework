@@ -269,6 +269,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "python-multipart" },
     { name = "setuptools" },
+    { name = "shared-auth-library" },
     { name = "uvicorn" },
 ]
 
@@ -282,6 +283,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "python-multipart", specifier = ">=0.0.21" },
     { name = "setuptools", specifier = ">=80.9.0" },
+    { name = "shared-auth-library", directory = "../../shared-auth-library" },
     { name = "uvicorn", specifier = ">=0.40.0" },
 ]
 
@@ -441,6 +443,20 @@ wheels = [
 ]
 
 [[package]]
+name = "pyjwt"
+version = "2.11.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5c/5a/b46fa56bf322901eee5b0454a34343cdbdae202cd421775a8ee4e42fd519/pyjwt-2.11.0.tar.gz", hash = "sha256:35f95c1f0fbe5d5ba6e43f00271c275f7a1a4db1dab27bf708073b75318ea623", size = 98019, upload-time = "2026-01-30T19:59:55.694Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6f/01/c26ce75ba460d5cd503da9e13b21a33804d38c2165dec7b716d06b13010c/pyjwt-2.11.0-py3-none-any.whl", hash = "sha256:94a6bde30eb5c8e04fee991062b534071fd1439ef58d2adc9ccb823e7bcd0469", size = 28224, upload-time = "2026-01-30T19:59:54.539Z" },
+]
+
+[package.optional-dependencies]
+crypto = [
+    { name = "cryptography" },
+]
+
+[[package]]
 name = "pymysql"
 version = "1.1.2"
 source = { registry = "https://pypi.org/simple" }
@@ -474,6 +490,23 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/82/f3/748f4d6f65d1756b9ae577f329c951cda23fb900e4de9f70900ced962085/setuptools-82.0.0.tar.gz", hash = "sha256:22e0a2d69474c6ae4feb01951cb69d515ed23728cf96d05513d36e42b62b37cb", size = 1144893, upload-time = "2026-02-08T15:08:40.206Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e1/c6/76dc613121b793286a3f91621d7b75a2b493e0390ddca50f11993eadf192/setuptools-82.0.0-py3-none-any.whl", hash = "sha256:70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0", size = 1003468, upload-time = "2026-02-08T15:08:38.723Z" },
+]
+
+[[package]]
+name = "shared-auth-library"
+version = "0.1.0"
+source = { directory = "../../shared-auth-library" }
+dependencies = [
+    { name = "fastapi" },
+    { name = "pyjwt", extra = ["crypto"] },
+    { name = "setuptools" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.128.5" },
+    { name = "pyjwt", extras = ["crypto"], specifier = ">=2.11.0" },
+    { name = "setuptools", specifier = ">=80.9.0" },
 ]
 
 [[package]]

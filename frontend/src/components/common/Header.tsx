@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {NavLink, Link, useLocation} from "react-router-dom";
-import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut} from "lucide-react";
+import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut, LayoutGrid} from "lucide-react";
 import {motion, AnimatePresence} from "framer-motion";
 import {LanguageSwitcher} from "../header/LanguageSwitcher";
 import mimirLogo from "../../assets/mimir-logo.png"
@@ -17,6 +17,7 @@ export const Header = () => {
 
     const publicLinks = [
         { path: "/", labelKey: "header.nav.home", icon: Home },
+        { path: "/realms", labelKey: "header.nav.realms", icon: LayoutGrid },
     ];
 
     const protectedLinks = [

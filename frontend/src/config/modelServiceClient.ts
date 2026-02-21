@@ -1,4 +1,4 @@
-import {Configuration, AdaptersApi, PathApi} from "@isin/model-service-client"
+import {Configuration, AdaptersApi} from "@isin/model-service-client"
 import {axiosInstance} from "./axios.ts";
 
 const config = new Configuration({
@@ -7,4 +7,3 @@ const config = new Configuration({
 });
 
 export const adaptersApi = new AdaptersApi(config);
-export const pathApi = new PathApi(config);

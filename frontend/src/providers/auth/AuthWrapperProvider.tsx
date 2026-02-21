@@ -3,6 +3,7 @@ import {hasAuthParams, useAuth} from "react-oidc-context";
 import {AuthWrapperContext} from "../../contexts/auth/authWrapperContext.ts";
 import {setAuthToken} from "../../config/axios.ts";
 import {useQueryClient} from "@tanstack/react-query";
+import {useSelectorRealm} from "../../hooks/realm/useSelectorRealm.ts";
 
 interface AuthWrapperProviderProps {
     children: ReactNode;
@@ -11,6 +12,7 @@ interface AuthWrapperProviderProps {
 export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const auth = useAuth();
     const queryClient = useQueryClient();
+    const {setRealm} = useSelectorRealm();
     const [hasTriedSignin, setHasTriedSignin] = useState(false);
 
     const isLoading = useMemo(() => {
@@ -61,6 +63,8 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
             auth.removeUser();
             console.error("Logout failed:", err);
             throw err;
+        } finally {
+            setRealm(undefined);
         }
     }, [auth]);
 

@@ -18,5 +18,9 @@ class InstituteServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_by_name(self, institute_name: str) -> InstituteDTO:
+        raise NotImplementedError
+
+    @abstractmethod
     async def delete_institute_by_id(self, institute_id: int) -> None:
         raise NotImplementedError

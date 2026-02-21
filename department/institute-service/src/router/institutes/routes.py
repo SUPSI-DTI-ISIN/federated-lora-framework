@@ -1,7 +1,9 @@
 from typing import List
 
 from fastapi import APIRouter, status, Depends
+from shared_auth_library.entities import User
 
+from auth import jwt_validator
 from schemas.institute import InstituteDTO, InstituteCreationRequestDTO
 from services.institute import InstituteServiceInterface
 from .dependencies import get_institute_service
@@ -19,6 +21,7 @@ tags = ["institute"]
 async def create_institute(
         institute_creation_request_dto: InstituteCreationRequestDTO,
         institute_service: InstituteServiceInterface = Depends(get_institute_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await institute_service.create_new_institute(institute_creation_request_dto=institute_creation_request_dto)
 
@@ -53,6 +56,7 @@ async def get_institute_by_id(
 )
 async def delete_institute(
         institute_id: int,
-        institute_service: InstituteServiceInterface = Depends(get_institute_service)
+        institute_service: InstituteServiceInterface = Depends(get_institute_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     await institute_service.delete_institute_by_id(institute_id=institute_id)

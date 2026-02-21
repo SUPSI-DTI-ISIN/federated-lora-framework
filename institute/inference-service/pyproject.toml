@@ -24,7 +24,7 @@ index-strategy = "unsafe-best-match"
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
-shared-auth-library = { path = "../shared-auth-library" }
+shared-auth-library = { path = "../../shared-auth-library" }
 
 [[tool.uv.index]]
 name = "pytorch-cu128"

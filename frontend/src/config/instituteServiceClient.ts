@@ -1,4 +1,4 @@
-import {Configuration, AdapterApi} from "@isin/mlflow-service-client"
+import {Configuration, InstituteApi} from "@isin/institute-service-client"
 import {axiosInstance} from "./axios.ts";
 
 const config = new Configuration({
@@ -6,4 +6,4 @@ const config = new Configuration({
     baseOptions: axiosInstance.defaults
 });
 
-export const departmentAdaptersApi = new AdapterApi(config);
+export const instituteApi = new InstituteApi(config);

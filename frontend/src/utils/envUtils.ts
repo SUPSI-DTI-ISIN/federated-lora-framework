@@ -13,3 +13,11 @@ export const getFrontendUrl = (): string => {
 export const getClientId = (): string => {
     return import.meta.env.VITE_CLIENT_ID;
 }
+
+const getEnvironment = (): string => {
+    return import.meta.env.VITE_ENVIRONMENT;
+}
+
+export const isInDevelopmentEnvironment = (): boolean => {
+    return getEnvironment() === "development" || getEnvironment() === "dev"
+}

@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@isin/federated-learning-management-service-client": "file:../federated-learning-management-service/sdks/federated-learning-management-service-client",
+    "@isin/institute-service-client": "file:../institute-service/sdks/institute-service-client",
     "@isin/mlflow-service-client": "file:../mlflow-service/sdks/mlflow-service-client",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",

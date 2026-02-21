@@ -12,6 +12,7 @@
   "dependencies": {
     "@isin/federated-learning-management-service-client": "file:../department/federated-learning-management-service/sdks/federated-learning-management-service-client",
     "@isin/mlflow-service-client": "file:../department/mlflow-service/sdks/mlflow-service-client",
+    "@isin/institute-service-client": "file:../department/institute-service/sdks/institute-service-client",
     "@isin/chat-service-client": "file:../institute/chat-service/sdks/chat-service-client",
     "@isin/data-service-client": "file:../institute/data-service/sdks/data-service-client",
     "@isin/model-service-client": "file:../institute/model-service/sdks/model-service-client",

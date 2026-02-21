@@ -18,5 +18,9 @@ class InstituteRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_by_name(self, institute_name: str) -> Optional[InstituteModel]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def delete_institute_by_id(self, institute_model: InstituteModel) -> None:
         raise NotImplementedError

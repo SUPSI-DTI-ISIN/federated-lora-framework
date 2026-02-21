@@ -14,4 +14,8 @@ dependencies = [
     "dotenv>=0.9.9",
     "aiomysql>=0.3.2",
     "cryptography>=46.0.5",
+    "shared-auth-library"
 ]
+
+[tool.uv.sources]
+shared-auth-library = { path = "../../shared-auth-library" }
