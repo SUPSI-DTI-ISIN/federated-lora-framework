@@ -821,7 +821,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.12.0" },
     { name = "python-multipart", specifier = ">=0.0.21" },
     { name = "setuptools", specifier = ">=80.9.0" },
-    { name = "shared-auth-library", directory = "../../institute/shared-auth-library" },
+    { name = "shared-auth-library", directory = "../../shared-auth-library" },
     { name = "uvicorn", specifier = ">=0.40.0" },
 ]
 
@@ -1485,7 +1485,7 @@ wheels = [
 [[package]]
 name = "shared-auth-library"
 version = "0.1.0"
-source = { directory = "../../institute/shared-auth-library" }
+source = { directory = "../../shared-auth-library" }
 dependencies = [
     { name = "fastapi" },
     { name = "pyjwt", extra = ["crypto"] },

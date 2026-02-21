@@ -2,23 +2,20 @@ import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "framer-motion";
 import { SortDesc, SortAsc, Inbox } from "lucide-react";
-import type { AdapterDTO } from "@isin/model-service-client";
-import { AdapterCard } from "./AdapterCard";
+import { DepartmentAdapterCard } from "./DepartmentAdapterCard.tsx";
 
-type AdaptersListProps = {
-    adapters: AdapterDTO[];
-    onDownload: (adapterVersion: number) => Promise<void> | void;
-    isDownloading?: boolean;
+type DepartmentAdaptersListProps = {
+    adapters: number[];
 };
 
-export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: AdaptersListProps) => {
+export const DepartmentAdaptersList = ({ adapters }: DepartmentAdaptersListProps) => {
     const { t } = useTranslation();
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
     const sortedAdapters = useMemo(() => {
         return [...adapters].sort((a, b) => {
-            const vA = a.version ?? 0;
-            const vB = b.version ?? 0;
+            const vA = a ?? 0;
+            const vB = b ?? 0;
             return sortOrder === "desc" ? vB - vA : vA - vB;
         });
     }, [adapters, sortOrder]);
@@ -52,11 +49,9 @@ export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: Ad
             <div className="flex flex-col gap-3">
                 <AnimatePresence mode="popLayout">
                     {sortedAdapters.map((adapter) => (
-                        <AdapterCard
-                            key={String(adapter.version)}
+                        <DepartmentAdapterCard
+                            key={String(adapter)}
                             adapter={adapter}
-                            onDownload={onDownload}
-                            isDownloading={isDownloading}
                         />
                     ))}
                 </AnimatePresence>

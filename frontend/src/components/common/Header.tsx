@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {NavLink, Link, useLocation, useNavigate} from "react-router-dom";
-import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut} from "lucide-react";
+import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut, LayoutGrid} from "lucide-react";
 import {motion, AnimatePresence} from "framer-motion";
 import {LanguageSwitcher} from "../header/LanguageSwitcher";
 import mimirLogo from "../../assets/mimir-logo.png"
@@ -13,7 +13,7 @@ export const Header = () => {
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const location = useLocation();
-    const {isAuthenticated, isLoading, logout, user} = useAuthWrapper();
+    const {isAuthenticated, isLoading, logout, user, isDepartmentAdmin} = useAuthWrapper();
     const profileRef = useRef<HTMLDivElement | null>(null);
 
     const publicLinks = [
@@ -26,10 +26,16 @@ export const Header = () => {
         { path: "/adapters", labelKey: "header.nav.adapters", icon: Microchip },
     ];
 
+    const departmentAdminProtectedLinks = [
+        { path: "/realms-admin", labelKey: "header.nav.realms", icon: LayoutGrid },
+        { path: "/adapters-admin", labelKey: "header.nav.adapters", icon: Microchip },
+    ];
+
     const visibleLinks = useMemo(() => {
         if (isLoading) return publicLinks;
+        const links = isDepartmentAdmin? departmentAdminProtectedLinks : protectedLinks;
         return isAuthenticated
-            ? [...publicLinks, ...protectedLinks]
+            ? [...publicLinks, ...links]
             : publicLinks;
     }, [isAuthenticated, isLoading]);
 

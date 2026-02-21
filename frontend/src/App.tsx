@@ -10,6 +10,8 @@ import {AdaptersPage} from "./pages/AdaptersPage.tsx";
 import {SectionsPage} from "./pages/SectionsPage.tsx";
 import {ProtectedRoute} from "./routes/ProtectedRoute.tsx";
 import {RealmsPage} from "./pages/RealmsPage.tsx";
+import {RealmsAdminPage} from "./pages/RealmsAdminPage.tsx";
+import {AdaptersAdminPage} from "./pages/AdaptersAdminPage.tsx";
 
 const App = () => {
     return (
@@ -34,6 +36,15 @@ const App = () => {
                     path="/realms"
                     element={
                         <RealmsPage/>
+                    }
+                />
+
+                <Route
+                    path="/realms-admin"
+                    element={
+                        <ProtectedRoute departmentAdminOnly={true}>
+                            <RealmsAdminPage/>
+                        </ProtectedRoute>
                     }
                 />
 
@@ -63,6 +74,15 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <AdaptersPage/>
+                        </ProtectedRoute>
+                    }
+                />
+
+                <Route
+                    path="/adapters-admin"
+                    element={
+                        <ProtectedRoute departmentAdminOnly={true}>
+                            <AdaptersAdminPage/>
                         </ProtectedRoute>
                     }
                 />

@@ -1,51 +1,38 @@
-import {useMemo, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import toast from "react-hot-toast";
 import {AdapterFilterBar} from "../components/adapters/AdapterFilterBar";
-import {AdaptersList} from "../components/adapters/institute/AdaptersList.tsx";
-import {useGetAllAvailableAdapters} from "../hooks/institute/model/useGetAllAvailableAdapters.ts";
 import {getModelKey} from "../utils/envUtils.ts";
-import {useSaveNewAdapter} from "../hooks/institute/model/useSaveNewAdapter.ts";
-import type {AdapterDTO} from "@isin/model-service-client";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 import {Cpu} from "lucide-react";
+import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
+import {useNavigate} from "react-router-dom";
+import {useGetAllDepartmentAdapters} from "../hooks/department/mlflow/useGetAllDepartmentAdapters.ts";
+import {DepartmentAdaptersList} from "../components/adapters/department/DepartmentAdaptersList.tsx";
 
-export const AdaptersPage = () => {
+export const AdaptersAdminPage = () => {
     const {t} = useTranslation();
+    const {isDepartmentAdmin} = useAuthWrapper();
+    const navigate = useNavigate();
     const modelKey = getModelKey();
+
     const {
         data: availableAdapters,
         isLoading: isLoadingAdapters,
         error: errorLoadingAdapters
-    } = useGetAllAvailableAdapters(modelKey);
-
-    const [isSavingNewAdapter, setIsSavingNewAdapter] = useState<boolean>(false);
-    const {mutateAsync: saveNewAdapter} = useSaveNewAdapter();
+    } = useGetAllDepartmentAdapters(modelKey);
 
     const [query, setQuery] = useState("");
-    const [localOnly, setLocalOnly] = useState(false);
 
-    const adapters = useMemo(() => availableAdapters?.adapters ?? [], [availableAdapters]);
+    const adapters = useMemo(() => availableAdapters?.adapters_version ?? [], [availableAdapters]);
 
-    const filtered = adapters.filter((adapter: AdapterDTO) => {
-        const matchQuery = adapter?.version?.toString().includes(query.toLowerCase()) || (adapter?.version && `v${adapter.version}`.includes(query));
-        const matchLocal = !localOnly || adapter.available_local;
-        return matchQuery && matchLocal;
+    const filtered = adapters.filter((adapterVersion: number) => {
+        return adapterVersion?.toString().includes(query.toLowerCase()) || (adapterVersion && `v${adapterVersion}`.includes(query));
     });
 
-    const handleDownload = async (adapterVersion: number) => {
-        try {
-            setIsSavingNewAdapter(true);
-            toast.loading(t("adapters.toast.downloading"), {id: "adapter-download"});
-            await saveNewAdapter({modelKey, adapterVersion});
-            toast.success(t("adapters.toast.downloaded"), {id: "adapter-download"});
-        } catch (err: any) {
-            console.error(err);
-            toast.error(t("adapters.toast.error"), {id: "adapter-download"});
-        } finally {
-            setIsSavingNewAdapter(false);
-        }
-    };
+    useEffect(() => {
+        if(!isDepartmentAdmin)
+            navigate("/")
+    }, [isDepartmentAdmin]);
 
     if (isLoadingAdapters) {
         return (
@@ -94,16 +81,12 @@ export const AdaptersPage = () => {
                         <AdapterFilterBar
                             query={query}
                             onQueryChange={setQuery}
-                            localOnly={localOnly}
-                            onLocalOnlyChange={setLocalOnly}
                         />
                     </div>
                 </motion.div>
 
-                <AdaptersList
+                <DepartmentAdaptersList
                     adapters={filtered}
-                    onDownload={handleDownload}
-                    isDownloading={isSavingNewAdapter}
                 />
             </div>
         </div>

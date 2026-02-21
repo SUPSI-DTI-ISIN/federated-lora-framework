@@ -4,10 +4,11 @@ import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
 
 type ProtectedRouteProps = {
     children: ReactNode;
+    departmentAdminOnly?: boolean
 };
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
-    const { isAuthenticated, isLoading } = useAuthWrapper();
+export const ProtectedRoute = ({ children, departmentAdminOnly = false }: ProtectedRouteProps) => {
+    const { isAuthenticated, isLoading, isDepartmentAdmin } = useAuthWrapper();
 
     if (isLoading) {
         return (
@@ -17,7 +18,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         );
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || (departmentAdminOnly && !isDepartmentAdmin) ) {
         return <Navigate to="/" replace />;
     }
 

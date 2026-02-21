@@ -5,15 +5,25 @@ import { useSelectorRealm } from "../hooks/realm/useSelectorRealm.ts";
 import { useGetAllInstitutes } from "../hooks/department/institutes/useGetAllInstitutes.ts";
 import type {InstituteDTO} from "@isin/institute-service-client";
 import {RealmList} from "../components/realm/RealmList.tsx";
+import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
+import {useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 export const RealmsPage = () => {
     const { t } = useTranslation();
     const { setRealm } = useSelectorRealm();
     const { data: realms, isLoading, error } = useGetAllInstitutes();
+    const {isAuthenticated} = useAuthWrapper()
+    const navigate = useNavigate();
 
     const handleSelectRealm = (realm: InstituteDTO) => {
         setRealm(realm.name);
     }
+
+    useEffect(() => {
+        if (isAuthenticated)
+            navigate("/");
+    }, [isAuthenticated]);
 
     if (isLoading) {
         return (

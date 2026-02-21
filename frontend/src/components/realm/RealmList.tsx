@@ -4,10 +4,11 @@ import {RealmCard} from "./RealmCard.tsx";
 
 interface RealmListProps {
     realms: InstituteDTO[];
-    onSelectRealm: (realm: InstituteDTO) => void
+    onSelectRealm?: (realm: InstituteDTO) => void;
+    isAdmin?: boolean;
 }
 
-export const RealmList = ({realms, onSelectRealm}: RealmListProps) => {
+export const RealmList = ({realms, onSelectRealm, isAdmin = false}: RealmListProps) => {
 
     return (
         <motion.div
@@ -26,6 +27,7 @@ export const RealmList = ({realms, onSelectRealm}: RealmListProps) => {
                     <RealmCard
                         realm={institute}
                         onSelect={onSelectRealm}
+                        isAdmin={isAdmin}
                     />
                 </motion.div>
             ))}

@@ -4,8 +4,8 @@ import {Search} from "lucide-react";
 type AdapterFilterBarProps = {
     query: string;
     onQueryChange: (v: string) => void;
-    localOnly: boolean;
-    onLocalOnlyChange: (v: boolean) => void;
+    localOnly?: boolean;
+    onLocalOnlyChange?: (v: boolean) => void;
 };
 
 export const AdapterFilterBar = ({ query, onQueryChange, localOnly, onLocalOnlyChange }: AdapterFilterBarProps) => {
@@ -23,20 +23,23 @@ export const AdapterFilterBar = ({ query, onQueryChange, localOnly, onLocalOnlyC
                     className="input input-ghost w-full pl-12 bg-base-100 focus:bg-base-100 rounded-xl border-none focus:ring-2 focus:ring-secondary/20"
                 />
             </div>
+            {localOnly && onLocalOnlyChange && (
+                <>
+                    <div className="divider divider-horizontal hidden sm:flex mx-0" />
 
-            <div className="divider divider-horizontal hidden sm:flex mx-0" />
-
-            <label className="flex items-center gap-3 cursor-pointer select-none px-4 py-2 hover:bg-base-100 rounded-xl transition-colors w-full sm:w-auto justify-between sm:justify-start">
+                    <label className="flex items-center gap-3 cursor-pointer select-none px-4 py-2 hover:bg-base-100 rounded-xl transition-colors w-full sm:w-auto justify-between sm:justify-start">
                 <span className="text-sm font-bold text-base-content/70 uppercase tracking-wider">
                     {t("adapters.filter.localOnly")}
                 </span>
-                <input
-                    type="checkbox"
-                    checked={localOnly}
-                    onChange={(e) => onLocalOnlyChange(e.target.checked)}
-                    className="toggle toggle-secondary"
-                />
-            </label>
+                        <input
+                            type="checkbox"
+                            checked={localOnly}
+                            onChange={(e) => onLocalOnlyChange(e.target.checked)}
+                            className="toggle toggle-secondary"
+                        />
+                    </label>
+                </>
+            )}
         </div>
     );
 };
