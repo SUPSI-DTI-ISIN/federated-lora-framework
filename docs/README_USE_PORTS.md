@@ -15,6 +15,7 @@ Check this file before assigning ports to new services.
 | 5000 | MLflow Server                             | MLflow tracking server            |
 | 9010 | MLflow Service API                        | Department MLflow API             |
 | 9015 | Federated Learning Management Service API | Federated Learning Management API |
+| 9020 | Institute Service API                     | Institute Management API          |
 | 81   | Department NGINX Gateway                  | Reverse proxy to MLflow service   |
 | 8085 | Keycloak                                  | Authentication Service            |
 

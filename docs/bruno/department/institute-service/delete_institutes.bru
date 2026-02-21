@@ -1,0 +1,20 @@
+meta {
+  name: delete_institutes
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:9020/api_institute/institutes/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

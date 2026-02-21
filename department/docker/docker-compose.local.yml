@@ -1,4 +1,19 @@
 services:
+  institutes-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "33062:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${INSTITUTES_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${INSTITUTES_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${INSTITUTES_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - institutes-mysql-data:/var/lib/mysql
+
   keycloak-postgres-db:
     image: postgres:15
     container_name: keycloak-postgres
@@ -116,6 +131,8 @@ services:
 #        condition: service_healthy
 
 volumes:
+  institutes-mysql-data:
+    driver: local
   keycloak-data:
     driver: local
 #  mlflow-postgres-data:

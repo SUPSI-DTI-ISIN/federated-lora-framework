@@ -4,8 +4,7 @@ from datetime import datetime, timezone
 
 from entities import ChatModel
 from repositories.chat import ChatRepositoryInterface
-from schemas.chat import ChatDTO
-from schemas.chat.chat_creation_request_dto import ChatCreationRequestDTO
+from schemas.chat import ChatDTO, ChatCreationRequestDTO
 from schemas.exceptions import ChatNotFoundError
 from .chat_service_interface import ChatServiceInterface
 

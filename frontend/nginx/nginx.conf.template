@@ -1,0 +1,87 @@
+worker_processes auto;
+
+events {
+    worker_connections 2048;
+    multi_accept on;
+    use epoll;
+}
+
+http {
+  etag off;
+
+  include mime.types;
+  default_type application/octet-stream;
+
+  client_header_timeout  15m;
+  client_body_timeout    15m;
+  send_timeout           15m;
+
+  # Keep connections alive
+  keepalive_timeout      75s;
+
+  server {
+    listen ${PORT};
+    client_max_body_size 1M;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html index.htm;
+        try_files $uri $uri/ /index.html;
+    }
+
+    location /api_chat {
+      proxy_pass ${CHAT_SERVICE_URL};
+
+      proxy_connect_timeout  60s;
+      proxy_send_timeout     15m;
+      proxy_read_timeout     15m;
+
+      # Prevent buffering issues with long responses
+      proxy_buffering        off;
+      proxy_request_buffering off;
+
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header X-Proxied-By "nginx-frontend" always;
+
+      if ($request_method = OPTIONS) {
+        return 204;
+      }
+
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /api_data {
+      client_max_body_size 100M;
+      proxy_pass ${DATA_SERVICE_URL};
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header X-Proxied-By "nginx-frontend" always;
+
+      if ($request_method = OPTIONS) {
+        return 204;
+      }
+
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /api_model {
+      proxy_pass ${MODEL_SERVICE_URL};
+      add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+      add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+      add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+      add_header 'Access-Control-Allow-Credentials' 'true' always;
+      add_header X-Proxied-By "nginx-frontend" always;
+
+      if ($request_method = OPTIONS) {
+        return 204;
+      }
+
+      proxy_set_header X-Real-IP $remote_addr;
+    }
+  }
+}
