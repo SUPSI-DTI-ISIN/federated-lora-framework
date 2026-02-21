@@ -2,8 +2,8 @@ import {motion} from 'framer-motion';
 import {Plus, MessageSquare, ChevronRight, ChevronLeft} from 'lucide-react';
 import {useTranslation} from "react-i18next";
 import type {ChatDTO} from "@isin/chat-service-client";
-import {useCreateChat} from "../../hooks/chat/useCreateChat.ts";
-import {useDeleteChat} from "../../hooks/chat/useDeleteChat.ts";
+import {useCreateChat} from "../../hooks/institute/chat/useCreateChat.ts";
+import {useDeleteChat} from "../../hooks/institute/chat/useDeleteChat.ts";
 import {useState} from "react";
 import toast from "react-hot-toast";
 

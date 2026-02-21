@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { Upload, X, FileText } from "lucide-react";
 import toast from "react-hot-toast";
-import { useUploadDocument } from "../../hooks/data/documents/useUploadDocument.ts";
+import { useUploadDocument } from "../../hooks/institute/data/documents/useUploadDocument.ts";
 
 interface DocumentUploadProps {
     onClose: (documentId?: number) => void;

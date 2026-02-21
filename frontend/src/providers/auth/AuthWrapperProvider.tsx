@@ -12,7 +12,7 @@ interface AuthWrapperProviderProps {
 export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const auth = useAuth();
     const queryClient = useQueryClient();
-    const {setRealm, pendingLogin, clearPendingLogin} = useSelectorRealm();
+    const {realm, setRealm, pendingLogin, clearPendingLogin} = useSelectorRealm();
     const [hasTriedSignin, setHasTriedSignin] = useState(false);
 
     const isLoading = useMemo(() => {
@@ -67,7 +67,8 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const value = useMemo(() => ({
             user: auth.user ?? null,
             isLoading,
-            isAuthenticated: auth.isAuthenticated && !!auth.user && !!auth.user.profile,
+            isAuthenticated: auth.isAuthenticated && !!auth.user && !!auth.user.profile && !!realm,
+            isDepartmentAdmin: auth.isAuthenticated && !!auth.user && !!auth.user.profile && !!realm && auth.user?.profile?.realm_admin === true,
             login,
             logout,
         }),

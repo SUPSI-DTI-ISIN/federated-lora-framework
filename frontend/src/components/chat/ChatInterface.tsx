@@ -2,9 +2,9 @@ import {useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
 import {ChatComposer} from "./ChatComposer";
-import {useInferenceModel} from "../../hooks/chat/useInferenceModel.ts";
+import {useInferenceModel} from "../../hooks/institute/chat/useInferenceModel.ts";
 import {Cpu, Sparkles, User} from "lucide-react";
-import {useGetAllMessagesByChat} from "../../hooks/chat/useGetAllMessagesByChat.ts";
+import {useGetAllMessagesByChat} from "../../hooks/institute/chat/useGetAllMessagesByChat.ts";
 
 
 interface ChatInterfaceProps {

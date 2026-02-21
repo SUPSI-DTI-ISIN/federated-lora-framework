@@ -49,6 +49,18 @@ async def get_institute_by_id(
 ):
     return await institute_service.get_by_id(institute_id=institute_id)
 
+@router.get(
+    "/name/{institute_name}",
+    response_model=InstituteDTO,
+    status_code=status.HTTP_200_OK,
+    tags=tags
+)
+async def get_institute_by_name(
+        institute_name: str,
+        institute_service: InstituteServiceInterface = Depends(get_institute_service)
+):
+    return await institute_service.get_by_name(institute_name=institute_name)
+
 @router.delete(
     "/{institute_id}",
     status_code=status.HTTP_204_NO_CONTENT,

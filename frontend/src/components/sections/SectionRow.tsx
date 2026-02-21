@@ -1,7 +1,7 @@
 import type {SectionDTO} from "@isin/data-service-client";
 import {AnimatePresence, motion} from "framer-motion";
 import {ChevronDown, Trash2} from "lucide-react";
-import {useDeleteSection} from "../../hooks/data/sections/useDeleteSection.ts";
+import {useDeleteSection} from "../../hooks/institute/data/sections/useDeleteSection.ts";
 import {useState} from "react";
 import toast from "react-hot-toast";
 import {useTranslation} from "react-i18next";

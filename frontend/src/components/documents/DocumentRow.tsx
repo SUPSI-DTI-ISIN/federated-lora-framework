@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { DocumentDTO } from "@isin/data-service-client";
 import { motion } from "framer-motion";
 import {FileText, Trash2, InspectIcon} from "lucide-react";
-import { useDeleteDocument } from "../../hooks/data/documents/useDeleteDocument.ts";
+import { useDeleteDocument } from "../../hooks/institute/data/documents/useDeleteDocument.ts";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";

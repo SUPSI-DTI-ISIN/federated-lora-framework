@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { AnimatePresence } from "framer-motion";
 import { AlertCircle, FileIcon } from "lucide-react";
 
-import { useGetAllDocuments } from "../../hooks/data/documents/useGetAllDocuments.ts";
+import { useGetAllDocuments } from "../../hooks/institute/data/documents/useGetAllDocuments.ts";
 import { DocumentRow } from "./DocumentRow";
 
 interface DocumentListProps {

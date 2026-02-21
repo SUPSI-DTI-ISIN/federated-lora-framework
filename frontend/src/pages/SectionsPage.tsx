@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useGetDocumentById } from "../hooks/data/documents/useGetDocumentById.ts";
+import { useGetDocumentById } from "../hooks/institute/data/documents/useGetDocumentById.ts";
 import { SectionsHeader } from "../components/sections/SectionsHeader";
 import { SectionsList } from "../components/sections/SectionsList";
 

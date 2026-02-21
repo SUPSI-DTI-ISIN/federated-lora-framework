@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
 import { LayoutGrid, AlertCircle } from "lucide-react";
 import { useSelectorRealm } from "../hooks/realm/useSelectorRealm.ts";
-import { useGetAllInstitutes } from "../hooks/institutes/useGetAllInstitutes.ts";
+import { useGetAllInstitutes } from "../hooks/department/institutes/useGetAllInstitutes.ts";
 import type {InstituteDTO} from "@isin/institute-service-client";
 import {RealmList} from "../components/realm/RealmList.tsx";
 

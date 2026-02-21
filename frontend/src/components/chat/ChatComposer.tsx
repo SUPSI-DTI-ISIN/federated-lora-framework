@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {Send} from "lucide-react";
-import {useGetAllAvailableLocalAdapters} from "../../hooks/model/useGetAllAvailableLocalAdapters.ts";
+import {useGetAllAvailableLocalAdapters} from "../../hooks/institute/model/useGetAllAvailableLocalAdapters.ts";
 
 type ChatComposerProps = {
     modelKey: string;

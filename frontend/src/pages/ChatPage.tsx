@@ -2,7 +2,7 @@ import {useState} from "react";
 import {Menu} from "lucide-react";
 import {ChatSidebar} from "../components/chat/ChatSidebar";
 import {getModelKey} from "../utils/envUtils.ts";
-import {useGetAllChats} from "../hooks/chat/useGetAllChats.ts";
+import {useGetAllChats} from "../hooks/institute/chat/useGetAllChats.ts";
 import {ChatInterfaceWrapper} from "../components/chat/ChatInterfaceWrapper.tsx";
 
 export const ChatPage = () => {

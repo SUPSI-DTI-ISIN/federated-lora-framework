@@ -5,6 +5,7 @@ export type AuthWrapperContextType = {
     user: User | null;
     isLoading: boolean;
     isAuthenticated: boolean;
+    isDepartmentAdmin: boolean;
     login: () => void;
     logout: () => void;
 };
