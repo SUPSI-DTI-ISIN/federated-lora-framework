@@ -26,12 +26,9 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
     def get_available_adapters(self, model_key: str) -> AvailableAdaptersDTO:
         adapters_version_from_department_dto = self.__mlflow_service_client.get_adapters_version(model_key=model_key)
 
-        if adapters_version_from_department_dto.adapters_version is None:
-            return AvailableAdaptersDTO(model_key=model_key)
-
         adapters_version_local_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
 
-        if not os.path.exists(adapters_version_local_path):
+        if not os.path.exists(adapters_version_local_path) and adapters_version_from_department_dto.adapters_version is not None:
             return AvailableAdaptersDTO(
                 model_key=model_key,
                 adapters=[
@@ -46,7 +43,7 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             if os.path.isdir(version_path) and entry.isdigit() and os.listdir(version_path):
                 adapters_version_local.append(int(entry))
 
-        if not adapters_version_local:
+        if not adapters_version_local and adapters_version_from_department_dto.adapters_version is not None:
             return AvailableAdaptersDTO(
                 model_key=model_key,
                 adapters=[
@@ -57,15 +54,17 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
 
         adapters_version_local_set = set(adapters_version_local)
 
+        local_only_adapters_version = adapters_version_local_set - set(adapters_version_from_department_dto.adapters_version) if adapters_version_from_department_dto.adapters_version is not None else adapters_version_local_set
+        for local_only_adapter_version in local_only_adapters_version:
+            AdapterRegistryService.__delete_adapter_version(model_key=model_key, adapter_version=local_only_adapter_version)
+
+        if adapters_version_from_department_dto.adapters_version is None:
+            return AvailableAdaptersDTO(model_key=model_key)
+
         adapters = [
             AdapterDTO(version=int(adapter_version), available_local=(int(adapter_version) in adapters_version_local_set))
             for adapter_version in adapters_version_from_department_dto.adapters_version
         ]
-
-        local_only_adapters_version = adapters_version_local_set - set(adapters_version_from_department_dto.adapters_version)
-        print(f"Local only adapters version {local_only_adapters_version}")
-        for local_only_adapter_version in local_only_adapters_version:
-            AdapterRegistryService.__delete_adapter_version(model_key=model_key, adapter_version=local_only_adapter_version)
 
         return AvailableAdaptersDTO(model_key=model_key, adapters=adapters)
 
@@ -118,6 +117,8 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
                 version=adapter_version
             )
         )
+
+        print(adapter_version_path)
 
         if not adapter_version_path.exists():
             raise FileNotFoundError(f"Model with {model_key} does not have adapter with version {adapter_version}")

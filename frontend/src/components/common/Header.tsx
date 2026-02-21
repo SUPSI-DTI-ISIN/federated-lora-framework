@@ -6,6 +6,7 @@ import {motion, AnimatePresence} from "framer-motion";
 import {LanguageSwitcher} from "../header/LanguageSwitcher";
 import mimirLogo from "../../assets/mimir-logo.png"
 import {useAuthWrapper} from "../../hooks/auth/useAuthWrapper.ts";
+import {useSelectorRealm} from "../../hooks/realm/useSelectorRealm.ts";
 
 export const Header = () => {
     const {t} = useTranslation();
@@ -14,6 +15,7 @@ export const Header = () => {
     const [profileOpen, setProfileOpen] = useState(false);
     const location = useLocation();
     const {isAuthenticated, isLoading, logout, user, isDepartmentAdmin} = useAuthWrapper();
+    const {realm} = useSelectorRealm();
     const profileRef = useRef<HTMLDivElement | null>(null);
 
     const publicLinks = [
@@ -72,7 +74,7 @@ export const Header = () => {
                                         className="flex items-center gap-3">
                                 <img src={mimirLogo} alt="Mimir Logo" className="h-10 w-auto"/>
                                 <span
-                                    className="hidden text-xl font-bold tracking-tight text-base-content sm:inline-block">{t("header.title")}</span>
+                                    className="hidden text-xl font-bold tracking-tight text-base-content sm:inline-block">{t("header.title")} {isAuthenticated && realm? "(" + realm + ")" : ""}</span>
                             </motion.div>
                         </Link>
                     </div>

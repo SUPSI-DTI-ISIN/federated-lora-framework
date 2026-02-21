@@ -12,7 +12,7 @@ export const useDeleteDepartmentAdapters = () => {
     return useMutation<void, Error, DeleteDepartmentAdaptersParams>({
         mutationFn: async ({modelKey, adapterVersion}: DeleteDepartmentAdaptersParams) => departmentAdaptersApi.deleteAdapterVersionApiMlflowModelModelKeyAdaptersAdapterVersionDelete(modelKey, adapterVersion).then(response => response.data),
         onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: ["department", "adapters"]})
+            queryClient.invalidateQueries({queryKey: ["department-adapters"]})
         }
     })
 }

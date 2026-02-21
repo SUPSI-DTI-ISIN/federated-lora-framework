@@ -8,7 +8,7 @@ from services.utils import InitModelDownloaderServiceInterface, InitModelDownloa
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    mlflow_service_client: MlFlowServiceClientInterface = MlFlowServiceClient.get_instance(department_service_url=settings.department_service_url)
+    mlflow_service_client: MlFlowServiceClientInterface = MlFlowServiceClient.get_instance(mlflow_department_service_url=settings.mlflow_department_service_url)
 
     init_model_downloader_service: InitModelDownloaderServiceInterface = InitModelDownloaderService.get_instance(mlflow_service_client=mlflow_service_client)
     init_model_downloader_service.download_base_model(model_key=settings.model_key)
