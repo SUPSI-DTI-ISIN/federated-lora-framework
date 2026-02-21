@@ -12,7 +12,7 @@ export const AuthProviders = ({children}: AuthProvidersProps) => {
     const {realm} = useSelectorRealm();
 
     return (
-        <AuthProvider {...getOidcAuthConfiguration(realm)}>
+        <AuthProvider key={realm}  {...getOidcAuthConfiguration(realm)}>
             <AuthWrapperProvider>
                 {children}
             </AuthWrapperProvider>

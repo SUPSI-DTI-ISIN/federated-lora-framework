@@ -1,7 +1,7 @@
 import {useEffect, useMemo, useRef, useState} from "react";
 import {useTranslation} from "react-i18next";
-import {NavLink, Link, useLocation} from "react-router-dom";
-import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut, LayoutGrid} from "lucide-react";
+import {NavLink, Link, useLocation, useNavigate} from "react-router-dom";
+import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut} from "lucide-react";
 import {motion, AnimatePresence} from "framer-motion";
 import {LanguageSwitcher} from "../header/LanguageSwitcher";
 import mimirLogo from "../../assets/mimir-logo.png"
@@ -9,15 +9,15 @@ import {useAuthWrapper} from "../../hooks/auth/useAuthWrapper.ts";
 
 export const Header = () => {
     const {t} = useTranslation();
+    const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [profileOpen, setProfileOpen] = useState(false);
     const location = useLocation();
-    const {isAuthenticated, isLoading, login, logout, user} = useAuthWrapper();
+    const {isAuthenticated, isLoading, logout, user} = useAuthWrapper();
     const profileRef = useRef<HTMLDivElement | null>(null);
 
     const publicLinks = [
         { path: "/", labelKey: "header.nav.home", icon: Home },
-        { path: "/realms", labelKey: "header.nav.realms", icon: LayoutGrid },
     ];
 
     const protectedLinks = [
@@ -32,6 +32,10 @@ export const Header = () => {
             ? [...publicLinks, ...protectedLinks]
             : publicLinks;
     }, [isAuthenticated, isLoading]);
+
+    const handleLogin = () => {
+        navigate("/realms");
+    }
 
     useEffect(() => {
         function handleClick(e: MouseEvent) {
@@ -149,7 +153,7 @@ export const Header = () => {
                                     </AnimatePresence>
                                 </>
                             ) : (
-                                <button className="btn" onClick={login}>
+                                <button className="btn" onClick={handleLogin}>
                                     {t("header.login", "Login")}
                                 </button>
                             )}
@@ -225,7 +229,7 @@ export const Header = () => {
                                         </button>
                                     </div>
                                 ) : (
-                                    <button className="btn w-full" onClick={login}>
+                                    <button className="btn w-full" onClick={handleLogin}>
                                         {t("header.login", "Login")}
                                     </button>
                                 )}

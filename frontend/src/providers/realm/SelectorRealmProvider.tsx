@@ -1,4 +1,4 @@
-import {type ReactNode, useMemo, useState} from "react";
+import {type ReactNode, useCallback, useMemo, useState} from "react";
 import {SelectorRealmContext} from "../../contexts/realm/selectorRealmContext.ts";
 
 interface SelectorRealmProviderProps {
@@ -6,15 +6,30 @@ interface SelectorRealmProviderProps {
 }
 
 export const SelectorRealmProvider = ({children}: SelectorRealmProviderProps) => {
-    const [selectedRealm, setSelectedRealm] = useState<string | undefined>(undefined);
+    const [selectedRealm, setSelectedRealm] = useState<string | undefined>(() => {
+        return localStorage.getItem("selected-realm") ?? undefined;
+    });
+    const [pendingLogin, setPendingLogin] = useState(false);
 
+    const setRealm = useCallback((realm: string | undefined) => {
+        setSelectedRealm(realm);
+        if (realm) {
+            localStorage.setItem("selected-realm", realm);
+            setPendingLogin(true);
+        } else {
+            localStorage.removeItem("selected-realm");
+            setPendingLogin(false);
+        }
+    }, []);
+
+    const clearPendingLogin = useCallback(() => setPendingLogin(false), []);
 
     const value = useMemo(() => ({
-            realm: selectedRealm,
-            setRealm: setSelectedRealm,
-        }),
-        [selectedRealm, setSelectedRealm]
-    );
+        realm: selectedRealm,
+        setRealm,
+        pendingLogin,
+        clearPendingLogin
+    }), [selectedRealm, setRealm]);
 
     return (
         <SelectorRealmContext.Provider value={value}>

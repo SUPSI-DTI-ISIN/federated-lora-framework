@@ -12,7 +12,7 @@ interface AuthWrapperProviderProps {
 export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const auth = useAuth();
     const queryClient = useQueryClient();
-    const {setRealm} = useSelectorRealm();
+    const {setRealm, pendingLogin, clearPendingLogin} = useSelectorRealm();
     const [hasTriedSignin, setHasTriedSignin] = useState(false);
 
     const isLoading = useMemo(() => {
@@ -24,26 +24,24 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     }, [auth.isLoading, auth.activeNavigator]);
 
     useEffect(() => {
-        const token = auth.user?.access_token ?? null;
-        setAuthToken(token);
+        setAuthToken(auth.user?.access_token ?? null);
         queryClient.invalidateQueries();
     }, [auth.user?.access_token, queryClient]);
 
     useEffect(() => {
-        if (
-            !hasAuthParams() &&
-            !auth.user &&
-            !auth.activeNavigator &&
-            !auth.isLoading &&
-            !hasTriedSignin
-        ) {
-            auth.signinSilent()
-                .catch(() => {})
-                .finally(() => {
-                    setHasTriedSignin(true);
-                });
+        if (auth.isLoading || auth.activeNavigator) return;
+
+        if (pendingLogin && !auth.user) {
+            clearPendingLogin();
+            auth.signinRedirect();
+            return;
         }
-    }, [auth, hasTriedSignin]);
+
+        if (!pendingLogin && !hasAuthParams() && !auth.user && !hasTriedSignin) {
+            setHasTriedSignin(true);
+            auth.signinSilent().catch(() => {});
+        }
+    }, [pendingLogin, auth.isLoading, auth.activeNavigator, auth.user, hasTriedSignin]);
 
     const login = useCallback(async () => {
         try {
@@ -57,16 +55,14 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     const logout = useCallback(async () => {
         try {
             setAuthToken(null);
-
+            setRealm(undefined);
             await auth.signoutRedirect();
         } catch (err) {
             auth.removeUser();
             console.error("Logout failed:", err);
             throw err;
-        } finally {
-            setRealm(undefined);
         }
-    }, [auth]);
+    }, [auth, setRealm]);
 
     const value = useMemo(() => ({
             user: auth.user ?? null,
