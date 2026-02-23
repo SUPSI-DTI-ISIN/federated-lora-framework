@@ -37,9 +37,9 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/inference-service:${DOCKER_IMAGE_TAG}
     environment:
       INSTITUTE_NAME: ${INSTITUTE_NAME}
-      KEYCLOAK_URL: ${KEYCLOAK_SERVICE_URL}
-      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_SERVICE_URL}
-      FRONTEND_URL: http://frontend:80
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
       MODEL_SERVICE_URL: http://model-service:8090
     restart: always
     ports:
@@ -69,13 +69,13 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/data-service:${DOCKER_IMAGE_TAG}
     environment:
       INSTITUTE_NAME: ${INSTITUTE_NAME}
-      KEYCLOAK_URL: ${KEYCLOAK_SERVICE_URL}
-      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_SERVICE_URL}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
       DATABASE_URL: mysql+aiomysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
       DB_HOST: documents-mysql-db
       DB_PORT: 3306
-      FRONTEND_URL: http://frontend:80
+      FRONTEND_URL: ${FRONTEND_URL}
     restart: always
     ports:
       - "8080:8080"
@@ -95,9 +95,9 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/model-service:${DOCKER_IMAGE_TAG}
     environment:
       INSTITUTE_NAME: ${INSTITUTE_NAME}
-      KEYCLOAK_URL: ${KEYCLOAK_SERVICE_URL}
-      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_SERVICE_URL}
-      FRONTEND_URL: http://frontend:80
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
       MLFLOW_DEPARTMENT_SERVICE_URL: ${MLFLOW_DEPARTMENT_SERVICE_URL}
     restart: always
     ports:
@@ -117,14 +117,14 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/chat-service:${DOCKER_IMAGE_TAG}
     environment:
       INSTITUTE_NAME: ${INSTITUTE_NAME}
-      KEYCLOAK_URL: ${KEYCLOAK_SERVICE_URL}
-      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_SERVICE_URL}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       INFERENCE_SERVICE_URL: http://inference-service:8095
       ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
       DATABASE_URL: mysql+aiomysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
       DB_HOST: chats-mysql-db
       DB_PORT: 3306
-      FRONTEND_URL: http://frontend:80
+      FRONTEND_URL: ${FRONTEND_URL}
     restart: always
     ports:
       - "8081:8081"
@@ -142,8 +142,8 @@ services:
       - internal
       - external
 
-  frontend:
-    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/frontend:${DOCKER_IMAGE_TAG}
+  nginx-service:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/nginx:${DOCKER_IMAGE_TAG}
     environment:
       CHAT_SERVICE_URL: http://chat-service:8081
       DATA_SERVICE_URL: http://data-service:8080

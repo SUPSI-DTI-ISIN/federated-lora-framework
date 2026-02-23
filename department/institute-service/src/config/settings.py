@@ -1,8 +1,6 @@
 from typing import List
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from commons import Environment
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
@@ -12,7 +10,6 @@ class Settings(BaseSettings):
     keycloak_global_hostname_url: str = None
     database_url: str = "mysql+aiomysql://root:root@localhost:33062/institutes"
     frontend_url: str = "http://localhost:3000"
-    environment: str = Environment.DEV
     department_url: str = "http://localhost:81"
 
     @property

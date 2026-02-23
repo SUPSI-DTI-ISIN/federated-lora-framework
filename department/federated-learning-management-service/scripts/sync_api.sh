@@ -13,8 +13,7 @@ mkdir -p "$SDKS_DIR"
 
 echo "Generating OpenAPI json..."
 uv sync --reinstall
-#uv run --env-file ../.env.dev ../src/extract_openapi.py --output "$OPENAPI_JSON_PATH"
-uv run ../src/extract_openapi.py --output "$OPENAPI_JSON_PATH"
+uv run --env-file ../.env.dev ../src/extract_openapi.py --output "$OPENAPI_JSON_PATH"
 
 if [ ! -f "$OPENAPI_JSON_PATH" ]; then
     echo "OpenAPI spec not found at $OPENAPI_JSON_PATH"
@@ -41,7 +40,7 @@ cd "$CLIENT_DIR"
 npm install
 npm run build
 
-cd ../../../frontend
-npm install "../${SERVICE_NAME}/sdks/${SERVICE_NAME}-client"
+cd ../../../../frontend
+npm install "../department/${SERVICE_NAME}/sdks/${SERVICE_NAME}-client"
 
 echo "Sync $SERVICE_NAME done with version: $VERSION"

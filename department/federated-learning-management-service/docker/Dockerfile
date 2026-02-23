@@ -1,6 +1,8 @@
 FROM --platform=$TARGETPLATFORM python:3.13-slim
 
-#ARG ENV_PATH=.env.local
+ARG ENV_PATH=.env.local
+ARG UV_INDEX_GITLAB_USERNAME
+ARG UV_INDEX_GITLAB_PASSWORD
 
 ENV PYTHONUNBUFFERED=1
 
@@ -16,14 +18,17 @@ ENV PATH="/root/.local/bin/:$PATH"
 
 WORKDIR /app
 
+ENV UV_INDEX_GITLAB_USERNAME=${UV_INDEX_GITLAB_USERNAME}
+ENV UV_INDEX_GITLAB_PASSWORD=${UV_INDEX_GITLAB_PASSWORD}
+
 COPY src src/
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
-#COPY $ENV_PATH .env
+COPY $ENV_PATH .env
 
 RUN uv sync
 
 EXPOSE 9015
-#ENV UV_ENV_FILE=.env
+ENV UV_ENV_FILE=.env
 
 CMD ["uv", "run", "src/federated_learning_management_service.py", "-p", "9015"]

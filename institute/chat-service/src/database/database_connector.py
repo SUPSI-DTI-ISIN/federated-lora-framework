@@ -1,6 +1,5 @@
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
-from commons import Environment
 from config import settings
 
 class DatabaseConnector:
@@ -11,7 +10,7 @@ class DatabaseConnector:
     def init_database_connection(cls):
         cls._engine = create_async_engine(
             url=settings.database_url,
-            echo=settings.environment == Environment.DEV,
+            echo=False,
             pool_pre_ping=True
         )
 

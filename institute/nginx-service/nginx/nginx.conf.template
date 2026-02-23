@@ -24,18 +24,25 @@ http {
     client_max_body_size 1M;
 
     location / {
-        root /usr/share/nginx/html;
-        index index.html index.htm;
-        try_files $uri $uri/ /index.html;
+        return 404;
     }
 
-    location /api_mlflow {
-      proxy_pass ${MLFLOW_SERVICE_URL};
+    location /api_chat {
+      proxy_pass ${CHAT_SERVICE_URL};
+
+      proxy_connect_timeout  60s;
+      proxy_send_timeout     15m;
+      proxy_read_timeout     15m;
+
+      # Prevent buffering issues with long responses
+      proxy_buffering        off;
+      proxy_request_buffering off;
+
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
       add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
       add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
       add_header 'Access-Control-Allow-Credentials' 'true' always;
-      add_header X-Proxied-By "nginx-department" always;
+      add_header X-Proxied-By "nginx-frontend" always;
 
       if ($request_method = OPTIONS) {
         return 204;
@@ -44,13 +51,14 @@ http {
       proxy_set_header X-Real-IP $remote_addr;
     }
 
-    location /api_institute {
-      proxy_pass ${INSTITUTE_SERVICE_URL};
+    location /api_data {
+      client_max_body_size 100M;
+      proxy_pass ${DATA_SERVICE_URL};
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
       add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
       add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
       add_header 'Access-Control-Allow-Credentials' 'true' always;
-      add_header X-Proxied-By "nginx-department" always;
+      add_header X-Proxied-By "nginx-frontend" always;
 
       if ($request_method = OPTIONS) {
         return 204;
@@ -59,13 +67,13 @@ http {
       proxy_set_header X-Real-IP $remote_addr;
     }
 
-    location /api_federated {
-      proxy_pass ${FEDERATED_SERVICE_URL};
+    location /api_model {
+      proxy_pass ${MODEL_SERVICE_URL};
       add_header 'Access-Control-Allow-Origin' "$http_origin" always;
       add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
       add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
       add_header 'Access-Control-Allow-Credentials' 'true' always;
-      add_header X-Proxied-By "nginx-department" always;
+      add_header X-Proxied-By "nginx-frontend" always;
 
       if ($request_method = OPTIONS) {
         return 204;

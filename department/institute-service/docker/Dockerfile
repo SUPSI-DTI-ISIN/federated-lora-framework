@@ -1,6 +1,8 @@
 FROM python:3.13-slim
 
 ARG ENV_PATH=.env.local
+ARG UV_INDEX_GITLAB_USERNAME
+ARG UV_INDEX_GITLAB_PASSWORD
 
 ENV PYTHONUNBUFFERED=1
 
@@ -15,6 +17,9 @@ RUN sh /uv-installer.sh && rm /uv-installer.sh
 ENV PATH="/root/.local/bin/:$PATH"
 
 WORKDIR /app
+
+ENV UV_INDEX_GITLAB_USERNAME=${UV_INDEX_GITLAB_USERNAME}
+ENV UV_INDEX_GITLAB_PASSWORD=${UV_INDEX_GITLAB_PASSWORD}
 
 COPY src src/
 COPY pyproject.toml pyproject.toml

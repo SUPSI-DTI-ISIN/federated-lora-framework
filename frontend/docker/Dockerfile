@@ -1,7 +1,7 @@
 FROM --platform=$TARGETPLATFORM node:22.21-alpine AS builder
 
 ARG NPM_TOKEN
-ARG ENV_PATH=.env
+ARG ENV_PATH=.env.local
 
 WORKDIR /app
 
