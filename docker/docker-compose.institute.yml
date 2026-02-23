@@ -53,17 +53,17 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models:/models-institute
+      - models:/models
     networks:
       - internal
       - external
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [ gpu ]
 
   data-service:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/data-service:${DOCKER_IMAGE_TAG}
@@ -108,7 +108,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models:/models-institute
+      - models:/models
     networks:
       - internal
       - external
@@ -165,7 +165,6 @@ services:
 
   supernode:
     image: flwr/supernode:1.25.0
-    container_name: supernode
     environment:
       DATA_SERVICE_URL: http://data-service:8080
       MODEL_SERVICE_URL: http://model-service:8090
@@ -190,7 +189,6 @@ services:
 
   superexec-clientapp:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/superexec:${DOCKER_IMAGE_TAG}
-    container_name: superexec-clientapp
     environment:
       DATA_SERVICE_URL: http://data-service:8080
       MODEL_SERVICE_URL: http://model-service:8090
@@ -204,16 +202,16 @@ services:
     depends_on:
       - supernode
     volumes:
-      - models:/models-institute
+      - models:/models
     networks:
       - internal
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [ gpu ]
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [ gpu ]
 
 volumes:
   documents-mysql-data:
