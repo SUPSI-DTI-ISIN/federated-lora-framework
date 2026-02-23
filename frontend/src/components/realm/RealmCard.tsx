@@ -47,7 +47,7 @@ export const RealmCard = ({ realm, onSelect, isAdmin = false }: RealmCardProps) 
                         </p>
                     </div>
 
-                    {isAdmin ? (
+                    {isAdmin && realm.deletable ? (
                         <button
                             onClick={handleDelete}
                             disabled={isDeleting}

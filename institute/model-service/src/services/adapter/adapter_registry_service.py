@@ -28,13 +28,13 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
 
         adapters_version_local_path = ModelPathUtils.get_model_adapters_path(model_key=model_key)
 
-        if not os.path.exists(adapters_version_local_path) and adapters_version_from_department_dto.adapters_version is not None:
+        if not os.path.exists(adapters_version_local_path):
             return AvailableAdaptersDTO(
                 model_key=model_key,
                 adapters=[
                     AdapterDTO(version=int(adapter_version), available_local=False)
                     for adapter_version in adapters_version_from_department_dto.adapters_version
-                ]
+                ] if adapters_version_from_department_dto.adapters_version is not None else None
             )
 
         adapters_version_local = []
@@ -43,13 +43,13 @@ class AdapterRegistryService(AdapterRegistryServiceInterface):
             if os.path.isdir(version_path) and entry.isdigit() and os.listdir(version_path):
                 adapters_version_local.append(int(entry))
 
-        if not adapters_version_local and adapters_version_from_department_dto.adapters_version is not None:
+        if not adapters_version_local:
             return AvailableAdaptersDTO(
                 model_key=model_key,
                 adapters=[
                     AdapterDTO(version=int(adapter_version), available_local=False)
                     for adapter_version in adapters_version_from_department_dto.adapters_version
-                ]
+                ] if adapters_version_from_department_dto.adapters_version is not None else None
             )
 
         adapters_version_local_set = set(adapters_version_local)

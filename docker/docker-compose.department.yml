@@ -34,7 +34,7 @@ services:
     depends_on:
       - superlink
     volumes:
-      - models:/models-department
+      - models:/models
     networks:
       - internal
     deploy:
@@ -134,7 +134,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models:/models-department
+      - models:/models
     networks:
       - internal
       - external

@@ -15,6 +15,7 @@ class InstituteService(InstituteServiceInterface):
         new_institute = InstituteModel(
             name=institute_creation_request_dto.name,
             url=institute_creation_request_dto.url,
+            deletable=institute_creation_request_dto.deletable
         )
 
         new_institute_created = await self.__institute_repository.save(institute_model=new_institute)
