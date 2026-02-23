@@ -5,3 +5,4 @@ class InstituteDTO(BaseModel):
     id: int
     name: str
     url: str
+    deletable: bool

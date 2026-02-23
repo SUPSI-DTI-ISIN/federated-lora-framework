@@ -25,7 +25,8 @@ async def lifespan(app: FastAPI):
             await institute_service.create_new_institute(
                 institute_creation_request_dto=InstituteCreationRequestDTO(
                     name=settings.realm_name,
-                    url=settings.department_url
+                    url=settings.department_url,
+                    deletable=False
                 )
             )
 

@@ -3,7 +3,7 @@ from typing import List
 from entities import InstituteModel
 from repositories.institute import InstituteRepositoryInterface
 from schemas.institute import InstituteDTO, InstituteCreationRequestDTO
-from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError
+from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError, InstituteCannotBeDeletedError
 from .institute_service_interface import InstituteServiceInterface
 
 
@@ -46,5 +46,8 @@ class InstituteService(InstituteServiceInterface):
 
         if institute is None:
             raise InstituteNotFoundError(institute_id=institute_id)
+
+        if not institute.deletable:
+            raise InstituteCannotBeDeletedError(institute_id=institute_id)
 
         await self.__institute_repository.delete_institute_by_id(institute_model=institute)

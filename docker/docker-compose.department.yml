@@ -177,7 +177,7 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REALM_NAME: ${REALM_NAME:-Department}
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated_learning_management/health" ]
       interval: 20s
       timeout: 5s
       retries: 10
@@ -211,6 +211,8 @@ services:
 
 volumes:
   institutes-mysql-data:
+    driver: local
+  keycloak-data:
     driver: local
   keycloak-initial-configuration:
     driver: local
