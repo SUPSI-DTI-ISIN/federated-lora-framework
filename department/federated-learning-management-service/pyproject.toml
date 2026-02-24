@@ -11,13 +11,17 @@ dependencies = [
     "uvicorn>=0.40.0",
     "python-multipart>=0.0.21",
     "shared-auth-library",
+    "sse-starlette>=3.2.0",
+    "celery-types>=0.24.0",
+    "celery[redis]>=5.6.2",
+    "flower>=2.0.1",
 ]
 
 [tool.uv.sources]
-#shared-auth-library = { path = "../../shared-auth-library" }
-shared-auth-library = { index = "gitlab" }
+shared-auth-library = { path = "../../shared-auth-library" }
+#shared-auth-library = { index = "gitlab" }
 
-[[tool.uv.index]]
-name = "gitlab"
-url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-authenticate = "always"
+#[[tool.uv.index]]
+#name = "gitlab"
+#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+#authenticate = "always"

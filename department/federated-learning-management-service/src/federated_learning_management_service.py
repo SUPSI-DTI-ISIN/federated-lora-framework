@@ -2,7 +2,6 @@ import argparse
 import uvicorn
 
 from fastapi import FastAPI
-from fastapi.middleware.gzip import GZipMiddleware
 
 from router import api_router
 
@@ -13,8 +12,6 @@ def create_app() -> FastAPI:
         description="Federated Learning Management Service used for handling the federated learning operations",
         version="1.0.0",
     )
-
-    app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     app.include_router(router=api_router, prefix="/api_federated_learning_management")
 

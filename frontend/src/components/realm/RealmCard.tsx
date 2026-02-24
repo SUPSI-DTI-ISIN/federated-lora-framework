@@ -55,7 +55,7 @@ export const RealmCard = ({ realm, onSelect, isAdmin = false }: RealmCardProps) 
                         >
                             <Trash2 size={20} />
                         </button>
-                    ) : (
+                    ) : !isAdmin && (
                         <ChevronRight className="text-base-content/20 group-hover:text-primary transition-colors" size={20} />
                     )}
                 </div>

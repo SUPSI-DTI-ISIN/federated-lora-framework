@@ -29,22 +29,31 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
     }, [auth.user?.access_token, queryClient]);
 
     useEffect(() => {
-        if (auth.isLoading || auth.activeNavigator) return;
+        if (auth.error) {
+            clearPendingLogin();
+            setRealm(undefined);
 
+            setHasTriedSignin(true);
+        }
+    }, [auth.error, clearPendingLogin, setRealm]);
+
+    useEffect(() => {
+        if (auth.isLoading || auth.activeNavigator || auth.error) return;
         if (pendingLogin && !auth.user) {
             clearPendingLogin();
             auth.signinRedirect();
             return;
         }
 
-        if (!pendingLogin && !hasAuthParams() && !auth.user && !hasTriedSignin) {
+        if (!pendingLogin && !auth.user && !hasTriedSignin && !hasAuthParams()) {
             setHasTriedSignin(true);
             auth.signinSilent().catch(() => {});
         }
-    }, [pendingLogin, auth.isLoading, auth.activeNavigator, auth.user, hasTriedSignin]);
+    }, [pendingLogin, auth.isLoading, auth.activeNavigator, auth.user, hasTriedSignin, clearPendingLogin, auth.error]);
 
     const login = useCallback(async () => {
         try {
+            console.log("login");
             await auth.signinRedirect();
         } catch (err) {
             console.error("Login failed:", err);

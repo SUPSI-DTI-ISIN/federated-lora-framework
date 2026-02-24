@@ -1,4 +1,18 @@
 services:
+  redis-service:
+    image: redis:8.6.1
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    restart: always
+    volumes:
+      - redis-data:/data
+
   institutes-mysql-db:
     image: mysql:8.4.7
     ports:
@@ -132,6 +146,8 @@ services:
 
 volumes:
   institutes-mysql-data:
+    driver: local
+  redis-data:
     driver: local
   keycloak-data:
     driver: local

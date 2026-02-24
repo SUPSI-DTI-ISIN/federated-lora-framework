@@ -1,4 +1,4 @@
-import {Configuration, ManagementApi} from "@isin/federated-learning-management-service-client"
+import {Configuration, JobsApi} from "@isin/federated-learning-management-service-client"
 import {axiosInstance} from "./axios.ts";
 
 const config = new Configuration({
@@ -6,4 +6,4 @@ const config = new Configuration({
     baseOptions: axiosInstance.defaults
 });
 
-export const federatedLearningManagementApi = new ManagementApi(config);
+export const federatedLearningJobsApi = new JobsApi(config);

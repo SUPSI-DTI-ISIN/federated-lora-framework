@@ -29,7 +29,7 @@ export const SelectorRealmProvider = ({children}: SelectorRealmProviderProps) =>
         setRealm,
         pendingLogin,
         clearPendingLogin
-    }), [selectedRealm, setRealm]);
+    }), [selectedRealm, setRealm, pendingLogin, clearPendingLogin]);
 
     return (
         <SelectorRealmContext.Provider value={value}>

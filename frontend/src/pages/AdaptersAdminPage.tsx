@@ -8,8 +8,11 @@ import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
 import {useNavigate} from "react-router-dom";
 import {useGetAllDepartmentAdapters} from "../hooks/department/mlflow/useGetAllDepartmentAdapters.ts";
 import {DepartmentAdaptersList} from "../components/adapters/department/DepartmentAdaptersList.tsx";
+import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
+import {FederatedLearningActions} from "../components/adapters/department/FederatedLearningActions.tsx";
 
 export const AdaptersAdminPage = () => {
+    useFederatedLearningJobSse();
     const {t} = useTranslation();
     const {isDepartmentAdmin} = useAuthWrapper();
     const navigate = useNavigate();
@@ -77,11 +80,13 @@ export const AdaptersAdminPage = () => {
                         </div>
                     </div>
 
-                    <div className="bg-base-200/50 p-2 rounded-2xl border border-base-content/5">
+                    <div className="flex items-center bg-base-200/50 p-2 rounded-2xl border border-base-content/5 shadow-sm">
                         <AdapterFilterBar
                             query={query}
                             onQueryChange={setQuery}
                         />
+
+                        <FederatedLearningActions />
                     </div>
                 </motion.div>
 
