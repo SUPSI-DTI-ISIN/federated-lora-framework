@@ -6,7 +6,6 @@ IMAGE_TAG="latest"
 #PLATFORM_ARG="--platform=linux/amd64,linux/arm64"
 PLATFORM_ARG=""
 SERVICES_ENV_PATH=".env.local"
-FRONTEND_ENV_PATH=".env.local"
 
 usage() {
   echo "Usage: $0 [--platform <platform>] [--tag <tag>]"
@@ -40,10 +39,6 @@ while [[ $# -gt 0 ]]; do
       ;;
   esac
 done
-
-if [[ "$IMAGE_TAG" == "nvidia" ]]; then
-  FRONTEND_ENV_PATH=".env.local-nvidia"
-fi
 
 if [ ! -f .env.config ]; then
   echo "Error: .env.config file not found"
