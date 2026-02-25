@@ -6,6 +6,10 @@ export const getKeycloakUrl = (): string => {
     return import.meta.env.VITE_KEYCLOAK_URL;
 }
 
+export const getFlowerCeleryJobsUrl = (): string => {
+    return import.meta.env.VITE_FLOWER_CELERY_JOBS_URL;
+}
+
 export const getFrontendUrl = (): string => {
     return import.meta.env.VITE_FRONTEND_URL;
 }

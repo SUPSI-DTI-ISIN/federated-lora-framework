@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Play, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import {useStartFederatedLearning} from "../../../hooks/department/federated-learning/useStartFederatedLearning.ts";
+import {getFlowerCeleryJobsUrl} from "../../../utils/envUtils.ts";
 
 
 export const FederatedLearningActions = () => {
@@ -37,7 +38,7 @@ export const FederatedLearningActions = () => {
             </button>
 
             <a
-                href="http://localhost:5555"
+                href={getFlowerCeleryJobsUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-ghost btn-sm btn-square"

@@ -82,6 +82,22 @@ services:
     networks:
       - internal
 
+  redis-service:
+    image: redis:8.6.1
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    restart: always
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.0
     environment:
@@ -175,15 +191,58 @@ services:
       KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
+      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated_learning_management/health" ]
       interval: 20s
       timeout: 5s
       retries: 10
     depends_on:
-      - superlink
-      - superexec-serverapp
+      redis-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  federated-learning-management-service-worker:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/federated-learning-management-service:${DOCKER_IMAGE_TAG}
+    working_dir: /app
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
+      REALM_NAME: ${REALM_NAME:-Department}
+      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
+      PYTHONPATH: src
+    restart: always
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
+    depends_on:
+      federated-learning-management-service:
+        condition: service_healthy
+    networks:
+      - internal
+
+  federated-learning-management-service-flower:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/federated-learning-management-service:${DOCKER_IMAGE_TAG}
+    working_dir: /app
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
+      REALM_NAME: ${REALM_NAME:-Department}
+      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
+      PYTHONPATH: src
+    restart: always
+    ports:
+      - "5555:5555"
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "flower", "--port=5555" ]
+    depends_on:
+      federated-learning-management-service:
+        condition: service_healthy
     networks:
       - internal
       - external
@@ -210,6 +269,8 @@ services:
       - external
 
 volumes:
+  redis-data:
+    driver: local
   institutes-mysql-data:
     driver: local
   keycloak-data:

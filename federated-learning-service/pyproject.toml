@@ -29,7 +29,7 @@ url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
 [tool.flwr.app]
-publisher = "luca.fanto"
+publisher = "luca-fanto"
 
 [tool.flwr.app.components]
 serverapp = "src.server_app:app"
@@ -42,24 +42,19 @@ fraction-train = 0.5
 local-epochs = 1
 lr = 0.01
 
-[tool.flwr.federations]
+[superlink]
 default = "local-simulation"
 
-[tool.flwr.federations.local-simulation]
-options.num-supernodes = 1
+[superlink.local-simulation]
+options.num-supernodes = 2
 
-[tool.flwr.federations.local-deployment]
+[superlink.local-deployment]
 address = "127.0.0.1:9093"
 insecure = true
 
-[tool.flwr.federations.nvidia-deployment]
+[superlink.nvidia-deployment]
 address = "10.11.13.6:9093"
 insecure = true
-
-# Remote federation example for use with SuperLink
-[tool.flwr.federations.remote-federation]
-address = "<SUPERLINK-ADDRESS>:<PORT>"
-insecure = true  # Remove this line to enable TLS
 
 # root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup
 

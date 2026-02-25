@@ -5,6 +5,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(validate_default=False)
 
     redis_url: str
+    flwr_app_path: str
+    federated_learning_deployment_environment: str
 
     keycloak_url: str
     realm_name: str

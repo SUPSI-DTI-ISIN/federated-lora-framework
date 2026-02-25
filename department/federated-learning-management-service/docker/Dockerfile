@@ -24,6 +24,7 @@ ENV UV_INDEX_GITLAB_PASSWORD=${UV_INDEX_GITLAB_PASSWORD}
 COPY src src/
 COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
+COPY flwr flwr/
 COPY $ENV_PATH .env
 
 RUN uv sync
