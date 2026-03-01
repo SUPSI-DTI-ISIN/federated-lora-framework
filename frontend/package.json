@@ -12,7 +12,7 @@
   "dependencies": {
     "@isin/chat-service-client": "0.1.0-dev.1771766043",
     "@isin/data-service-client": "0.1.0-dev.1771765999",
-    "@isin/federated-learning-management-service-client": "0.1.0-dev.1772014326",
+    "@isin/federated-learning-management-service-client": "0.1.0-dev.1772276010",
     "@isin/institute-service-client": "0.1.0-dev.1772014311",
     "@isin/mlflow-service-client": "0.1.0-dev.1772014294",
     "@isin/model-service-client": "0.1.0-dev.1771766021",

@@ -193,7 +193,6 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
-      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated_learning_management/health" ]
       interval: 20s
@@ -215,7 +214,6 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
-      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
       PYTHONPATH: src
     restart: always
     command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
@@ -234,7 +232,6 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
-      FEDERATED_LEARNING_DEPLOYMENT_ENVIRONMENT: nvidia-deployment
       PYTHONPATH: src
     restart: always
     ports:
