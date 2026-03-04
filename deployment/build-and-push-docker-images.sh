@@ -88,4 +88,4 @@ docker buildx build --network host -t "${GITLAB_DOCKER_REGISTRY_URL}/department/
 
 docker buildx build --network host -t "${GITLAB_DOCKER_REGISTRY_URL}/frontend:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../frontend/docker/Dockerfile --build-arg ENV_PATH="$FRONTEND_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../frontend
 
-docker buildx build --network host -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../federated-learning-service/docker/superexec.Dockerfile ../federated-learning-service
+docker buildx build --network host -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push -f ../federated-learning-service/docker/superexec.uv.Dockerfile ../federated-learning-service

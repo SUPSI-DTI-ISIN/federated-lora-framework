@@ -1,25 +1,19 @@
-FROM nvcr.io/nvidia/pytorch:26.01-py3
+FROM --platform=$TARGETPLATFORM nvidia/cuda:12.8.0-cudnn-runtime-ubuntu24.04
 
-USER root
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
 
-RUN apt-get update \
-    && apt-get -y --no-install-recommends install \
-    build-essential \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+ADD https://astral.sh/uv/install.sh /uv-installer.sh
 
-RUN id -u app &>/dev/null || useradd -m -u 49999 app
+# Run the installer then remove it
+RUN sh /uv-installer.sh && rm /uv-installer.sh
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+ENV PATH="/root/.local/bin/:$PATH"
 
-USER app
 WORKDIR /app
+COPY pyproject.toml .
 
-COPY --chown=app:app pyproject.toml uv.lock ./
-
-RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml
-
-RUN uv sync --no-dev --frozen
+#RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml
+RUN uv sync
 
 ENV PATH="/app/.venv/bin:$PATH"
 
