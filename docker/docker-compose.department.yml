@@ -110,13 +110,13 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
 
       KC_HOSTNAME: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
-      KC_HTTP_PORT: 8085
+      KC_HTTP_PORT: 8086
       KC_HTTP_ENABLED: true
 
       KC_METRICS_ENABLED: true
       KC_HEALTH_ENABLED: true
     ports:
-      - "8085:8085"
+      - "8086:8086"
     command:
       - start-dev
       - --import-realm
@@ -140,7 +140,7 @@ services:
     ports:
       - "9010:9010"
     environment:
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REALM_NAME: ${REALM_NAME:-Department}
@@ -161,7 +161,7 @@ services:
     ports:
       - "9020:9020"
     environment:
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       DEPARTMENT_URL: ${DEPARTMENT_URL_URL:-http://frontend:80}
@@ -188,7 +188,7 @@ services:
     ports:
       - "9015:9015"
     environment:
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
@@ -209,7 +209,7 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/federated-learning-management-service:${DOCKER_IMAGE_TAG}
     working_dir: /app
     environment:
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
@@ -227,7 +227,7 @@ services:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/federated-learning-management-service:${DOCKER_IMAGE_TAG}
     working_dir: /app
     environment:
-      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8085}
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
       KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
