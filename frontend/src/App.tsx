@@ -3,15 +3,15 @@ import {Outlet, Route, Routes} from "react-router-dom";
 import {Home} from "./pages/Home";
 import {DocumentsPage} from "./pages/DocumentsPage";
 import {ChatPage} from "./pages/ChatPage";
-import {Header} from "./components/common/Header.tsx";
-import {Footer} from "./components/common/Footer.tsx";
 import {AdaptersPage} from "./pages/AdaptersPage.tsx";
 import {SectionsPage} from "./pages/SectionsPage.tsx";
 import {ProtectedRoute} from "./routes/ProtectedRoute.tsx";
 import {RealmsPage} from "./pages/RealmsPage.tsx";
 import {RealmsAdminPage} from "./pages/RealmsAdminPage.tsx";
 import {AdaptersAdminPage} from "./pages/AdaptersAdminPage.tsx";
+import {Header} from "./components/common/header/Header.tsx";
 import {ThemedToaster} from "./components/common/ThemedToaster.tsx";
+import {Footer} from "./components/common/Footer.tsx";
 
 const App = () => {
     return (

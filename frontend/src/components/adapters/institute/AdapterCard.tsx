@@ -4,11 +4,11 @@ import type { AdapterDTO } from "@isin/model-service-client";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 
-type AdapterCardProps = {
+interface AdapterCardProps {
     adapter: AdapterDTO;
     onDownload: (adapterVersion: number) => Promise<void> | void;
     isDownloading?: boolean;
-};
+}
 
 export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: AdapterCardProps) => {
     const { t } = useTranslation();

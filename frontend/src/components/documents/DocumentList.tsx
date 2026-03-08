@@ -11,27 +11,11 @@ interface DocumentListProps {
     searchQuery?: string;
 }
 
-/**
- * DocumentList Component
- * 
- * Refactored to use EmptyState and LoadingSkeleton components.
- * Preserves all existing business logic and data fetching hooks.
- * 
- * Requirements satisfied:
- * - 13.10: Render EmptyState when no documents
- * - 13.11: Render LoadingSkeleton when data is loading
- * - 13.12: Render DaisyUI alert with error icon on error
- * - 17.1: Render Loading_State using DaisyUI skeleton loaders
- * - 17.3: Render Error_State using DaisyUI alert component
- * - 17.4: Display error icon from Lucide
- * - 17.5: Display translated error message
- */
 export const DocumentList = ({ searchQuery = "" }: DocumentListProps) => {
     const { t } = useTranslation();
     const { data: documents, isLoading: isLoadingDocuments, error: errorRetrievingDocuments } =
         useGetAllDocuments();
 
-    // Error state
     if (errorRetrievingDocuments) {
         return (
             <div className="card bg-base-100 shadow-lg">
@@ -48,7 +32,6 @@ export const DocumentList = ({ searchQuery = "" }: DocumentListProps) => {
         );
     }
 
-    // Loading state
     if (isLoadingDocuments) {
         return <LoadingSkeleton variant="list" count={3} />;
     }
@@ -62,7 +45,6 @@ export const DocumentList = ({ searchQuery = "" }: DocumentListProps) => {
         return number.includes(query) || title.includes(query);
     });
 
-    // Empty state
     if (filtered.length === 0) {
         return (
             <EmptyState
@@ -73,7 +55,6 @@ export const DocumentList = ({ searchQuery = "" }: DocumentListProps) => {
         );
     }
 
-    // Document list
     return (
         <div className="space-y-4">
             <AnimatePresence mode="popLayout">

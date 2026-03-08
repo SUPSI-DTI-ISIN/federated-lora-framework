@@ -4,9 +4,9 @@ import { AnimatePresence } from "framer-motion";
 import { SortDesc, SortAsc, Inbox } from "lucide-react";
 import { DepartmentAdapterCard } from "./DepartmentAdapterCard.tsx";
 
-type DepartmentAdaptersListProps = {
+interface DepartmentAdaptersListProps {
     adapters: number[];
-};
+}
 
 export const DepartmentAdaptersList = ({ adapters }: DepartmentAdaptersListProps) => {
     const { t } = useTranslation();

@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {getModelKey} from "../utils/envUtils.ts";
 import {motion} from "framer-motion";
-import {Cpu, Play, ExternalLink, Loader2} from "lucide-react";
+import {Cpu} from "lucide-react";
 import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
 import {useNavigate} from "react-router-dom";
 import {useGetAllDepartmentAdapters} from "../hooks/department/mlflow/useGetAllDepartmentAdapters.ts";
@@ -10,9 +10,7 @@ import {DepartmentAdaptersList} from "../components/adapters/department/Departme
 import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
 import {SearchBar} from "../components/common/SearchBar.tsx";
-import {useStartFederatedLearning} from "../hooks/department/federated-learning/useStartFederatedLearning.ts";
-import {getFlowerCeleryJobsUrl} from "../utils/envUtils.ts";
-import toast from "react-hot-toast";
+import {FederatedLearningActions} from "../components/adapters/department/FederatedLearningActions.tsx";
 
 export const AdaptersAdminPage = () => {
     useFederatedLearningJobSse();
@@ -27,9 +25,6 @@ export const AdaptersAdminPage = () => {
         error: errorLoadingAdapters
     } = useGetAllDepartmentAdapters(modelKey);
 
-    const { mutateAsync: startFederatedLearning } = useStartFederatedLearning();
-    const [isStarting, setIsStarting] = useState<boolean>(false);
-
     const [query, setQuery] = useState("");
 
     const adapters = useMemo(() => availableAdapters?.adapters_version ?? [], [availableAdapters]);
@@ -43,18 +38,6 @@ export const AdaptersAdminPage = () => {
             navigate("/")
     }, [isDepartmentAdmin]);
 
-    const handleStartFL = async () => {
-        try {
-            setIsStarting(true);
-            await startFederatedLearning();
-            toast.success(t("adapters.admin.fl.startSuccess"));
-        } catch (err: any) {
-            console.error(err);
-            toast.error(t("adapters.admin.fl.startError"));
-        } finally {
-            setIsStarting(false);
-        }
-    };
 
     if (isLoadingAdapters) {
         return <LoadingSkeleton variant="list" count={5} />;
@@ -99,30 +82,7 @@ export const AdaptersAdminPage = () => {
                         placeholder={t("adapters.filter.searchPlaceholder")}
                     />
 
-                    <div className="flex items-center gap-3 shrink-0">
-                        <button
-                            onClick={handleStartFL}
-                            disabled={isStarting}
-                            className="btn btn-primary gap-2"
-                        >
-                            {isStarting ? (
-                                <Loader2 size={18} className="animate-spin" />
-                            ) : (
-                                <Play size={18} fill="currentColor" />
-                            )}
-                            <span>{t("adapters.admin.fl.start")}</span>
-                        </button>
-
-                        <a
-                            href={getFlowerCeleryJobsUrl()}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-ghost btn-square"
-                            title={t("adapters.admin.fl.trackJobs")}
-                        >
-                            <ExternalLink size={20} />
-                        </a>
-                    </div>
+                    <FederatedLearningActions />
                 </div>
 
                 <DepartmentAdaptersList

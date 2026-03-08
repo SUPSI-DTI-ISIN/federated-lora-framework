@@ -1,25 +1,25 @@
-import { useParams } from "react-router-dom";
-import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useGetDocumentById } from "../hooks/institute/data/documents/useGetDocumentById.ts";
-import { SectionsHeader } from "../components/sections/SectionsHeader";
-import { SectionsList } from "../components/sections/SectionsList";
-import { useDeleteSection } from "../hooks/institute/data/sections/useDeleteSection.ts";
+import {useParams} from "react-router-dom";
+import {useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useGetDocumentById} from "../hooks/institute/data/documents/useGetDocumentById.ts";
+import {SectionsHeader} from "../components/sections/SectionsHeader";
+import {SectionsList} from "../components/sections/SectionsList";
+import {useDeleteSection} from "../hooks/institute/data/sections/useDeleteSection.ts";
 import toast from "react-hot-toast";
-import { Trash2 } from "lucide-react";
-import { DeleteConfirmModal } from "../components/common/DeleteConfirmModal.tsx";
+import {Trash2} from "lucide-react";
+import {DeleteConfirmModal} from "../components/common/DeleteConfirmModal.tsx";
 
 
 export const SectionsPage = () => {
-    const { t } = useTranslation();
-    const { documentId } = useParams();
+    const {t} = useTranslation();
+    const {documentId} = useParams();
     const {
         data: document,
         isLoading: isLoadingDocument,
         error: errorLoadingDocument,
     } = useGetDocumentById(Number(documentId!));
 
-    const { mutateAsync: deleteSection } = useDeleteSection();
+    const {mutateAsync: deleteSection} = useDeleteSection();
     const [selectedSections, setSelectedSections] = useState<number[]>([]);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -44,13 +44,13 @@ export const SectionsPage = () => {
     const handleBulkDelete = async () => {
         setShowDeleteModal(false);
         setIsDeleting(true);
-        
+
         let successCount = 0;
         let errorCount = 0;
 
         for (const sectionId of selectedSections) {
             try {
-                await deleteSection({ sectionId, documentId: Number(documentId!) });
+                await deleteSection({sectionId, documentId: Number(documentId!)});
                 successCount++;
             } catch (e) {
                 console.error(e);
@@ -62,11 +62,11 @@ export const SectionsPage = () => {
         setSelectedSections([]);
 
         if (errorCount === 0) {
-            toast.success(t("sections.delete.bulkSuccess", { count: successCount }));
+            toast.success(t("sections.delete.bulkSuccess", {count: successCount}));
         } else if (successCount === 0) {
             toast.error(t("sections.delete.bulkError"));
         } else {
-            toast.success(t("sections.delete.bulkPartial", { success: successCount, failed: errorCount }));
+            toast.success(t("sections.delete.bulkPartial", {success: successCount, failed: errorCount}));
         }
     };
 
@@ -76,10 +76,10 @@ export const SectionsPage = () => {
             <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="card bg-base-100 shadow-lg p-8">
-                        <div className="h-8 bg-base-200 rounded w-1/3 animate-pulse" />
+                        <div className="h-8 bg-base-200 rounded w-1/3 animate-pulse"/>
                         <div className="mt-6 space-y-3">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="h-16 bg-base-200 rounded animate-pulse" />
+                                <div key={i} className="h-16 bg-base-200 rounded animate-pulse"/>
                             ))}
                         </div>
                     </div>
@@ -108,7 +108,7 @@ export const SectionsPage = () => {
             <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-start justify-between gap-4 mb-6">
-                        <SectionsHeader title={document.title} number={document.number} />
+                        <SectionsHeader title={document.title} number={document.number}/>
 
                         {/* Selection Controls - Top Right */}
                         {document.sections && document.sections.length > 0 && (
@@ -134,11 +134,11 @@ export const SectionsPage = () => {
                                         className="btn btn-error btn-sm gap-2"
                                     >
                                         {isDeleting ? (
-                                            <span className="loading loading-spinner loading-xs" />
+                                            <span className="loading loading-spinner loading-xs"/>
                                         ) : (
-                                            <Trash2 size={16} />
+                                            <Trash2 size={16}/>
                                         )}
-                                        <span>{t("sections.selection.deleteSelected", { count: selectedSections.length })}</span>
+                                        <span>{t("sections.selection.deleteSelected", {count: selectedSections.length})}</span>
                                     </button>
                                 )}
                             </div>
@@ -160,7 +160,7 @@ export const SectionsPage = () => {
                 isOpen={showDeleteModal}
                 onConfirm={handleBulkDelete}
                 onCancel={() => setShowDeleteModal(false)}
-                itemName={t("sections.selection.deleteConfirm", { count: selectedSections.length })}
+                itemName={t("sections.selection.deleteConfirm", {count: selectedSections.length})}
             />
         </>
     );

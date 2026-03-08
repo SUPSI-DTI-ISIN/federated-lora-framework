@@ -133,7 +133,6 @@
   "documents": {
     "title": "Documents",
     "subtitle": "All uploaded documents are listed here.",
-    "upload": "Upload Document",
     "uploadButton": "Upload Document",
     "empty": "No documents yet. Upload your first document to get started.",
     "error": "Unable to load documents. Please try again later.",

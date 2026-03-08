@@ -9,19 +9,6 @@ import { DocumentUpload } from "../components/documents/DocumentUpload";
 import { DocumentList } from "../components/documents/DocumentList";
 import { SearchBar } from "../components/common/SearchBar";
 
-/**
- * DocumentsPage Component
- * 
- * Refactored to use PageHeader, EmptyState, LoadingSkeleton, and DeleteConfirmModal components.
- * Preserves all existing business logic and data fetching hooks.
- * 
- * Requirements satisfied:
- * - 13.1: Render page header with title, subtitle, and upload button
- * - 13.2: Render upload button with Upload icon
- * - 13.3: Styled drag-and-drop zone (in DocumentUpload component)
- * - 10.2: Wrap page in motion.div with entrance animation
- * - 10.9: Use AnimatePresence for modal transitions
- */
 export const DocumentsPage = () => {
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");

@@ -13,22 +13,6 @@ interface DocumentRowProps {
     index: number;
 }
 
-/**
- * DocumentRow Component
- * 
- * Refactored to use DeleteConfirmModal instead of window.confirm.
- * Added View button with Eye icon.
- * Preserves all existing business logic and event handlers.
- * 
- * Requirements satisfied:
- * - 13.5: Render document list with name, type badge, date, size, and actions
- * - 13.7: Render PDF badge in red/accent color
- * - 13.8: Render View and Delete action buttons as icon buttons
- * - 13.9: Wire Delete button to trigger DeleteConfirmModal
- * - 13.13: Preserve existing upload handler logic
- * - 13.14: Preserve existing document fetching hooks
- * - 13.15: Preserve all existing event handlers
- */
 export const DocumentRow = ({ document, index }: DocumentRowProps) => {
     const { t } = useTranslation();
     const { mutateAsync: deleteDocument } = useDeleteDocument();
@@ -79,7 +63,6 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                 </div>
 
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100 shrink-0">
-                    {/* View Button */}
                     <button
                         onClick={handleNavigateToSections}
                         disabled={isDeleting}
@@ -90,7 +73,6 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                         <Eye size={18} />
                     </button>
 
-                    {/* Delete Button */}
                     <button
                         onClick={() => setShowDeleteModal(true)}
                         disabled={isDeleting}
@@ -103,7 +85,6 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                 </div>
             </motion.div>
 
-            {/* Delete Confirmation Modal */}
             <DeleteConfirmModal
                 isOpen={showDeleteModal}
                 onConfirm={handleDelete}

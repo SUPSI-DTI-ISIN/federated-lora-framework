@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FiChevronDown, FiGlobe } from 'react-icons/fi';
 import { AnimatePresence, motion } from 'framer-motion';
-import i18n from "../../i18n/i18n.ts";
+import i18n from "../../../i18n/i18n.ts";
 import ReactCountryFlag from "react-country-flag";
 
 export const LanguageSwitcher = () => {

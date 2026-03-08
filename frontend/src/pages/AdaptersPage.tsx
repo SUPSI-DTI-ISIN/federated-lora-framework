@@ -6,7 +6,7 @@ import {useGetAllAvailableAdapters} from "../hooks/institute/model/useGetAllAvai
 import {getModelKey} from "../utils/envUtils.ts";
 import {useSaveNewAdapter} from "../hooks/institute/model/useSaveNewAdapter.ts";
 import type {AdapterDTO} from "@isin/model-service-client";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 import {Cpu} from "lucide-react";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
 import {EmptyState} from "../components/common/EmptyState.tsx";
@@ -61,8 +61,9 @@ export const AdaptersPage = () => {
             >
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center gap-5 mb-8">
-                        <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
-                            <Cpu size={36} />
+                        <div
+                            className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                            <Cpu size={36}/>
                         </div>
                         <div>
                             <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
@@ -73,7 +74,7 @@ export const AdaptersPage = () => {
                             </p>
                         </div>
                     </div>
-                    <LoadingSkeleton variant="card" count={5} />
+                    <LoadingSkeleton variant="card" count={5}/>
                 </div>
             </motion.div>
         );
@@ -89,8 +90,9 @@ export const AdaptersPage = () => {
             >
                 <div className="max-w-7xl mx-auto">
                     <div className="flex items-center gap-5 mb-8">
-                        <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
-                            <Cpu size={36} />
+                        <div
+                            className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                            <Cpu size={36}/>
                         </div>
                         <div>
                             <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
@@ -102,8 +104,10 @@ export const AdaptersPage = () => {
                         </div>
                     </div>
                     <div role="alert" className="alert alert-error">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none"
+                             viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                         <span>{t("adapters.errorFetch")}</span>
                     </div>
@@ -122,8 +126,9 @@ export const AdaptersPage = () => {
             <div className="relative z-10 max-w-7xl mx-auto">
                 {/* Header */}
                 <div className="flex items-center gap-5 mb-8">
-                    <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
-                        <Cpu size={36} />
+                    <div
+                        className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                        <Cpu size={36}/>
                     </div>
                     <div>
                         <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
@@ -142,7 +147,7 @@ export const AdaptersPage = () => {
                         onChange={setQuery}
                         placeholder={t("adapters.filter.searchPlaceholder")}
                     />
-                    
+
                     <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
                         <input
                             type="checkbox"

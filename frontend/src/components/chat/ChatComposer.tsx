@@ -3,18 +3,17 @@ import { useTranslation } from "react-i18next";
 import {Send} from "lucide-react";
 import {useGetAllAvailableLocalAdapters} from "../../hooks/institute/model/useGetAllAvailableLocalAdapters.ts";
 
-type ChatComposerProps = {
+interface ChatComposerProps {
     modelKey: string;
     onSubmit: (prompt: string, adapterVersion?: number | null ) => Promise<void>;
     isSubmitting?: boolean;
-};
+}
 
 export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatComposerProps) => {
     const { t } = useTranslation();
     const { data: availableAdaptersDTO } = useGetAllAvailableLocalAdapters(modelKey);
     const adapters = availableAdaptersDTO?.adapters ?? [];
 
-    // Get latest adapter version (highest number)
     const latestAdapterVersion = useMemo(() => {
         if (adapters.length === 0) return null;
         return Math.max(...adapters.map((a: any) => a.version));
@@ -24,7 +23,6 @@ export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatC
     const [selectedAdapterVersion, setSelectedAdapterVersion] = useState<number | null>(latestAdapterVersion);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-    // Update selected adapter when latest changes
     useEffect(() => {
         if (latestAdapterVersion !== null && selectedAdapterVersion === null) {
             setSelectedAdapterVersion(latestAdapterVersion);

@@ -6,8 +6,8 @@ import {RealmList} from "../components/realm/RealmList.tsx";
 import {useAuthWrapper} from "../hooks/auth/useAuthWrapper.ts";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState, useMemo} from "react";
-import {RealmSearchBar} from "../components/realm/RealmSearchBar.tsx";
 import {CreateRealmModal} from "../components/realm/CreateRealmModal.tsx";
+import {SearchBar} from "../components/common/SearchBar.tsx";
 
 export const RealmsAdminPage = () => {
     const {t} = useTranslation();
@@ -91,7 +91,11 @@ export const RealmsAdminPage = () => {
                     </button>
                 </motion.div>
 
-                <RealmSearchBar value={searchQuery} onChange={setSearchQuery}/>
+                <SearchBar
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    placeholder={t("realms.search.placeholder")}
+                />
 
                 <div className="mt-4">
                     <RealmList realms={filteredRealms} isAdmin={isDepartmentAdmin}/>

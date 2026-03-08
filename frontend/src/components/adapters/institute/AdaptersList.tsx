@@ -6,11 +6,11 @@ import type { AdapterDTO } from "@isin/model-service-client";
 import { AdapterCard } from "./AdapterCard.tsx";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
 
-type AdaptersListProps = {
+interface AdaptersListProps {
     adapters: AdapterDTO[];
     onDownload: (adapterVersion: number) => Promise<void> | void;
     isDownloading?: boolean;
-};
+}
 
 export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: AdaptersListProps) => {
     const { t } = useTranslation();

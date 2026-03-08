@@ -7,9 +7,9 @@ import {useDeleteDepartmentAdapters} from "../../../hooks/department/mlflow/useD
 import toast from "react-hot-toast";
 import {DeleteConfirmModal} from "../../common/DeleteConfirmModal.tsx";
 
-type DepartmentAdapterCardProps = {
+interface DepartmentAdapterCardProps {
     adapter: number;
-};
+}
 
 export const DepartmentAdapterCard = ({adapter}: DepartmentAdapterCardProps) => {
     const {t} = useTranslation();
