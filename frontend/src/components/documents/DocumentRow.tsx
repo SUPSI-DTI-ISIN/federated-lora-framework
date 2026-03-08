@@ -61,28 +61,24 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ delay: index * 0.05 }}
-                className="group flex items-center gap-4 bg-base-100 hover:bg-base-200/50 p-4 rounded-2xl border border-base-content/5 transition-all duration-200"
+                className="group flex items-start gap-4 bg-base-100 hover:bg-base-200/50 p-6 rounded-2xl border border-base-content/5 hover:border-primary/20 transition-all duration-200 shadow-sm hover:shadow-md"
             >
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
                     <FileText size={24} />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                        <h3 className="text-base font-bold text-base-content truncate group-hover:text-primary transition-colors">
-                            {document.title}
-                        </h3>
-                        {/* PDF Badge */}
-                        <span className="badge badge-error badge-sm">PDF</span>
-                    </div>
-                    <div className="flex items-center gap-3 mt-0.5">
-                        <span className="text-xs font-mono text-base-content/40 bg-base-200 px-1.5 py-0.5 rounded">
-                            Number: {document.number.slice(0, 8)}
+                    <h3 className="text-base font-bold text-base-content group-hover:text-primary transition-colors break-words">
+                        {document.title}
+                    </h3>
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs font-mono text-base-content/40 bg-base-200 px-2 py-1 rounded">
+                            ID: {document.number}
                         </span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100 shrink-0">
                     {/* View Button */}
                     <button
                         onClick={handleNavigateToSections}

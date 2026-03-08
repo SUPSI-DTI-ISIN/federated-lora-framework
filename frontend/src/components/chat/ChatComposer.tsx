@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {Send} from "lucide-react";
 import {useGetAllAvailableLocalAdapters} from "../../hooks/institute/model/useGetAllAvailableLocalAdapters.ts";
@@ -14,9 +14,22 @@ export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatC
     const { data: availableAdaptersDTO } = useGetAllAvailableLocalAdapters(modelKey);
     const adapters = availableAdaptersDTO?.adapters ?? [];
 
+    // Get latest adapter version (highest number)
+    const latestAdapterVersion = useMemo(() => {
+        if (adapters.length === 0) return null;
+        return Math.max(...adapters.map((a: any) => a.version));
+    }, [adapters]);
+
     const [prompt, setPrompt] = useState("");
-    const [selectedAdapterVersion, setSelectedAdapterVersion] = useState<number | null>(null);
+    const [selectedAdapterVersion, setSelectedAdapterVersion] = useState<number | null>(latestAdapterVersion);
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+    // Update selected adapter when latest changes
+    useEffect(() => {
+        if (latestAdapterVersion !== null && selectedAdapterVersion === null) {
+            setSelectedAdapterVersion(latestAdapterVersion);
+        }
+    }, [latestAdapterVersion]);
 
     const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setPrompt(e.target.value);

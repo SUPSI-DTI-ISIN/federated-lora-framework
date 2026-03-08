@@ -107,43 +107,45 @@ export const SectionsPage = () => {
         <>
             <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
                 <div className="max-w-7xl mx-auto">
-                    <SectionsHeader title={document.title} number={document.number} />
+                    <div className="flex items-start justify-between gap-4 mb-6">
+                        <SectionsHeader title={document.title} number={document.number} />
 
-                    {/* Selection Controls */}
-                    {document.sections && document.sections.length > 0 && (
-                        <div className="flex items-center justify-between mb-4 p-4 bg-base-200/50 rounded-xl border border-base-content/5">
-                            <label className="flex items-center gap-3 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={selectedSections.length === document.sections.length && document.sections.length > 0}
-                                    onChange={handleSelectAll}
-                                    className="checkbox checkbox-primary"
-                                />
-                                <span className="font-medium">
-                                    {selectedSections.length === document.sections.length && document.sections.length > 0
-                                        ? t("sections.selection.deselectAll")
-                                        : t("sections.selection.selectAll")}
-                                </span>
-                            </label>
+                        {/* Selection Controls - Top Right */}
+                        {document.sections && document.sections.length > 0 && (
+                            <div className="flex items-center gap-3 shrink-0">
+                                <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedSections.length === document.sections.length && document.sections.length > 0}
+                                        onChange={handleSelectAll}
+                                        className="checkbox checkbox-primary"
+                                    />
+                                    <span className="font-medium text-sm">
+                                        {selectedSections.length === document.sections.length && document.sections.length > 0
+                                            ? t("sections.selection.deselectAll")
+                                            : t("sections.selection.selectAll")}
+                                    </span>
+                                </label>
 
-                            {selectedSections.length > 0 && (
-                                <button
-                                    onClick={() => setShowDeleteModal(true)}
-                                    disabled={isDeleting}
-                                    className="btn btn-error gap-2"
-                                >
-                                    {isDeleting ? (
-                                        <span className="loading loading-spinner loading-sm" />
-                                    ) : (
-                                        <Trash2 size={18} />
-                                    )}
-                                    <span>{t("sections.selection.deleteSelected", { count: selectedSections.length })}</span>
-                                </button>
-                            )}
-                        </div>
-                    )}
+                                {selectedSections.length > 0 && (
+                                    <button
+                                        onClick={() => setShowDeleteModal(true)}
+                                        disabled={isDeleting}
+                                        className="btn btn-error btn-sm gap-2"
+                                    >
+                                        {isDeleting ? (
+                                            <span className="loading loading-spinner loading-xs" />
+                                        ) : (
+                                            <Trash2 size={16} />
+                                        )}
+                                        <span>{t("sections.selection.deleteSelected", { count: selectedSections.length })}</span>
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
 
-                    <div className="mt-6 bg-base-200/30 rounded-3xl p-4 border border-base-content/5">
+                    <div className="space-y-3">
                         <SectionsList
                             documentId={document.id}
                             sections={document.sections}

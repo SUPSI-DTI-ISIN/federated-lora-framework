@@ -175,6 +175,7 @@
     "empty": "Nessun adapter disponibile. Ricontrolla più tardi o contatta l'amministratore.",
     "emptyDescription": "Gli adapter appariranno qui una volta disponibili.",
     "local": "Locale",
+    "installed": "Installato",
     "download": "Scarica",
     "filter": {
       "localOnly": "Mostra solo locali",

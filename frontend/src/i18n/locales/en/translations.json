@@ -221,6 +221,7 @@
     "empty": "No adapters available. Check back later or contact your administrator.",
     "emptyDescription": "Adapters will appear here once they are available.",
     "local": "Local",
+    "installed": "Installed",
     "download": "Download",
     "errorFetch": "Unable to fetch adapters. Try again later.",
     "notLocal": "Remote",

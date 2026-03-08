@@ -10,12 +10,7 @@ import mimirLogo from "../../assets/mimir-logo.png"
 import {useAuthWrapper} from "../../hooks/auth/useAuthWrapper.ts";
 import {useSelectorRealm} from "../../hooks/realm/useSelectorRealm.ts";
 
-interface HeaderProps {
-  onToggleSidebar?: () => void;
-  onToggleDrawer?: () => void;
-}
-
-export const Header = ({ onToggleSidebar, onToggleDrawer }: HeaderProps = {}) => {
+export const Header = () => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -72,23 +67,6 @@ export const Header = ({ onToggleSidebar, onToggleDrawer }: HeaderProps = {}) =>
             <div className="container mx-auto px-4 py-2">
                 <div className="navbar min-h-16 px-0">
                     <div className="navbar-start">
-                        {/* Hamburger toggle for sidebar collapse (desktop) and drawer (mobile) */}
-                        <button
-                            className="btn btn-ghost btn-circle mr-2"
-                            aria-label={t("header.toggleMenu", "Toggle menu")}
-                            onClick={() => {
-                                // On desktop (lg+), toggle sidebar collapse
-                                // On mobile/tablet, toggle drawer
-                                if (window.innerWidth >= 1024) {
-                                    onToggleSidebar?.();
-                                } else {
-                                    onToggleDrawer?.();
-                                }
-                            }}
-                        >
-                            <Menu size={20} />
-                        </button>
-
                         <Link
                             to="/"
                             className="group flex items-center gap-3 focus-visible:outline-primary rounded-lg transition-all"
