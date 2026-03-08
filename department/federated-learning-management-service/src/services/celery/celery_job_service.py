@@ -1,9 +1,8 @@
-from schemas.job import FederatedLearningJobStartResponseDTO
-from .job_service_interface import JobServiceInterface
+from .celery_job_service_interface import CeleryJobServiceInterface
 from .tasks import start_federated_learning_celery_task, start_federated_learning_simulation_celery_task
 
 
-class JobService(JobServiceInterface):
+class CeleryJobService(CeleryJobServiceInterface):
     __INSTANCE = None
 
     def __init__(self, flwr_app_base_path: str, federated_learning_deployment_environment: str, is_federated_learning_simulation_environment: bool):
@@ -18,7 +17,7 @@ class JobService(JobServiceInterface):
         return cls.__INSTANCE
 
 
-    def start_federated_learning(self) -> FederatedLearningJobStartResponseDTO:
+    def start_federated_learning(self) -> str:
         if self.__is_federated_learning_simulation_environment:
             task = start_federated_learning_simulation_celery_task.delay(
                 self.__flwr_app_base_path
@@ -29,6 +28,4 @@ class JobService(JobServiceInterface):
                 self.__federated_learning_deployment_environment
             )
 
-        return FederatedLearningJobStartResponseDTO(
-            job_id=task.id
-        )
+        return task.id

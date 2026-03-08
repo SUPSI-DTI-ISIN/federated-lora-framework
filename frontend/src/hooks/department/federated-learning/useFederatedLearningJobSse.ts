@@ -17,6 +17,7 @@ export const useFederatedLearningJobSse = () => {
             }
 
             queryClient.invalidateQueries({queryKey: ["department-adapters"]})
+            queryClient.invalidateQueries({queryKey: ["federated-learning-jobs"]})
         })
 
         eventSource.onerror = (error) => {

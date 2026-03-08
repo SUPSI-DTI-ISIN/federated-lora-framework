@@ -1,5 +1,7 @@
 import os
 import subprocess
+from time import sleep
+
 import sys
 
 from pathlib import Path
@@ -11,6 +13,9 @@ logger = get_task_logger(__name__)
 
 @celery.task(bind=True)
 def start_federated_learning_simulation_celery_task(self, flwr_app_path: str):
+    sleep(15)
+    return "Simulation Federated Learning Done"
+
     task_id = self.request.id
     logger.info("Starting FL simulation task %s", task_id)
 

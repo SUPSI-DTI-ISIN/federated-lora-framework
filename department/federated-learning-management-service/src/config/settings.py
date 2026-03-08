@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     keycloak_global_hostname_url: str = None
 
     is_federated_learning_simulation_environment: bool = False
-
+    database_url: str = "mysql+aiomysql://root:root@localhost:33063/federated_learning_jobs"
     frontend_url: str = "http://localhost:3000"
 
     @property

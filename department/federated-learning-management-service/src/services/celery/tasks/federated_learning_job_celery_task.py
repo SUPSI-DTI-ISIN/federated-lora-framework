@@ -1,5 +1,4 @@
 import subprocess
-import sys
 
 from pathlib import Path
 from celery.utils.log import get_task_logger

@@ -5,7 +5,7 @@ from sse_starlette import ServerSentEvent
 from starlette.requests import Request
 
 from commons import RedisChannel
-from schemas.job import FederatedLearningJobDTO
+from schemas.celery import CeleryJobDTO
 from schemas.sse import SseEvent
 from services.sse.sse_service_interface import SseServiceInterface
 
@@ -36,10 +36,10 @@ class SseService(SseServiceInterface):
                 message = await pubsub.get_message(ignore_subscribe_messages=True, timeout=1.0)
 
                 if message is not None:
-                    data = FederatedLearningJobDTO.model_validate_json(message['data'])
+                    celery_job_dto = CeleryJobDTO.model_validate_json(message['data'])
 
                     yield ServerSentEvent(
-                        data=data.model_dump_json(),
+                        data=celery_job_dto.model_dump_json(),
                         event=SseEvent.FEDERATED_LEARNING_JOB_UPDATE.value,
                     )
 

@@ -26,10 +26,14 @@ COPY pyproject.toml pyproject.toml
 COPY uv.lock uv.lock
 COPY flwr flwr/
 COPY $ENV_PATH .env
+COPY migrations/ migrations/
+COPY alembic.ini alembic.ini
+COPY docker/docker-entrypoint.sh docker-entrypoint.sh
 
 RUN uv sync
 
 EXPOSE 9015
 ENV UV_ENV_FILE=.env
 
+ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["uv", "run", "src/federated_learning_management_service.py", "-p", "9015"]

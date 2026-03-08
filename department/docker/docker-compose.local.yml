@@ -28,6 +28,21 @@ services:
     volumes:
       - institutes-mysql-data:/var/lib/mysql
 
+  federated-learning-jobs-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "33063:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - federated-learning-jobs-mysql-data:/var/lib/mysql
+
   keycloak-postgres-db:
     image: postgres:15
     container_name: keycloak-postgres
@@ -146,6 +161,8 @@ services:
 
 volumes:
   institutes-mysql-data:
+    driver: local
+  federated-learning-jobs-mysql-data:
     driver: local
   redis-data:
     driver: local

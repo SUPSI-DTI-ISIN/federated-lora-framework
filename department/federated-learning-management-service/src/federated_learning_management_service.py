@@ -3,7 +3,8 @@ import uvicorn
 
 from fastapi import FastAPI
 
-from router import api_router
+from router import api_router, lifespan
+from router.exceptions import register_exception_handlers
 
 
 def create_app() -> FastAPI:
@@ -11,8 +12,9 @@ def create_app() -> FastAPI:
         title="Federated Learning Management Service",
         description="Federated Learning Management Service used for handling the federated learning operations",
         version="1.0.0",
+        lifespan=lifespan
     )
-
+    register_exception_handlers(app=app)
     app.include_router(router=api_router, prefix="/api_federated_learning_management")
 
     return app

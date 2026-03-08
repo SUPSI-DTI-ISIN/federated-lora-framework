@@ -14,8 +14,8 @@ class CeleryClient(CeleryClientInterface):
             broker=f"{redis_url}/0",
             backend=f"{redis_url}/0",
             include=[
-                "services.job.signals",
-                "services.job.tasks",
+                "services.celery.signals",
+                "services.celery.tasks",
             ]
         )
 
