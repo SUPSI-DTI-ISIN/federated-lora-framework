@@ -76,23 +76,30 @@ export const AdaptersAdminPage = () => {
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-12"
+                    className="flex items-center gap-5 mb-8"
                 >
-                    <div className="flex items-center gap-5">
-                        <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
-                            <Cpu size={36} />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
-                                {t("adapters.title")}
-                            </h1>
-                            <p className="text-lg text-base-content/60 font-medium">
-                                {t("adapters.subtitle")}
-                            </p>
-                        </div>
+                    <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                        <Cpu size={36} />
                     </div>
+                    <div>
+                        <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
+                            {t("adapters.title")}
+                        </h1>
+                        <p className="text-lg text-base-content/60 font-medium">
+                            {t("adapters.subtitle")}
+                        </p>
+                    </div>
+                </motion.div>
 
-                    <div className="flex items-center gap-3">
+                {/* Search Bar and Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-center justify-between">
+                    <SearchBar
+                        value={query}
+                        onChange={setQuery}
+                        placeholder={t("adapters.filter.searchPlaceholder")}
+                    />
+
+                    <div className="flex items-center gap-3 shrink-0">
                         <button
                             onClick={handleStartFL}
                             disabled={isStarting}
@@ -116,15 +123,6 @@ export const AdaptersAdminPage = () => {
                             <ExternalLink size={20} />
                         </a>
                     </div>
-                </motion.div>
-
-                {/* Search Bar */}
-                <div className="mb-6">
-                    <SearchBar
-                        value={query}
-                        onChange={setQuery}
-                        placeholderKey="adapters.filter.searchPlaceholder"
-                    />
                 </div>
 
                 <DepartmentAdaptersList

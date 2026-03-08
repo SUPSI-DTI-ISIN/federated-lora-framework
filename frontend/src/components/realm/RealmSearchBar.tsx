@@ -1,21 +1,21 @@
-import { Search } from "lucide-react";
+import { SearchBar } from "../common/SearchBar";
+import { useTranslation } from "react-i18next";
 
-interface SearchBarProps {
+interface RealmSearchBarProps {
     value: string;
     onChange: (val: string) => void;
 }
 
-export const RealmSearchBar = ({ value, onChange }: SearchBarProps) => (
-    <div className="relative w-full max-w-2xl mx-auto my-10 group">
-        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none text-base-content/30 group-focus-within:text-primary transition-colors">
-            <Search size={24} />
+export const RealmSearchBar = ({ value, onChange }: RealmSearchBarProps) => {
+    const { t } = useTranslation();
+    
+    return (
+        <div className="my-10 flex justify-center">
+            <SearchBar
+                value={value}
+                onChange={onChange}
+                placeholder={t("realms.search.placeholder")}
+            />
         </div>
-        <input
-            type="text"
-            placeholder="Cerca istituto per nome..."
-            className="input input-bordered w-full h-14 pl-14 bg-base-200/40 border-base-content/10 focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all rounded-2xl text-lg shadow-sm"
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-        />
-    </div>
-);
+    );
+};

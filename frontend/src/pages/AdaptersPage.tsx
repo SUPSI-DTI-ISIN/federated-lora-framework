@@ -9,7 +9,6 @@ import type {AdapterDTO} from "@isin/model-service-client";
 import { motion } from "framer-motion";
 import {Cpu} from "lucide-react";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
-import {PageHeader} from "../components/common/PageHeader.tsx";
 import {EmptyState} from "../components/common/EmptyState.tsx";
 import {SearchBar} from "../components/common/SearchBar.tsx";
 import {useReducedMotion} from "../hooks/useReducedMotion";
@@ -61,11 +60,19 @@ export const AdaptersPage = () => {
                 className="min-h-screen bg-base-100 py-12 px-4 sm:px-8"
             >
                 <div className="max-w-7xl mx-auto">
-                    <PageHeader
-                        icon={Cpu}
-                        title={t("adapters.title")}
-                        subtitle={t("adapters.subtitle")}
-                    />
+                    <div className="flex items-center gap-5 mb-8">
+                        <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                            <Cpu size={36} />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
+                                {t("adapters.title")}
+                            </h1>
+                            <p className="text-lg text-base-content/60 font-medium">
+                                {t("adapters.subtitle")}
+                            </p>
+                        </div>
+                    </div>
                     <LoadingSkeleton variant="card" count={5} />
                 </div>
             </motion.div>
@@ -81,11 +88,19 @@ export const AdaptersPage = () => {
                 className="min-h-screen bg-base-100 py-12 px-4 sm:px-8"
             >
                 <div className="max-w-7xl mx-auto">
-                    <PageHeader
-                        icon={Cpu}
-                        title={t("adapters.title")}
-                        subtitle={t("adapters.subtitle")}
-                    />
+                    <div className="flex items-center gap-5 mb-8">
+                        <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                            <Cpu size={36} />
+                        </div>
+                        <div>
+                            <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
+                                {t("adapters.title")}
+                            </h1>
+                            <p className="text-lg text-base-content/60 font-medium">
+                                {t("adapters.subtitle")}
+                            </p>
+                        </div>
+                    </div>
                     <div role="alert" className="alert alert-error">
                         <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -106,18 +121,26 @@ export const AdaptersPage = () => {
         >
             <div className="relative z-10 max-w-7xl mx-auto">
                 {/* Header */}
-                <PageHeader
-                    icon={Cpu}
-                    title={t("adapters.title")}
-                    subtitle={t("adapters.subtitle")}
-                />
+                <div className="flex items-center gap-5 mb-8">
+                    <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                        <Cpu size={36} />
+                    </div>
+                    <div>
+                        <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
+                            {t("adapters.title")}
+                        </h1>
+                        <p className="text-lg text-base-content/60 font-medium">
+                            {t("adapters.subtitle")}
+                        </p>
+                    </div>
+                </div>
 
                 {/* Search Bar and Filter */}
                 <div className="flex flex-col sm:flex-row gap-4 mb-6">
                     <SearchBar
                         value={query}
                         onChange={setQuery}
-                        placeholderKey="adapters.filter.searchPlaceholder"
+                        placeholder={t("adapters.filter.searchPlaceholder")}
                     />
                     
                     <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">

@@ -59,7 +59,7 @@ export const DocumentsPage = () => {
                     <SearchBar
                         value={searchQuery}
                         onChange={setSearchQuery}
-                        placeholderKey="documents.search.placeholder"
+                        placeholder={t("documents.search.placeholder")}
                     />
 
                     <div className="bg-base-200/30 rounded-3xl p-2 border border-base-content/5">

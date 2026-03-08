@@ -185,7 +185,14 @@
     "errorCreate": "Error creating chat",
     "errorDelete": "Error deleting chat",
     "deleteSuccess": "Chat deleted successfully",
+    "createSuccess": "Chat created successfully",
     "disclaimer": "AI can make mistakes. Check important info.",
+    "modal": {
+      "title": "New Chat",
+      "nameLabel": "Chat Name",
+      "namePlaceholder": "Enter chat name...",
+      "create": "Create Chat"
+    },
     "adapter": {
       "selectLabel": "Adapter",
       "chooseLabel": "Choose adapter:",
@@ -299,6 +306,9 @@
   },
   "realms": {
     "title": "Realms",
+    "search": {
+      "placeholder": "Search institute by name..."
+    },
     "delete": {
       "success": "Realm deleted successfully",
       "error": "Failed to delete realm"

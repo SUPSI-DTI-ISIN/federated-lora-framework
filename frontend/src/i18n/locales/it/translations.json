@@ -216,7 +216,14 @@
     "errorCreate": "Errore nella creazione della chat",
     "errorDelete": "Errore nell'eliminazione della chat",
     "deleteSuccess": "Chat eliminata con successo",
+    "createSuccess": "Chat creata con successo",
     "disclaimer": "L'AI può commettere errori. Verifica le informazioni importanti.",
+    "modal": {
+      "title": "Nuova Chat",
+      "nameLabel": "Nome Chat",
+      "namePlaceholder": "Inserisci nome chat...",
+      "create": "Crea Chat"
+    },
     "adapter": {
       "selectLabel": "Adapter",
       "chooseLabel": "Scegli adapter:",
@@ -296,6 +303,9 @@
   },
   "realms": {
     "title": "Realms",
+    "search": {
+      "placeholder": "Cerca istituto per nome..."
+    },
     "delete": {
       "success": "Realm eliminato con successo",
       "error": "Impossibile eliminare il realm"

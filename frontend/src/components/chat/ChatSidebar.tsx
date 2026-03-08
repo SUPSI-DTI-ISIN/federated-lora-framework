@@ -2,7 +2,6 @@ import {motion} from 'framer-motion';
 import {Plus, MessageSquare, ChevronRight, ChevronLeft, Trash2} from 'lucide-react';
 import {useTranslation} from "react-i18next";
 import type {ChatDTO} from "@isin/chat-service-client";
-import {useCreateChat} from "../../hooks/institute/chat/useCreateChat.ts";
 import {useDeleteChat} from "../../hooks/institute/chat/useDeleteChat.ts";
 import {useState} from "react";
 import toast from "react-hot-toast";
@@ -17,6 +16,7 @@ interface ChatSidebarProps {
     isLoadingChats?: boolean;
     selectedChatId?: number | null;
     onSelectChat: (chatId: number | null) => void;
+    onCreateChat: () => void;
 }
 
 export const ChatSidebar = ({
@@ -26,34 +26,17 @@ export const ChatSidebar = ({
                                 errorLoadingChats,
                                 isLoadingChats,
                                 selectedChatId,
-                                onSelectChat
+                                onSelectChat,
+                                onCreateChat
                             }: ChatSidebarProps) => {
     const {t} = useTranslation();
     const prefersReducedMotion = useReducedMotion();
 
-    const {mutateAsync: createChat} = useCreateChat();
     const {mutateAsync: deleteChat} = useDeleteChat();
 
-    const [creating, setCreating] = useState<boolean>(false);
     const [deletingId, setDeletingId] = useState<number | null>(null);
     const [deleteModalOpen, setDeleteModalOpen] = useState<boolean>(false);
     const [chatToDelete, setChatToDelete] = useState<ChatDTO | null>(null);
-
-    const handleCreate = async () => {
-        const title = window.prompt(t("chat.sidebar.newChatPrompt") ?? "Titolo chat");
-        if (title === null) return;
-
-        setCreating(true);
-        try {
-            const newChat = await createChat({title: title.trim() || null});
-            onSelectChat(newChat.id);
-        } catch (err) {
-            console.error(err);
-            toast.error(t("chat.errorCreate") ?? "Errore nella creazione della chat");
-        } finally {
-            setCreating(false);
-        }
-    };
 
     const handleDeleteClick = (chat: ChatDTO) => {
         setChatToDelete(chat);
@@ -106,14 +89,12 @@ export const ChatSidebar = ({
 
                 {/* New Chat Button */}
                 <button
-                    onClick={handleCreate}
+                    onClick={onCreateChat}
                     className={`btn btn-primary shadow-lg shadow-primary/20 flex items-center transition-all duration-300 w-full justify-start`}
-                    disabled={creating}
                     aria-label={t("chat.sidebar.newChat") ?? "New chat"}
                 >
                     <Plus size={20} />
-                    {isOpen && <span
-                        className="truncate">{creating ? (t("chat.sidebar.creating") ?? "Creating...") : t("chat.sidebar.newChat") ?? "New chat"}</span>}
+                    {isOpen && <span className="truncate">{t("chat.sidebar.newChat") ?? "New chat"}</span>}
                 </button>
             </div>
 
