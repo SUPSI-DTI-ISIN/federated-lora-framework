@@ -2,6 +2,7 @@ import { Download, CheckCircle, Cloud } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { AdapterDTO } from "@isin/model-service-client";
 import { motion } from "framer-motion";
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
 
 type AdapterCardProps = {
     adapter: AdapterDTO;
@@ -12,13 +13,16 @@ type AdapterCardProps = {
 export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: AdapterCardProps) => {
     const { t } = useTranslation();
     const { version, available_local } = adapter;
+    const prefersReducedMotion = useReducedMotion();
 
     return (
         <motion.div
             layout
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.98 }}
+            initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
+            animate={prefersReducedMotion ? {} : { opacity: 1, y: 0 }}
+            exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.98 }}
+            whileHover={prefersReducedMotion ? {} : { y: -2 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.2 }}
             className="group w-full bg-base-100 p-4 sm:p-5 rounded-2xl border border-base-content/5 hover:border-secondary/30 hover:shadow-xl hover:shadow-secondary/5 transition-all duration-300"
         >
             <div className="flex flex-row items-center justify-between gap-6">
@@ -36,13 +40,13 @@ export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: Adap
                         </h3>
                         <div className="flex items-center gap-3 mt-1">
                             {available_local ? (
-                                <span className="flex items-center gap-1.5 text-xs font-bold text-success uppercase tracking-wide">
-                                    <CheckCircle size={14} strokeWidth={3} />
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-success uppercase tracking-wide" role="status" aria-label="Available locally">
+                                    <CheckCircle size={14} strokeWidth={3} aria-hidden="true" />
                                     {t("adapters.local")}
                                 </span>
                             ) : (
-                                <span className="flex items-center gap-1.5 text-xs font-bold text-info uppercase tracking-wide">
-                                    <Cloud size={14} strokeWidth={3} />
+                                <span className="flex items-center gap-1.5 text-xs font-bold text-info uppercase tracking-wide" role="status" aria-label="Available remotely">
+                                    <Cloud size={14} strokeWidth={3} aria-hidden="true" />
                                     {t("adapters.notLocal")}
                                 </span>
                             )}
@@ -53,8 +57,8 @@ export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: Adap
                 {/* Right Side: Action Button */}
                 <div className="flex items-center shrink-0">
                     {available_local ? (
-                        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-success/5 text-success font-bold text-sm border border-success/10">
-                            <CheckCircle size={16} />
+                        <div className="hidden sm:flex items-center gap-2 px-4 py-2 rounded-xl bg-success/5 text-success font-bold text-sm border border-success/10" role="status">
+                            <CheckCircle size={16} aria-hidden="true" />
                             Installato
                         </div>
                     ) : (
@@ -62,17 +66,18 @@ export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: Adap
                             onClick={() => onDownload(version)}
                             disabled={isDownloading}
                             className={`
-                                btn btn-md sm:btn-lg rounded-2xl
+                                btn btn-md sm:btn-lg rounded-2xl min-h-[44px] min-w-[44px]
                                 ${isDownloading ? 'btn-ghost' : 'btn-secondary'} 
                                 shadow-lg shadow-secondary/20 hover:scale-105 transition-all
                                 px-6
                             `}
+                            aria-label={`Download adapter version ${version}`}
                         >
                             {isDownloading ? (
-                                <span className="loading loading-spinner" />
+                                <span className="loading loading-spinner" aria-label="Downloading" />
                             ) : (
                                 <>
-                                    <Download size={20} className="mr-2" />
+                                    <Download size={20} className="mr-2" aria-hidden="true" />
                                     <span className="hidden sm:inline">{t("adapters.download")}</span>
                                 </>
                             )}

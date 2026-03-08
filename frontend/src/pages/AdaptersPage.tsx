@@ -9,10 +9,13 @@ import {useSaveNewAdapter} from "../hooks/institute/model/useSaveNewAdapter.ts";
 import type {AdapterDTO} from "@isin/model-service-client";
 import { motion } from "framer-motion";
 import {Cpu} from "lucide-react";
+import {LoadingSkeleton, PageHeader, EmptyState} from "../components/common";
+import {useReducedMotion} from "../hooks/useReducedMotion";
 
 export const AdaptersPage = () => {
     const {t} = useTranslation();
     const modelKey = getModelKey();
+    const prefersReducedMotion = useReducedMotion();
     const {
         data: availableAdapters,
         isLoading: isLoadingAdapters,
@@ -49,63 +52,89 @@ export const AdaptersPage = () => {
 
     if (isLoadingAdapters) {
         return (
-            <div className="space-y-3">
-                {/* skeleton placeholders */}
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="card bg-base-100 shadow animate-pulse h-20"/>
-                ))}
-            </div>
-        )
+            <motion.div
+                initial={prefersReducedMotion ? {} : {opacity: 0, y: 12}}
+                animate={prefersReducedMotion ? {} : {opacity: 1, y: 0}}
+                transition={prefersReducedMotion ? {duration: 0} : {duration: 0.25}}
+                className="min-h-screen bg-base-100 py-12 px-4 sm:px-8"
+            >
+                <div className="max-w-7xl mx-auto">
+                    <PageHeader
+                        icon={Cpu}
+                        title={t("adapters.title")}
+                        subtitle={t("adapters.subtitle")}
+                    />
+                    <LoadingSkeleton variant="card" count={5} />
+                </div>
+            </motion.div>
+        );
     }
 
     if (errorLoadingAdapters) {
         return (
-            <div className="card bg-base-100 shadow p-4 text-red-600">
-                <div>{t("adapters.errorFetch")}</div>
-            </div>
-        )
+            <motion.div
+                initial={prefersReducedMotion ? {} : {opacity: 0, y: 12}}
+                animate={prefersReducedMotion ? {} : {opacity: 1, y: 0}}
+                transition={prefersReducedMotion ? {duration: 0} : {duration: 0.25}}
+                className="min-h-screen bg-base-100 py-12 px-4 sm:px-8"
+            >
+                <div className="max-w-7xl mx-auto">
+                    <PageHeader
+                        icon={Cpu}
+                        title={t("adapters.title")}
+                        subtitle={t("adapters.subtitle")}
+                    />
+                    <div role="alert" className="alert alert-error">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>{t("adapters.errorFetch")}</span>
+                    </div>
+                </div>
+            </motion.div>
+        );
     }
 
     return (
-        <div className="min-h-screen bg-base-100 py-12 px-4 sm:px-8 relative">
-
+        <motion.div
+            initial={prefersReducedMotion ? {} : {opacity: 0, y: 12}}
+            animate={prefersReducedMotion ? {} : {opacity: 1, y: 0}}
+            transition={prefersReducedMotion ? {duration: 0} : {duration: 0.25}}
+            className="min-h-screen bg-base-100 py-12 px-4 sm:px-8 relative"
+        >
             <div className="relative z-10 max-w-7xl mx-auto">
                 {/* Header */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 mb-12"
-                >
-                    <div className="flex items-center gap-5">
-                        <div className="flex h-16 w-16 items-center justify-center bg-secondary/10 rounded-2xl text-secondary shadow-inner">
-                            <Cpu size={36} /> {/* Microchip/Cpu icon */}
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
-                                {t("adapters.title")}
-                            </h1>
-                            <p className="text-lg text-base-content/60 font-medium">
-                                {t("adapters.subtitle")}
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="bg-base-200/50 p-2 rounded-2xl border border-base-content/5">
-                        <AdapterFilterBar
-                            query={query}
-                            onQueryChange={setQuery}
-                            localOnly={localOnly}
-                            onLocalOnlyChange={setLocalOnly}
-                        />
-                    </div>
-                </motion.div>
-
-                <AdaptersList
-                    adapters={filtered}
-                    onDownload={handleDownload}
-                    isDownloading={isSavingNewAdapter}
+                <PageHeader
+                    icon={Cpu}
+                    title={t("adapters.title")}
+                    subtitle={t("adapters.subtitle")}
                 />
+
+                {/* Filter Bar */}
+                <div className="bg-base-200/50 p-2 rounded-2xl border border-base-content/5 mb-6">
+                    <AdapterFilterBar
+                        query={query}
+                        onQueryChange={setQuery}
+                        localOnly={localOnly}
+                        onLocalOnlyChange={setLocalOnly}
+                    />
+                </div>
+
+                {/* Adapters List or Empty State */}
+                {filtered.length === 0 ? (
+                    <EmptyState
+                        icon={Cpu}
+                        title={t("adapters.empty")}
+                        description={t("adapters.emptyDescription")}
+                    />
+                ) : (
+                    <AdaptersList
+                        adapters={filtered}
+                        onDownload={handleDownload}
+                        isDownloading={isSavingNewAdapter}
+                    />
+                )}
             </div>
-        </div>
+        </motion.div>
     );
 };

@@ -1,4 +1,3 @@
-import {Toaster} from "react-hot-toast";
 import './App.css'
 import {Outlet, Route, Routes} from "react-router-dom";
 import {Home} from "./pages/Home";
@@ -12,17 +11,12 @@ import {ProtectedRoute} from "./routes/ProtectedRoute.tsx";
 import {RealmsPage} from "./pages/RealmsPage.tsx";
 import {RealmsAdminPage} from "./pages/RealmsAdminPage.tsx";
 import {AdaptersAdminPage} from "./pages/AdaptersAdminPage.tsx";
+import {ThemedToaster} from "./components/common/ThemedToaster.tsx";
 
 const App = () => {
     return (
         <>
-            <Toaster
-                position="bottom-right"
-                toastOptions={{
-                    className: 'bg-base-200 text-base-content',
-                    duration: 4000,
-                }}
-            />
+            <ThemedToaster />
             <Header/>
             <Routes>
                 <Route

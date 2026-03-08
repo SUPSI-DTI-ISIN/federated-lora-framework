@@ -1,7 +1,7 @@
 import React, { useCallback, useState, type ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { motion } from "framer-motion";
-import { Upload, X, FileText } from "lucide-react";
+import { Upload, X, FileText, CloudUpload } from "lucide-react";
 import toast from "react-hot-toast";
 import { useUploadDocument } from "../../hooks/institute/data/documents/useUploadDocument.ts";
 
@@ -9,6 +9,17 @@ interface DocumentUploadProps {
     onClose: (documentId?: number) => void;
 }
 
+/**
+ * DocumentUpload Component
+ * 
+ * Modal for uploading PDF documents with drag-and-drop support.
+ * Preserves all existing business logic and upload handlers.
+ * 
+ * Requirements satisfied:
+ * - 13.3: Create drag-and-drop zone with dashed indigo border and cloud upload icon
+ * - 13.4: Display translated hint text in upload zone
+ * - 13.13: Preserve existing upload handler logic
+ */
 export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
     const { t } = useTranslation();
     const { mutateAsync: uploadDocument } = useUploadDocument();
@@ -92,14 +103,15 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
                             <button onClick={() => onClose()} className="btn btn-ghost btn-sm btn-circle"><X size={20} /></button>
                         </div>
 
+                        {/* Drag-and-drop zone with dashed indigo border */}
                         <div
                             onDragOver={onDragOver}
                             onDragLeave={onDragLeave}
                             onDrop={onDrop}
                             className={`relative border-3 border-dashed rounded-2xl p-10 transition-all duration-300 flex flex-col items-center justify-center ${
                                 isDragging
-                                    ? "border-primary bg-primary/5 scale-[1.02]"
-                                    : "border-base-content/10 bg-base-200/30 hover:bg-base-200/50"
+                                    ? "border-indigo-500 bg-indigo-500/5 scale-[1.02]"
+                                    : "border-indigo-300 dark:border-indigo-700 bg-base-200/30 hover:bg-base-200/50"
                             }`}
                         >
                             {selectedFile ? (
@@ -119,8 +131,9 @@ export const DocumentUpload = ({ onClose }: DocumentUploadProps) => {
                                 </div>
                             ) : (
                                 <div className="text-center">
-                                    <div className="mx-auto w-16 h-16 bg-base-content/5 rounded-full flex items-center justify-center mb-4">
-                                        <Upload className="text-base-content/40" size={32} />
+                                    {/* Cloud upload icon */}
+                                    <div className="mx-auto w-16 h-16 bg-indigo-500/10 rounded-full flex items-center justify-center mb-4">
+                                        <CloudUpload className="text-indigo-600 dark:text-indigo-400" size={32} />
                                     </div>
                                     <p className="text-lg font-bold text-base-content">{t("documents.upload.dragDrop")}</p>
                                     <p className="text-sm text-base-content/50 mt-1 mb-6">{t("documents.upload.info")}</p>

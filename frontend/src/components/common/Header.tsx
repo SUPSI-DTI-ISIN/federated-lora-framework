@@ -4,11 +4,18 @@ import {NavLink, Link, useLocation, useNavigate} from "react-router-dom";
 import {Home, FileText, MessageSquare, Menu, X, Microchip, User, LogOut, LayoutGrid} from "lucide-react";
 import {motion, AnimatePresence} from "framer-motion";
 import {LanguageSwitcher} from "../header/LanguageSwitcher";
+import {ThemeToggle} from "./ThemeToggle";
+import {InstituteBadge} from "./InstituteBadge";
 import mimirLogo from "../../assets/mimir-logo.png"
 import {useAuthWrapper} from "../../hooks/auth/useAuthWrapper.ts";
 import {useSelectorRealm} from "../../hooks/realm/useSelectorRealm.ts";
 
-export const Header = () => {
+interface HeaderProps {
+  onToggleSidebar?: () => void;
+  onToggleDrawer?: () => void;
+}
+
+export const Header = ({ onToggleSidebar, onToggleDrawer }: HeaderProps = {}) => {
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -65,6 +72,23 @@ export const Header = () => {
             <div className="container mx-auto px-4 py-2">
                 <div className="navbar min-h-16 px-0">
                     <div className="navbar-start">
+                        {/* Hamburger toggle for sidebar collapse (desktop) and drawer (mobile) */}
+                        <button
+                            className="btn btn-ghost btn-circle mr-2"
+                            aria-label={t("header.toggleMenu", "Toggle menu")}
+                            onClick={() => {
+                                // On desktop (lg+), toggle sidebar collapse
+                                // On mobile/tablet, toggle drawer
+                                if (window.innerWidth >= 1024) {
+                                    onToggleSidebar?.();
+                                } else {
+                                    onToggleDrawer?.();
+                                }
+                            }}
+                        >
+                            <Menu size={20} />
+                        </button>
+
                         <Link
                             to="/"
                             className="group flex items-center gap-3 focus-visible:outline-primary rounded-lg transition-all"
@@ -74,9 +98,14 @@ export const Header = () => {
                                         className="flex items-center gap-3">
                                 <img src={mimirLogo} alt="Mimir Logo" className="h-10 w-auto"/>
                                 <span
-                                    className="hidden text-xl font-bold tracking-tight text-base-content sm:inline-block">{t("header.title")} {isAuthenticated && realm? "(" + realm + ")" : ""}</span>
+                                    className="hidden text-xl font-bold tracking-tight text-base-content sm:inline-block">{t("header.title")}</span>
                             </motion.div>
                         </Link>
+
+                        {/* Institute Badge - displays realm/institute name */}
+                        {isAuthenticated && realm && (
+                            <InstituteBadge instituteName={realm} className="ml-3 hidden md:inline-flex" />
+                        )}
                     </div>
 
                     <div className="navbar-center hidden lg:flex">
@@ -117,6 +146,9 @@ export const Header = () => {
                         <div className="hidden sm:flex mr-2">
                             <LanguageSwitcher />
                         </div>
+
+                        {/* Theme Toggle */}
+                        <ThemeToggle />
 
                         {/* PROFILE / LOGIN area */}
                         <div className="relative" ref={profileRef}>
@@ -220,6 +252,14 @@ export const Header = () => {
                                 <div className="px-2">
                                     <LanguageSwitcher/>
                                 </div>
+                            </div>
+
+                            {/* Theme Toggle for mobile */}
+                            <div className="mt-2 px-4 sm:hidden">
+                                <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-base-content/40">
+                                    {t("header.settings.theme", "Theme")}
+                                </p>
+                                <ThemeToggle />
                             </div>
 
                             {/* mobile auth controls */}

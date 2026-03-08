@@ -6,7 +6,10 @@
       "home": "Home",
       "documents": "Documents",
       "chat": "AI Chat",
-      "adapters": "Adapters"
+      "adapters": "Adapters",
+      "realms": "Realms",
+      "settings": "Settings",
+      "logout": "Logout"
     },
     "navLabel": "Main navigation",
     "openMenu": "Open menu",
@@ -25,6 +28,10 @@
         "de": "DE",
         "fr": "FR"
       }
+    },
+    "settings": {
+      "language": "Language",
+      "theme": "Theme"
     }
   },
   "footer": {
@@ -51,6 +58,9 @@
     "and": "and"
   },
   "home": {
+    "welcome": "Welcome back, {{name}}!",
+    "tagline": "Smart Document Chat for Research & Study",
+    "description": "Upload documents, choose adapters and chat with models fine-tuned to your data.",
     "hero": {
       "title": "Smart Document Chat for Research & Study",
       "subtitle": "Upload documents, choose adapters and chat with models fine-tuned to your data.",
@@ -106,7 +116,10 @@
   "documents": {
     "title": "Documents",
     "subtitle": "All uploaded documents are listed here.",
+    "upload": "Upload Document",
     "uploadButton": "Upload Document",
+    "empty": "No documents yet. Upload your first document to get started.",
+    "error": "Unable to load documents. Please try again later.",
     "search": {
       "placeholder": "Search documents..."
     },
@@ -145,12 +158,16 @@
   "chat": {
     "title": "Chat",
     "subtitle": "Start a conversation with a model. Choose an adapter or use the base model.",
+    "empty": "No conversations yet. Start a new chat to begin.",
     "startPromptPlaceholder": "Type a question or paste a prompt...",
     "sendButton": "Send",
     "sending": "Sending...",
     "sampleReply": "This is a sample assistant reply. Replace with real inference output.",
     "emptyHint": "Start the chat by sending a message.",
     "errorInference": "An error occurred while running the model. Try again.",
+    "errorCreate": "Error creating chat",
+    "errorDelete": "Error deleting chat",
+    "deleteSuccess": "Chat deleted successfully",
     "adapter": {
       "selectLabel": "Adapter",
       "baseModelLabel": "Base model (no adapter)",
@@ -159,12 +176,22 @@
     "sidebar": {
       "title": "Conversations",
       "new": "New",
-      "empty": "No conversations yet."
+      "empty": "No conversations yet.",
+      "newChat": "New Chat",
+      "creating": "Creating...",
+      "newChatPrompt": "Chat title",
+      "confirmDelete": "Delete this chat?",
+      "delete": "Delete",
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar",
+      "noChats": "No chats yet. Create your first one!"
     }
   },
   "adapters": {
     "title": "Adapters",
     "subtitle": "Manage model adapters (LoRA) and download them locally.",
+    "empty": "No adapters available. Check back later or contact your administrator.",
+    "emptyDescription": "Adapters will appear here once they are available.",
     "local": "Local",
     "download": "Download",
     "errorFetch": "Unable to fetch adapters. Try again later.",
@@ -177,12 +204,42 @@
       "downloading": "Starting download...",
       "downloaded": "Adapter downloaded successfully",
       "error": "Failed to download adapter"
+    },
+    "card": {
+      "title": "Adapter v{{version}}"
+    },
+    "list": {
+      "empty": "No adapters found"
     }
   },
   "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
     "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "upload": "Upload",
     "clear": "Clear",
     "close": "Close",
     "start": "Start"
+  },
+  "modal": {
+    "delete": {
+      "title": "Confirm Deletion",
+      "message": "Are you sure you want to delete this item? This action cannot be undone.",
+      "messageNamed": "Are you sure you want to delete \"{{itemName}}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "theme": {
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode"
+  },
+  "app": {
+    "version": "v1.0.0"
   }
 }

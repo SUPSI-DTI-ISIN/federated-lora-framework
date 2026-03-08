@@ -6,7 +6,10 @@
       "home": "Home",
       "documents": "Documenti",
       "chat": "Chat AI",
-      "adapters": "Adapters"
+      "adapters": "Adapters",
+      "realms": "Realms",
+      "settings": "Impostazioni",
+      "logout": "Esci"
     },
     "navLabel": "Navigazione principale",
     "openMenu": "Apri menu",
@@ -25,6 +28,10 @@
         "de": "DE",
         "fr": "FR"
       }
+    },
+    "settings": {
+      "language": "Lingua",
+      "theme": "Tema"
     }
   },
   "footer": {
@@ -48,6 +55,9 @@
     "copyright": "Innosuisse AI Assistant. Tutti i diritti riservati."
   },
   "home": {
+    "welcome": "Bentornato, {{name}}!",
+    "tagline": "Chat intelligente sui documenti per ricerca e studio",
+    "description": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
     "hero": {
       "title": "Chat intelligente sui documenti per ricerca e studio",
       "subtitle": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
@@ -103,7 +113,10 @@
   "documents": {
     "title": "Documenti",
     "subtitle": "Tutti i documenti caricati sono elencati qui.",
+    "upload": "Carica Documento",
     "uploadButton": "Carica Documento",
+    "empty": "Nessun documento. Carica il tuo primo documento per iniziare.",
+    "error": "Impossibile caricare i documenti. Riprova più tardi.",
     "search": {
       "placeholder": "Cerca documenti..."
     },
@@ -142,6 +155,8 @@
   "adapters": {
     "title": "Adapters",
     "subtitle": "Gestisci gli adapter dei modelli (LoRA) e scaricali localmente.",
+    "empty": "Nessun adapter disponibile. Ricontrolla più tardi o contatta l'amministratore.",
+    "emptyDescription": "Gli adapter appariranno qui una volta disponibili.",
     "local": "Locale",
     "download": "Scarica",
     "filter": {
@@ -154,17 +169,27 @@
       "error": "Impossibile scaricare l'adapter"
     },
     "errorFetch": "Impossibile recuperare gli adapter. Riprova più tardi.",
-    "notLocal": "Non locale"
+    "notLocal": "Non locale",
+    "card": {
+      "title": "Adapter v{{version}}"
+    },
+    "list": {
+      "empty": "Nessun adapter trovato"
+    }
   },
   "chat": {
     "title": "Chat",
     "subtitle": "Inizia una conversazione con un modello. Scegli un adapter o usa il modello base.",
+    "empty": "Ancora nessuna conversazione. Inizia una nuova chat per cominciare.",
     "startPromptPlaceholder": "Scrivi una domanda o incolla un prompt...",
     "sendButton": "Invia",
     "sending": "Invio...",
     "sampleReply": "Questa è una risposta di esempio. Sostituiscila con l'output reale.",
     "emptyHint": "Avvia la chat inviando un messaggio.",
     "errorInference": "Errore nell'esecuzione del modello. Riprova.",
+    "errorCreate": "Errore nella creazione della chat",
+    "errorDelete": "Errore nell'eliminazione della chat",
+    "deleteSuccess": "Chat eliminata con successo",
     "adapter": {
       "selectLabel": "Adapter",
       "baseModelLabel": "Modello base (nessun adapter)",
@@ -173,13 +198,45 @@
     "sidebar": {
       "title": "Conversazioni",
       "new": "Nuova",
-      "empty": "Ancora nessuna conversazione."
+      "empty": "Ancora nessuna conversazione.",
+      "newChat": "Nuova Chat",
+      "creating": "Creazione...",
+      "newChatPrompt": "Titolo chat",
+      "confirmDelete": "Eliminare questa chat?",
+      "delete": "Elimina",
+      "collapse": "Comprimi barra laterale",
+      "expand": "Espandi barra laterale",
+      "noChats": "Nessuna chat ancora. Crea la prima!"
     }
   },
   "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "retry": "Riprova",
     "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "view": "Visualizza",
+    "upload": "Carica",
     "clear": "Pulisci",
     "close": "Chiudi",
     "start": "Avvia"
+  },
+  "modal": {
+    "delete": {
+      "title": "Conferma Eliminazione",
+      "message": "Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata.",
+      "messageNamed": "Sei sicuro di voler eliminare \"{{itemName}}\"? Questa azione non può essere annullata.",
+      "confirm": "Elimina",
+      "cancel": "Annulla"
+    }
+  },
+  "theme": {
+    "light": "Passa alla modalità chiara",
+    "dark": "Passa alla modalità scura"
+  },
+  "app": {
+    "version": "v1.0.0"
   }
 }

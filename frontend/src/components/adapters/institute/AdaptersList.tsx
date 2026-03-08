@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { SortDesc, SortAsc, Inbox } from "lucide-react";
 import type { AdapterDTO } from "@isin/model-service-client";
 import { AdapterCard } from "./AdapterCard.tsx";
+import { useReducedMotion } from "../../../hooks/useReducedMotion";
 
 type AdaptersListProps = {
     adapters: AdapterDTO[];
@@ -14,6 +15,7 @@ type AdaptersListProps = {
 export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: AdaptersListProps) => {
     const { t } = useTranslation();
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+    const prefersReducedMotion = useReducedMotion();
 
     const sortedAdapters = useMemo(() => {
         return [...adapters].sort((a, b) => {
@@ -42,25 +44,44 @@ export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: Ad
                 <button
                     onClick={() => setSortOrder(prev => prev === "asc" ? "desc" : "asc")}
                     className="btn btn-sm btn-ghost gap-2 hover:bg-base-200 text-primary uppercase tracking-tight"
+                    aria-label={`Sort adapters ${sortOrder === "desc" ? "ascending" : "descending"}`}
                 >
-                    {sortOrder === "desc" ? <SortDesc size={18} /> : <SortAsc size={18} />}
+                    {sortOrder === "desc" ? <SortDesc size={18} aria-hidden="true" /> : <SortAsc size={18} aria-hidden="true" />}
                     {sortOrder === "desc" ? "desc" : "asc"}
                 </button>
             </div>
 
             {/* List Items */}
-            <div className="flex flex-col gap-3">
+            <motion.div
+                initial="hidden"
+                animate="visible"
+                variants={prefersReducedMotion ? {} : {
+                    visible: {
+                        transition: {
+                            staggerChildren: 0.05
+                        }
+                    }
+                }}
+                className="flex flex-col gap-3"
+            >
                 <AnimatePresence mode="popLayout">
                     {sortedAdapters.map((adapter) => (
-                        <AdapterCard
+                        <motion.div
                             key={String(adapter.version)}
-                            adapter={adapter}
-                            onDownload={onDownload}
-                            isDownloading={isDownloading}
-                        />
+                            variants={prefersReducedMotion ? {} : {
+                                hidden: { opacity: 0, y: 8 },
+                                visible: { opacity: 1, y: 0 }
+                            }}
+                        >
+                            <AdapterCard
+                                adapter={adapter}
+                                onDownload={onDownload}
+                                isDownloading={isDownloading}
+                            />
+                        </motion.div>
                     ))}
                 </AnimatePresence>
-            </div>
+            </motion.div>
         </div>
     );
 };

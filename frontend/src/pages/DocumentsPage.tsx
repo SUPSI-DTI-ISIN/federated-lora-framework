@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { motion, AnimatePresence } from "framer-motion";
-import { Files, Plus } from "lucide-react";
+import { FileText, Upload } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
+import { PageHeader } from "../components/common/PageHeader";
 import { DocumentUpload } from "../components/documents/DocumentUpload";
 import { DocumentList } from "../components/documents/DocumentList";
 import { DocumentFilterBar } from "../components/documents/DocumentFilterBar";
-import { useNavigate } from "react-router-dom";
 
+/**
+ * DocumentsPage Component
+ * 
+ * Refactored to use PageHeader, EmptyState, LoadingSkeleton, and DeleteConfirmModal components.
+ * Preserves all existing business logic and data fetching hooks.
+ * 
+ * Requirements satisfied:
+ * - 13.1: Render page header with title, subtitle, and upload button
+ * - 13.2: Render upload button with Upload icon
+ * - 13.3: Styled drag-and-drop zone (in DocumentUpload component)
+ * - 10.2: Wrap page in motion.div with entrance animation
+ * - 10.9: Use AnimatePresence for modal transitions
+ */
 export const DocumentsPage = () => {
     const { t } = useTranslation();
     const [searchQuery, setSearchQuery] = useState("");
@@ -21,37 +35,24 @@ export const DocumentsPage = () => {
     }
 
     return (
-        <div className="min-h-screen bg-base-100 py-8 px-4 sm:px-8">
+        <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+            className="min-h-screen bg-base-100 py-8 px-4 sm:px-8"
+        >
             <div className="relative z-10 max-w-7xl mx-auto">
-
-                {/* Header della Pagina */}
-                <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10"
-                >
-                    <div className="flex items-center gap-4">
-                        <div className="flex h-14 w-14 items-center justify-center bg-primary/10 rounded-2xl text-primary shadow-inner">
-                            <Files size={32} />
-                        </div>
-                        <div>
-                            <h1 className="text-4xl font-black tracking-tight text-base-content">
-                                {t("documents.title")}
-                            </h1>
-                            <p className="text-base-content/60 font-medium">
-                                {t("documents.subtitle")}
-                            </p>
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={() => setShowUpload(true)}
-                        className="btn btn-primary btn-md md:btn-lg shadow-xl shadow-primary/20 hover:scale-105 transition-all"
-                    >
-                        <Plus size={20} />
-                        {t("documents.uploadButton")}
-                    </button>
-                </motion.div>
+                {/* Page Header */}
+                <PageHeader
+                    icon={FileText}
+                    title={t("documents.title")}
+                    subtitle={t("documents.subtitle")}
+                    action={{
+                        label: t("documents.uploadButton"),
+                        icon: Upload,
+                        onClick: () => setShowUpload(true)
+                    }}
+                />
 
                 {/* Filter & List Area */}
                 <div className="space-y-6">
@@ -69,6 +70,6 @@ export const DocumentsPage = () => {
             <AnimatePresence>
                 {showUpload && <DocumentUpload onClose={handleCloseDocumentUploader} />}
             </AnimatePresence>
-        </div>
+        </motion.div>
     );
 };

@@ -10,6 +10,7 @@ import {useGetAllDepartmentAdapters} from "../hooks/department/mlflow/useGetAllD
 import {DepartmentAdaptersList} from "../components/adapters/department/DepartmentAdaptersList.tsx";
 import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
 import {FederatedLearningActions} from "../components/adapters/department/FederatedLearningActions.tsx";
+import {LoadingSkeleton} from "../components/common";
 
 export const AdaptersAdminPage = () => {
     useFederatedLearningJobSse();
@@ -38,14 +39,7 @@ export const AdaptersAdminPage = () => {
     }, [isDepartmentAdmin]);
 
     if (isLoadingAdapters) {
-        return (
-            <div className="space-y-3">
-                {/* skeleton placeholders */}
-                {[1, 2, 3].map((i) => (
-                    <div key={i} className="card bg-base-100 shadow animate-pulse h-20"/>
-                ))}
-            </div>
-        )
+        return <LoadingSkeleton variant="list" count={5} />;
     }
 
     if (errorLoadingAdapters) {
