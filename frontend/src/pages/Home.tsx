@@ -4,20 +4,19 @@ import {
   FileText, 
   MessageSquare, 
   Cpu, 
-  Shield, 
   Users, 
   TrendingUp,
-  ArrowRight,
   Sparkles,
   Lock,
-  Zap
+  Zap,
+  ArrowRight
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuthWrapper } from '../hooks/auth/useAuthWrapper';
 
 export const Home = () => {
   const { t } = useTranslation();
-  const { user, isAuthenticated } = useAuthWrapper();
+  const { user, isAuthenticated, isDepartmentAdmin } = useAuthWrapper();
 
   const userName = user?.profile?.preferred_username || user?.profile?.name || t('home.guest');
 
@@ -201,84 +200,107 @@ export const Home = () => {
             </h2>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-            {/* Connection lines for desktop */}
-            <div className="hidden md:block absolute top-1/4 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-            
-            {[
-              {
-                step: '01',
-                titleKey: 'home.howItWorks.step1.title',
-                descKey: 'home.howItWorks.step1.description',
-                icon: FileText
-              },
-              {
-                step: '02',
-                titleKey: 'home.howItWorks.step2.title',
-                descKey: 'home.howItWorks.step2.description',
-                icon: Cpu
-              },
-              {
-                step: '03',
-                titleKey: 'home.howItWorks.step3.title',
-                descKey: 'home.howItWorks.step3.description',
-                icon: Zap
-              }
-            ].map((step, index) => (
-              <motion.div
-                key={index}
-                variants={itemVariants}
-                className="relative"
-              >
-                <div className="relative z-10 text-center">
-                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-content text-2xl font-bold mb-6 shadow-lg">
-                    {step.step}
+          {/* User Workflow */}
+          {!isDepartmentAdmin && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {/* Connection lines for desktop */}
+              <div className="hidden md:block absolute top-1/4 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+              
+              {[
+                {
+                  step: '01',
+                  titleKey: 'home.howItWorks.user.step1.title',
+                  descKey: 'home.howItWorks.user.step1.description',
+                  icon: FileText
+                },
+                {
+                  step: '02',
+                  titleKey: 'home.howItWorks.user.step2.title',
+                  descKey: 'home.howItWorks.user.step2.description',
+                  icon: Cpu
+                },
+                {
+                  step: '03',
+                  titleKey: 'home.howItWorks.user.step3.title',
+                  descKey: 'home.howItWorks.user.step3.description',
+                  icon: MessageSquare
+                }
+              ].map((step, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="relative"
+                >
+                  <div className="relative z-10 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-content text-2xl font-bold mb-6 shadow-lg">
+                      {step.step}
+                    </div>
+                    <div className="inline-flex p-3 rounded-xl bg-base-100 mb-4 shadow-md">
+                      <step.icon className="text-primary" size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-base-content mb-3">
+                      {t(step.titleKey)}
+                    </h3>
+                    <p className="text-base-content/70 leading-relaxed">
+                      {t(step.descKey)}
+                    </p>
                   </div>
-                  <div className="inline-flex p-3 rounded-xl bg-base-100 mb-4 shadow-md">
-                    <step.icon className="text-primary" size={24} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* Admin Workflow */}
+          {isDepartmentAdmin && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {/* Connection lines for desktop */}
+              <div className="hidden md:block absolute top-1/4 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
+              
+              {[
+                {
+                  step: '01',
+                  titleKey: 'home.howItWorks.admin.step1.title',
+                  descKey: 'home.howItWorks.admin.step1.description',
+                  icon: Zap
+                },
+                {
+                  step: '02',
+                  titleKey: 'home.howItWorks.admin.step2.title',
+                  descKey: 'home.howItWorks.admin.step2.description',
+                  icon: TrendingUp
+                },
+                {
+                  step: '03',
+                  titleKey: 'home.howItWorks.admin.step3.title',
+                  descKey: 'home.howItWorks.admin.step3.description',
+                  icon: Cpu
+                }
+              ].map((step, index) => (
+                <motion.div
+                  key={index}
+                  variants={itemVariants}
+                  className="relative"
+                >
+                  <div className="relative z-10 text-center">
+                    <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-secondary text-secondary-content text-2xl font-bold mb-6 shadow-lg">
+                      {step.step}
+                    </div>
+                    <div className="inline-flex p-3 rounded-xl bg-base-100 mb-4 shadow-md">
+                      <step.icon className="text-secondary" size={24} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-base-content mb-3">
+                      {t(step.titleKey)}
+                    </h3>
+                    <p className="text-base-content/70 leading-relaxed">
+                      {t(step.descKey)}
+                    </p>
                   </div>
-                  <h3 className="text-2xl font-bold text-base-content mb-3">
-                    {t(step.titleKey)}
-                  </h3>
-                  <p className="text-base-content/70 leading-relaxed">
-                    {t(step.descKey)}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
       </motion.section>
-
-      {/* CTA Section */}
-      {isAuthenticated && (
-        <motion.section
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={containerVariants}
-          className="px-6 py-20"
-        >
-          <motion.div
-            variants={itemVariants}
-            className="max-w-4xl mx-auto text-center p-12 rounded-3xl bg-gradient-to-br from-primary to-secondary text-primary-content shadow-2xl"
-          >
-            <Shield size={48} className="mx-auto mb-6 opacity-90" />
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              {t('home.cta.title')}
-            </h2>
-            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
-              {t('home.cta.description')}
-            </p>
-            <Link to="/chat">
-              <button className="btn btn-lg bg-base-100 text-base-content hover:bg-base-200 border-none shadow-xl gap-2">
-                {t('home.cta.button')}
-                <ArrowRight size={20} />
-              </button>
-            </Link>
-          </motion.div>
-        </motion.section>
-      )}
     </div>
   );
 };

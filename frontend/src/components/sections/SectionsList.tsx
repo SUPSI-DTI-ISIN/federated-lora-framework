@@ -7,11 +7,12 @@ import { useTranslation } from "react-i18next";
 interface SectionsListProps {
     documentId: number
     sections: Array<SectionDTO>;
-    onDeleteSection?: (sectionId: number) => void;
+    selectedSections?: number[];
+    onSelectSection?: (sectionId: number) => void;
 }
 
 
-export const SectionsList = ({ documentId, sections }: SectionsListProps) => {
+export const SectionsList = ({ documentId, sections, selectedSections = [], onSelectSection }: SectionsListProps) => {
     const { t } = useTranslation();
     const [expandedIds, setExpandedIds] = useState<Array<number>>([]);
 
@@ -39,6 +40,8 @@ export const SectionsList = ({ documentId, sections }: SectionsListProps) => {
                     documentId={documentId}
                     expanded={expandedIds.includes(section.id)}
                     onToggle={() => toggle(section.id)}
+                    isSelected={selectedSections.includes(section.id)}
+                    onSelect={onSelectSection ? () => onSelectSection(section.id) : undefined}
                 />
             ))}
         </div>

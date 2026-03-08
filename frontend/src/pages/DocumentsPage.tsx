@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { PageHeader } from "../components/common/PageHeader";
 import { DocumentUpload } from "../components/documents/DocumentUpload";
 import { DocumentList } from "../components/documents/DocumentList";
-import { DocumentFilterBar } from "../components/documents/DocumentFilterBar";
+import { SearchBar } from "../components/common/SearchBar";
 
 /**
  * DocumentsPage Component
@@ -56,9 +56,10 @@ export const DocumentsPage = () => {
 
                 {/* Filter & List Area */}
                 <div className="space-y-6">
-                    <DocumentFilterBar
+                    <SearchBar
                         value={searchQuery}
-                        onChange={(v) => setSearchQuery(v)}
+                        onChange={setSearchQuery}
+                        placeholderKey="documents.search.placeholder"
                     />
 
                     <div className="bg-base-200/30 rounded-3xl p-2 border border-base-content/5">

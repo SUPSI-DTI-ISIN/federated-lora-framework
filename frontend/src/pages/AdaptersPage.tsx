@@ -1,7 +1,6 @@
 import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
-import {AdapterFilterBar} from "../components/adapters/AdapterFilterBar";
 import {AdaptersList} from "../components/adapters/institute/AdaptersList.tsx";
 import {useGetAllAvailableAdapters} from "../hooks/institute/model/useGetAllAvailableAdapters.ts";
 import {getModelKey} from "../utils/envUtils.ts";
@@ -12,6 +11,7 @@ import {Cpu} from "lucide-react";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
 import {PageHeader} from "../components/common/PageHeader.tsx";
 import {EmptyState} from "../components/common/EmptyState.tsx";
+import {SearchBar} from "../components/common/SearchBar.tsx";
 import {useReducedMotion} from "../hooks/useReducedMotion";
 
 export const AdaptersPage = () => {
@@ -112,14 +112,23 @@ export const AdaptersPage = () => {
                     subtitle={t("adapters.subtitle")}
                 />
 
-                {/* Filter Bar */}
-                <div className="bg-base-200/50 p-2 rounded-2xl border border-base-content/5 mb-6">
-                    <AdapterFilterBar
-                        query={query}
-                        onQueryChange={setQuery}
-                        localOnly={localOnly}
-                        onLocalOnlyChange={setLocalOnly}
+                {/* Search Bar and Filter */}
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                    <SearchBar
+                        value={query}
+                        onChange={setQuery}
+                        placeholderKey="adapters.filter.searchPlaceholder"
                     />
+                    
+                    <label className="flex items-center gap-2 cursor-pointer whitespace-nowrap">
+                        <input
+                            type="checkbox"
+                            checked={localOnly}
+                            onChange={(e) => setLocalOnly(e.target.checked)}
+                            className="checkbox checkbox-primary"
+                        />
+                        <span className="label-text">{t("adapters.filter.localOnly")}</span>
+                    </label>
                 </div>
 
                 {/* Adapters List or Empty State */}

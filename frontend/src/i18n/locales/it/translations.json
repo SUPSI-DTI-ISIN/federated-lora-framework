@@ -97,23 +97,34 @@
     },
     "howItWorks": {
       "title": "Come Funziona",
-      "step1": {
-        "title": "Carica Documenti",
-        "description": "Importa i tuoi PDF o file di testo nell'area di lavoro."
+      "user": {
+        "step1": {
+          "title": "Carica Documenti",
+          "description": "Carica documenti PDF per il fine-tuning con federated learning."
+        },
+        "step2": {
+          "title": "Seleziona Adapter",
+          "description": "Scegli l'adapter che vuoi utilizzare per il tuo task."
+        },
+        "step3": {
+          "title": "Inferenza Modello",
+          "description": "Chatta con il modello utilizzando l'adapter selezionato."
+        }
       },
-      "step2": {
-        "title": "Seleziona Adapter",
-        "description": "Scegli l'adapter o il modello più adatto al tuo task."
-      },
-      "step3": {
-        "title": "Chatta e Affina",
-        "description": "Fai domande, affina i prompt ed esporta i risultati."
+      "admin": {
+        "step1": {
+          "title": "Avvia Federated Learning",
+          "description": "Inizia nuovi job di fine-tuning con federated learning tramite UI."
+        },
+        "step2": {
+          "title": "Monitora Stato Job",
+          "description": "Controlla lo stato e il progresso dei job di training in esecuzione."
+        },
+        "step3": {
+          "title": "Gestisci Adapter Globali",
+          "description": "Supervisiona e gestisci tutti gli adapter globali del sistema."
+        }
       }
-    },
-    "cta": {
-      "title": "Pronto per Iniziare?",
-      "description": "Sperimenta la potenza dell'intelligenza documentale basata su AI con sicurezza di livello enterprise.",
-      "button": "Inizia la Tua Prima Chat"
     }
   },
   "documents": {
@@ -182,6 +193,14 @@
     },
     "list": {
       "empty": "Nessun adapter trovato"
+    },
+    "admin": {
+      "fl": {
+        "start": "Avvia Federated Learning",
+        "startSuccess": "Federated learning avviato con successo",
+        "startError": "Errore nell'avvio del federated learning",
+        "trackJobs": "Traccia job in background"
+      }
     }
   },
   "chat": {
@@ -253,10 +272,23 @@
   "sections": {
     "title": "Sezioni",
     "empty": "Nessuna sezione disponibile per questo documento.",
+    "error": {
+      "title": "Errore nel caricamento del documento",
+      "description": "Impossibile trovare il documento con l'ID fornito."
+    },
+    "selection": {
+      "selectAll": "Seleziona Tutto",
+      "deselectAll": "Deseleziona Tutto",
+      "deleteSelected": "Elimina {{count}} selezionate",
+      "deleteConfirm": "{{count}} sezioni"
+    },
     "delete": {
       "action": "Elimina sezione",
       "confirm": "Sei sicuro di voler eliminare questa sezione?",
       "success": "Sezione eliminata con successo",
+      "bulkSuccess": "{{count}} sezioni eliminate con successo",
+      "bulkError": "Impossibile eliminare le sezioni",
+      "bulkPartial": "{{success}} sezioni eliminate, {{failed}} fallite",
       "error": {
         "failed": "Impossibile eliminare la sezione"
       }
