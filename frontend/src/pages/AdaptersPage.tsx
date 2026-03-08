@@ -9,7 +9,9 @@ import {useSaveNewAdapter} from "../hooks/institute/model/useSaveNewAdapter.ts";
 import type {AdapterDTO} from "@isin/model-service-client";
 import { motion } from "framer-motion";
 import {Cpu} from "lucide-react";
-import {LoadingSkeleton, PageHeader, EmptyState} from "../components/common";
+import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
+import {PageHeader} from "../components/common/PageHeader.tsx";
+import {EmptyState} from "../components/common/EmptyState.tsx";
 import {useReducedMotion} from "../hooks/useReducedMotion";
 
 export const AdaptersPage = () => {

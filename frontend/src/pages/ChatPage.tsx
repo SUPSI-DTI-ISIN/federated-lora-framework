@@ -19,7 +19,7 @@ export const ChatPage = () => {
             initial={prefersReducedMotion ? {} : {opacity: 0, y: 12}}
             animate={prefersReducedMotion ? {} : {opacity: 1, y: 0}}
             transition={prefersReducedMotion ? {duration: 0} : {duration: 0.25}}
-            className="flex h-[calc(100vh-4rem)] overflow-hidden bg-base-100"
+            className="flex h-[calc(100vh-4rem)] w-full overflow-hidden bg-base-100"
         >
             <ChatSidebar
                 isOpen={isSidebarOpen}
@@ -32,7 +32,7 @@ export const ChatPage = () => {
             />
 
 
-            <main className="flex flex-1 flex-col relative overflow-hidden">
+            <main className="flex flex-1 flex-col relative overflow-hidden w-full">
                 <header className="flex h-14 items-center justify-between border-b border-base-content/5 px-6 bg-base-100/50 backdrop-blur-md">
                     <div className="flex items-center gap-3">
                         {!isSidebarOpen && (
@@ -51,7 +51,7 @@ export const ChatPage = () => {
                 </header>
 
 
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-hidden w-full">
                     <ChatInterfaceWrapper modelKey={modelKey} chatId={selectedChatId} />
                 </div>
             </main>

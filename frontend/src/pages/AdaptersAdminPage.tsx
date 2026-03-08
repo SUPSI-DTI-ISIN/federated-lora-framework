@@ -10,7 +10,7 @@ import {useGetAllDepartmentAdapters} from "../hooks/department/mlflow/useGetAllD
 import {DepartmentAdaptersList} from "../components/adapters/department/DepartmentAdaptersList.tsx";
 import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
 import {FederatedLearningActions} from "../components/adapters/department/FederatedLearningActions.tsx";
-import {LoadingSkeleton} from "../components/common";
+import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
 
 export const AdaptersAdminPage = () => {
     useFederatedLearningJobSse();

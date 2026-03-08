@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SectionDTO } from "@isin/data-service-client";
 import { SectionRow } from "./SectionRow";
+import { useTranslation } from "react-i18next";
 
 
 interface SectionsListProps {
@@ -11,6 +12,7 @@ interface SectionsListProps {
 
 
 export const SectionsList = ({ documentId, sections }: SectionsListProps) => {
+    const { t } = useTranslation();
     const [expandedIds, setExpandedIds] = useState<Array<number>>([]);
 
 
@@ -22,7 +24,7 @@ export const SectionsList = ({ documentId, sections }: SectionsListProps) => {
     if (!sections || sections.length === 0) {
         return (
             <div className="card bg-base-100 shadow-lg p-6 text-center">
-                <p className="text-base-content/60">Nessuna sezione disponibile per questo documento.</p>
+                <p className="text-base-content/60">{t("sections.empty")}</p>
             </div>
         );
     }

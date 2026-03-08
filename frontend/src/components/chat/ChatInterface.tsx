@@ -61,8 +61,8 @@ export const ChatInterface = ({
     }
 
     return (
-        <div className="h-full flex flex-col max-w-4xl mx-auto w-full">
-            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 scroll-smooth" ref={scrollRef}>
+        <div className="h-full flex flex-col w-full">
+            <div className="flex-1 overflow-y-auto p-4 sm:p-8 space-y-8 scroll-smooth max-w-5xl mx-auto w-full" ref={scrollRef}>
                 {isLoadingMessages && (
                     <div className="space-y-4">
                         {Array.from({ length: 5 }).map((_, i) => (
@@ -95,7 +95,7 @@ export const ChatInterface = ({
                                 {from === "assistant" && (
                                     <div className="flex items-center gap-2 px-1 text-[10px] font-bold uppercase tracking-tighter opacity-40">
                                         <Cpu size={12} />
-                                        {message.adapter_version ? `Adapter v${message.adapter_version}` : "Base Model"}
+                                        {message.adapter_version ? t("chat.adapter.version", {version: message.adapter_version}) : t("chat.adapter.baseModel")}
                                     </div>
                                 )}
                             </div>

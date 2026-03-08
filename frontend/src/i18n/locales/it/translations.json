@@ -56,29 +56,30 @@
   },
   "home": {
     "welcome": "Bentornato, {{name}}!",
+    "guest": "Ospite",
     "tagline": "Chat intelligente sui documenti per ricerca e studio",
     "description": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
     "hero": {
-      "title": "Chat intelligente sui documenti per ricerca e studio",
+      "title": "Intelligenza Documentale Basata su AI",
       "subtitle": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
       "cta": {
         "documents": "Gestisci Documenti",
-        "chat": "Apri Chat"
+        "chat": "Inizia a Chattare"
       }
     },
     "features": {
-      "title": "Funzionalità principali",
+      "title": "Funzionalità Potenti",
       "subtitle": "Tutto il necessario per esperimenti rapidi e Q&A affidabili.",
       "upload": {
         "title": "Carica Documenti",
         "description": "Importa PDF, testo e risorse da usare come contesto."
       },
       "finetune": {
-        "title": "Fine-tune",
+        "title": "Affina Modelli",
         "description": "Crea adapter personalizzati (LoRA) per specializzare i modelli."
       },
       "chat": {
-        "title": "Interfaccia Chat",
+        "title": "Chat Interattiva",
         "description": "Conversazioni iterative con il modello."
       },
       "federated": {
@@ -86,28 +87,33 @@
         "description": "Esegui e memorizza modelli localmente per privacy e conformità."
       },
       "collaborative": {
-        "title": "Collaborazione",
+        "title": "Collaborazione di Team",
         "description": "Condividi upload e adapter con il team."
       },
       "improve": {
-        "title": "Miglioramento Continuo",
-        "description": "Raccogli feedback e migliora le prestazioni degli adapter."
+        "title": "Apprendimento Continuo",
+        "description": "Raccogli feedback e migliora le prestazioni degli adapter nel tempo."
       }
     },
     "howItWorks": {
-      "title": "Come funziona",
+      "title": "Come Funziona",
       "step1": {
-        "title": "Carica documenti",
+        "title": "Carica Documenti",
         "description": "Importa i tuoi PDF o file di testo nell'area di lavoro."
       },
       "step2": {
-        "title": "Scegli o scarica adapter",
-        "description": "Seleziona l'adapter o il modello più adatto al tuo task."
+        "title": "Seleziona Adapter",
+        "description": "Scegli l'adapter o il modello più adatto al tuo task."
       },
       "step3": {
-        "title": "Chatta e affina",
+        "title": "Chatta e Affina",
         "description": "Fai domande, affina i prompt ed esporta i risultati."
       }
+    },
+    "cta": {
+      "title": "Pronto per Iniziare?",
+      "description": "Sperimenta la potenza dell'intelligenza documentale basata su AI con sicurezza di livello enterprise.",
+      "button": "Inizia la Tua Prima Chat"
     }
   },
   "documents": {
@@ -166,6 +172,7 @@
     "toast": {
       "downloading": "Avvio download...",
       "downloaded": "Adapter scaricato con successo",
+      "deleted": "Adapter eliminato con successo",
       "error": "Impossibile scaricare l'adapter"
     },
     "errorFetch": "Impossibile recuperare gli adapter. Riprova più tardi.",
@@ -190,9 +197,13 @@
     "errorCreate": "Errore nella creazione della chat",
     "errorDelete": "Errore nell'eliminazione della chat",
     "deleteSuccess": "Chat eliminata con successo",
+    "disclaimer": "L'AI può commettere errori. Verifica le informazioni importanti.",
     "adapter": {
       "selectLabel": "Adapter",
+      "chooseLabel": "Scegli adapter:",
       "baseModelLabel": "Modello base (nessun adapter)",
+      "baseModel": "Modello Base",
+      "version": "Adapter v{{version}}",
       "local": "locale"
     },
     "sidebar": {
@@ -238,5 +249,24 @@
   },
   "app": {
     "version": "v1.0.0"
+  },
+  "sections": {
+    "title": "Sezioni",
+    "empty": "Nessuna sezione disponibile per questo documento.",
+    "delete": {
+      "action": "Elimina sezione",
+      "confirm": "Sei sicuro di voler eliminare questa sezione?",
+      "success": "Sezione eliminata con successo",
+      "error": {
+        "failed": "Impossibile eliminare la sezione"
+      }
+    }
+  },
+  "realms": {
+    "title": "Realms",
+    "delete": {
+      "success": "Realm eliminato con successo",
+      "error": "Impossibile eliminare il realm"
+    }
   }
 }

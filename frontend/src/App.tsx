@@ -15,74 +15,76 @@ import {ThemedToaster} from "./components/common/ThemedToaster.tsx";
 
 const App = () => {
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <ThemedToaster />
             <Header/>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <Home/>
-                    }
-                />
+            <main className="flex-1 w-full">
+                <Routes>
+                    <Route
+                        path="/"
+                        element={
+                            <Home/>
+                        }
+                    />
 
-                <Route
-                    path="/realms"
-                    element={
-                        <RealmsPage/>
-                    }
-                />
+                    <Route
+                        path="/realms"
+                        element={
+                            <RealmsPage/>
+                        }
+                    />
 
-                <Route
-                    path="/realms-admin"
-                    element={
-                        <ProtectedRoute departmentAdminOnly={true}>
-                            <RealmsAdminPage/>
-                        </ProtectedRoute>
-                    }
-                />
+                    <Route
+                        path="/realms-admin"
+                        element={
+                            <ProtectedRoute departmentAdminOnly={true}>
+                                <RealmsAdminPage/>
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route
-                    path="/documents"
-                    element={
-                        <ProtectedRoute>
-                            <Outlet/>
-                        </ProtectedRoute>
-                    }
-                >
-                    <Route index element={<DocumentsPage/>}/>
-                    <Route path=":documentId/sections" element={<SectionsPage/>}/>
-                </Route>
+                    <Route
+                        path="/documents"
+                        element={
+                            <ProtectedRoute>
+                                <Outlet/>
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route index element={<DocumentsPage/>}/>
+                        <Route path=":documentId/sections" element={<SectionsPage/>}/>
+                    </Route>
 
-                <Route
-                    path="/chat"
-                    element={
-                        <ProtectedRoute>
-                            <ChatPage/>
-                        </ProtectedRoute>
-                    }
-                />
+                    <Route
+                        path="/chat"
+                        element={
+                            <ProtectedRoute>
+                                <ChatPage/>
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route
-                    path="/adapters"
-                    element={
-                        <ProtectedRoute>
-                            <AdaptersPage/>
-                        </ProtectedRoute>
-                    }
-                />
+                    <Route
+                        path="/adapters"
+                        element={
+                            <ProtectedRoute>
+                                <AdaptersPage/>
+                            </ProtectedRoute>
+                        }
+                    />
 
-                <Route
-                    path="/adapters-admin"
-                    element={
-                        <ProtectedRoute departmentAdminOnly={true}>
-                            <AdaptersAdminPage/>
-                        </ProtectedRoute>
-                    }
-                />
-            </Routes>
+                    <Route
+                        path="/adapters-admin"
+                        element={
+                            <ProtectedRoute departmentAdminOnly={true}>
+                                <AdaptersAdminPage/>
+                            </ProtectedRoute>
+                        }
+                    />
+                </Routes>
+            </main>
             <Footer/>
-        </>
+        </div>
     )
 }
 

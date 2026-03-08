@@ -1,148 +1,284 @@
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { FileText, MessageSquare, Cpu } from 'lucide-react';
-import mimirLogo from '../assets/mimir-logo.png';
+import { 
+  FileText, 
+  MessageSquare, 
+  Cpu, 
+  Shield, 
+  Users, 
+  TrendingUp,
+  ArrowRight,
+  Sparkles,
+  Lock,
+  Zap
+} from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAuthWrapper } from '../hooks/auth/useAuthWrapper';
 
 export const Home = () => {
-    const { t } = useTranslation();
-    const { user, isAuthenticated } = useAuthWrapper();
+  const { t } = useTranslation();
+  const { user, isAuthenticated } = useAuthWrapper();
 
-    // Extract user name from OIDC profile
-    const userName = user?.profile?.preferred_username || user?.profile?.name || user?.profile?.sub || t('common.user');
+  const userName = user?.profile?.preferred_username || user?.profile?.name || t('home.guest');
 
-    // Mock user data - in a real app, this would come from an API
-    // For now, we'll show stats when user is authenticated
-    const hasUserData = isAuthenticated;
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-    return (
-        <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.25 }}
-            className="min-h-full"
-        >
-            {/* Welcome Hero Section */}
-            <div className="mb-8 text-center">
-                <h1 className="text-4xl md:text-5xl font-bold text-base-content mb-2">
-                    {t('home.welcome', { name: userName })}
-                </h1>
-                <p className="text-lg text-base-content/70">
-                    {t('home.tagline')}
-                </p>
-            </div>
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 }
+    }
+  };
 
-            {/* Content: Stats or Empty State */}
-            {hasUserData ? (
-                <div className="max-w-4xl mx-auto">
-                    {/* Summary Stats Cards */}
-                    <div className="stats stats-vertical lg:stats-horizontal shadow-lg w-full bg-base-100 border border-base-content/10">
-                        <div className="stat">
-                            <div className="stat-figure text-indigo-600 dark:text-indigo-400">
-                                <FileText size={32} strokeWidth={2} />
-                            </div>
-                            <div className="stat-title">{t('documents.title')}</div>
-                            <div className="stat-value text-indigo-600 dark:text-indigo-400">0</div>
-                            <div className="stat-desc">{t('documents.empty')}</div>
-                        </div>
+  return (
+    <div className="min-h-screen w-full bg-gradient-to-br from-base-100 via-base-200 to-base-100">
+      {/* Hero Section */}
+      <motion.section
+        initial="hidden"
+        animate="visible"
+        variants={containerVariants}
+        className="relative overflow-hidden px-6 py-20 lg:py-32"
+      >
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-40 -right-40 w-80 h-80 bg-primary/10 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary/10 rounded-full blur-3xl" />
+        </div>
 
-                        <div className="stat">
-                            <div className="stat-figure text-indigo-600 dark:text-indigo-400">
-                                <MessageSquare size={32} strokeWidth={2} />
-                            </div>
-                            <div className="stat-title">{t('chat.title')}</div>
-                            <div className="stat-value text-indigo-600 dark:text-indigo-400">0</div>
-                            <div className="stat-desc">{t('chat.empty')}</div>
-                        </div>
-
-                        <div className="stat">
-                            <div className="stat-figure text-indigo-600 dark:text-indigo-400">
-                                <Cpu size={32} strokeWidth={2} />
-                            </div>
-                            <div className="stat-title">{t('adapters.title')}</div>
-                            <div className="stat-value text-indigo-600 dark:text-indigo-400">0</div>
-                            <div className="stat-desc">{t('adapters.empty')}</div>
-                        </div>
-                    </div>
-
-                    {/* Features Grid */}
-                    <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="card bg-base-100 border border-indigo-200 dark:border-indigo-700 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="card-body p-6">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                                        <FileText size={20} strokeWidth={2} />
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-base-content">
-                                        {t('home.features.upload.title')}
-                                    </h3>
-                                </div>
-                                <p className="text-sm text-base-content/70">
-                                    {t('home.features.upload.description')}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="card bg-base-100 border border-indigo-200 dark:border-indigo-700 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="card-body p-6">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                                        <Cpu size={20} strokeWidth={2} />
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-base-content">
-                                        {t('home.features.finetune.title')}
-                                    </h3>
-                                </div>
-                                <p className="text-sm text-base-content/70">
-                                    {t('home.features.finetune.description')}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className="card bg-base-100 border border-indigo-200 dark:border-indigo-700 shadow-sm hover:shadow-md transition-shadow">
-                            <div className="card-body p-6">
-                                <div className="flex items-center gap-3 mb-3">
-                                    <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                                        <MessageSquare size={20} strokeWidth={2} />
-                                    </div>
-                                    <h3 className="text-lg font-semibold text-base-content">
-                                        {t('home.features.chat.title')}
-                                    </h3>
-                                </div>
-                                <p className="text-sm text-base-content/70">
-                                    {t('home.features.chat.description')}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <div className="max-w-2xl mx-auto">
-                    {/* Empty State with Logo */}
-                    <div className="flex min-h-[400px] items-center justify-center p-8">
-                        <div className="flex max-w-md flex-col items-center text-center">
-                            {/* Logo */}
-                            <div className="mb-6 flex items-center justify-center">
-                                <img
-                                    src={mimirLogo}
-                                    alt="Mimir Engine"
-                                    className="h-32 w-auto object-contain"
-                                />
-                            </div>
-
-                            {/* Title */}
-                            <h3 className="mb-2 text-2xl font-semibold text-base-content">
-                                {t('home.tagline')}
-                            </h3>
-
-                            {/* Description */}
-                            <p className="text-base text-base-content/60">
-                                {t('home.description')}
-                            </p>
-                        </div>
-                    </div>
-                </div>
+        <div className="relative max-w-7xl mx-auto">
+          <motion.div variants={itemVariants} className="text-center mb-12">
+            {isAuthenticated && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-6"
+              >
+                <Sparkles size={16} />
+                <span className="text-sm font-medium">{t('home.welcome', { name: userName })}</span>
+              </motion.div>
             )}
-        </motion.div>
-    );
+            
+            <h1 className="text-5xl md:text-7xl font-bold text-base-content mb-6 leading-tight">
+              {t('home.hero.title')}
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-base-content/70 max-w-3xl mx-auto mb-10">
+              {t('home.hero.subtitle')}
+            </p>
+
+            {isAuthenticated && (
+              <motion.div
+                variants={itemVariants}
+                className="flex flex-wrap items-center justify-center gap-4"
+              >
+                <Link to="/documents">
+                  <button className="btn btn-primary btn-lg gap-2 shadow-lg hover:shadow-xl transition-all">
+                    <FileText size={20} />
+                    {t('home.hero.cta.documents')}
+                    <ArrowRight size={18} />
+                  </button>
+                </Link>
+                <Link to="/chat">
+                  <button className="btn btn-outline btn-lg gap-2">
+                    <MessageSquare size={20} />
+                    {t('home.hero.cta.chat')}
+                  </button>
+                </Link>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Features Grid */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="px-6 py-20 bg-base-100"
+      >
+        <div className="max-w-7xl mx-auto">
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-base-content mb-4">
+              {t('home.features.title')}
+            </h2>
+            <p className="text-lg text-base-content/70 max-w-2xl mx-auto">
+              {t('home.features.subtitle')}
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: FileText,
+                titleKey: 'home.features.upload.title',
+                descKey: 'home.features.upload.description',
+                color: 'text-blue-500',
+                bgColor: 'bg-blue-500/10'
+              },
+              {
+                icon: Cpu,
+                titleKey: 'home.features.finetune.title',
+                descKey: 'home.features.finetune.description',
+                color: 'text-purple-500',
+                bgColor: 'bg-purple-500/10'
+              },
+              {
+                icon: MessageSquare,
+                titleKey: 'home.features.chat.title',
+                descKey: 'home.features.chat.description',
+                color: 'text-green-500',
+                bgColor: 'bg-green-500/10'
+              },
+              {
+                icon: Lock,
+                titleKey: 'home.features.federated.title',
+                descKey: 'home.features.federated.description',
+                color: 'text-red-500',
+                bgColor: 'bg-red-500/10'
+              },
+              {
+                icon: Users,
+                titleKey: 'home.features.collaborative.title',
+                descKey: 'home.features.collaborative.description',
+                color: 'text-orange-500',
+                bgColor: 'bg-orange-500/10'
+              },
+              {
+                icon: TrendingUp,
+                titleKey: 'home.features.improve.title',
+                descKey: 'home.features.improve.description',
+                color: 'text-teal-500',
+                bgColor: 'bg-teal-500/10'
+              }
+            ].map((feature, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                className="group relative"
+              >
+                <div className="h-full p-8 rounded-2xl bg-base-100 border border-base-content/10 hover:border-primary/30 transition-all shadow-lg hover:shadow-2xl">
+                  <div className={`inline-flex p-4 rounded-xl ${feature.bgColor} mb-6`}>
+                    <feature.icon className={`${feature.color}`} size={28} strokeWidth={2} />
+                  </div>
+                  <h3 className="text-xl font-bold text-base-content mb-3">
+                    {t(feature.titleKey)}
+                  </h3>
+                  <p className="text-base-content/70 leading-relaxed">
+                    {t(feature.descKey)}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* How It Works */}
+      <motion.section
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={containerVariants}
+        className="px-6 py-20 bg-base-200/50"
+      >
+        <div className="max-w-7xl mx-auto">
+          <motion.div variants={itemVariants} className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-base-content mb-4">
+              {t('home.howItWorks.title')}
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {/* Connection lines for desktop */}
+            <div className="hidden md:block absolute top-1/4 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+            
+            {[
+              {
+                step: '01',
+                titleKey: 'home.howItWorks.step1.title',
+                descKey: 'home.howItWorks.step1.description',
+                icon: FileText
+              },
+              {
+                step: '02',
+                titleKey: 'home.howItWorks.step2.title',
+                descKey: 'home.howItWorks.step2.description',
+                icon: Cpu
+              },
+              {
+                step: '03',
+                titleKey: 'home.howItWorks.step3.title',
+                descKey: 'home.howItWorks.step3.description',
+                icon: Zap
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="relative"
+              >
+                <div className="relative z-10 text-center">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary text-primary-content text-2xl font-bold mb-6 shadow-lg">
+                    {step.step}
+                  </div>
+                  <div className="inline-flex p-3 rounded-xl bg-base-100 mb-4 shadow-md">
+                    <step.icon className="text-primary" size={24} />
+                  </div>
+                  <h3 className="text-2xl font-bold text-base-content mb-3">
+                    {t(step.titleKey)}
+                  </h3>
+                  <p className="text-base-content/70 leading-relaxed">
+                    {t(step.descKey)}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.section>
+
+      {/* CTA Section */}
+      {isAuthenticated && (
+        <motion.section
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={containerVariants}
+          className="px-6 py-20"
+        >
+          <motion.div
+            variants={itemVariants}
+            className="max-w-4xl mx-auto text-center p-12 rounded-3xl bg-gradient-to-br from-primary to-secondary text-primary-content shadow-2xl"
+          >
+            <Shield size={48} className="mx-auto mb-6 opacity-90" />
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              {t('home.cta.title')}
+            </h2>
+            <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+              {t('home.cta.description')}
+            </p>
+            <Link to="/chat">
+              <button className="btn btn-lg bg-base-100 text-base-content hover:bg-base-200 border-none shadow-xl gap-2">
+                {t('home.cta.button')}
+                <ArrowRight size={20} />
+              </button>
+            </Link>
+          </motion.div>
+        </motion.section>
+      )}
+    </div>
+  );
 };

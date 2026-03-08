@@ -33,17 +33,17 @@ export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatC
     };
 
     return (
-        <div className="p-4 sm:p-6 bg-linear-to-t from-base-100 via-base-100 to-transparent">
-            <div className="max-w-4xl mx-auto relative bg-base-200 rounded-3xl p-2 border border-base-content/10 shadow-2xl focus-within:border-primary/30 transition-all">
+        <div className="p-4 sm:p-6 bg-linear-to-t from-base-100 via-base-100 to-transparent w-full">
+            <div className="max-w-5xl mx-auto relative bg-base-200 rounded-3xl p-2 border border-base-content/10 shadow-2xl focus-within:border-primary/30 transition-all">
 
                 <div className="flex items-center gap-2 px-2 pb-2 mb-2 border-b border-base-content/5">
-                    <span className="text-[10px] font-black uppercase opacity-40 ml-1">Choose adapter:</span>
+                    <span className="text-[10px] font-black uppercase opacity-40 ml-1">{t("chat.adapter.chooseLabel")}</span>
                     <select
                         className="select select-ghost select-xs font-bold text-primary focus:bg-transparent"
                         value={selectedAdapterVersion ?? ""}
                         onChange={(e) => setSelectedAdapterVersion(e.target.value ? Number(e.target.value) : null)}
                     >
-                        <option value="">{t("chat.adapter.baseModelLabel") ?? "Base Model"}</option>
+                        <option value="">{t("chat.adapter.baseModelLabel")}</option>
                         {adapters.map((a: any) => (
                             <option key={a.version} value={a.version}>v{a.version}</option>
                         ))}
@@ -75,7 +75,7 @@ export const ChatComposer = ({ modelKey, onSubmit, isSubmitting = false }: ChatC
                     </button>
                 </div>
             </div>
-            <p className="text-[10px] text-center mt-3 opacity-30 font-medium">Federated Engine can make mistakes. Check important info.</p>
+            <p className="text-[10px] text-center mt-3 opacity-30 font-medium">{t("chat.disclaimer")}</p>
         </div>
     );
 };

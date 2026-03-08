@@ -5,6 +5,7 @@ import {useDeleteSection} from "../../hooks/institute/data/sections/useDeleteSec
 import {useState} from "react";
 import toast from "react-hot-toast";
 import {useTranslation} from "react-i18next";
+import {DeleteConfirmModal} from "../common/DeleteConfirmModal.tsx";
 
 interface SectionRowProps {
     section: SectionDTO;
@@ -16,10 +17,11 @@ interface SectionRowProps {
 export const SectionRow = ({section, documentId, expanded = false, onToggle}: SectionRowProps) => {
     const {t} = useTranslation();
     const {mutateAsync: deleteSection} = useDeleteSection();
-    const [isDeletingSection, setIsDeletingSection] = useState<boolean>(false)
+    const [isDeletingSection, setIsDeletingSection] = useState<boolean>(false);
+    const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
     const handleDeleteSection = async () => {
-        if (!window.confirm(t("sections.delete.confirm"))) return;
+        setShowDeleteModal(false);
         setIsDeletingSection(true);
         try {
             await deleteSection({sectionId: section.id, documentId: documentId});
@@ -33,47 +35,56 @@ export const SectionRow = ({section, documentId, expanded = false, onToggle}: Se
     }
 
     return (
-        <motion.div initial={{opacity: 0, y: 6}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: -6}}
-                    className="bg-base-100 rounded-2xl border border-base-content/5 overflow-hidden">
-            <div onClick={onToggle}
-                 className="flex items-center justify-between gap-4 p-4 cursor-pointer select-none hover:bg-base-200/40 transition-colors"
-                 role="button" aria-expanded={expanded}>
-                <div className="flex-1 min-w-0">
-                    <h4 className="text-base font-semibold text-base-content truncate">{section.title}</h4>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteSection();
-                        }}
-                        disabled={isDeletingSection}
-                        className="btn btn-circle btn-ghost btn-sm text-error hover:bg-error/10"
-                        title={t("sections.delete.action")}
-                    >
-                        {isDeletingSection ? (
-                            <span className="loading loading-spinner loading-xs" />
-                        ) : (
-                            <Trash2 size={16} />
-                        )}
-                    </button>
+        <>
+            <motion.div initial={{opacity: 0, y: 6}} animate={{opacity: 1, y: 0}} exit={{opacity: 0, y: -6}}
+                        className="bg-base-100 rounded-2xl border border-base-content/5 overflow-hidden">
+                <div onClick={onToggle}
+                     className="flex items-center justify-between gap-4 p-4 cursor-pointer select-none hover:bg-base-200/40 transition-colors"
+                     role="button" aria-expanded={expanded}>
+                    <div className="flex-1 min-w-0">
+                        <h4 className="text-base font-semibold text-base-content truncate">{section.title}</h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowDeleteModal(true);
+                            }}
+                            disabled={isDeletingSection}
+                            className="btn btn-circle btn-ghost btn-sm text-error hover:bg-error/10"
+                            title={t("sections.delete.action")}
+                        >
+                            {isDeletingSection ? (
+                                <span className="loading loading-spinner loading-xs" />
+                            ) : (
+                                <Trash2 size={16} />
+                            )}
+                        </button>
 
-                    <div
-                        className={`p-2 rounded-full transition-transform ${
-                            expanded ? "rotate-180" : ""
-                        }`}
-                    >
-                        <ChevronDown size={18} />
+                        <div
+                            className={`p-2 rounded-full transition-transform ${
+                                expanded ? "rotate-180" : ""
+                            }`}
+                        >
+                            <ChevronDown size={18} />
+                        </div>
                     </div>
                 </div>
-            </div>
-            <AnimatePresence initial={false}> {expanded && (
-                <motion.div key="content" initial={{height: 0, opacity: 0}} animate={{height: "auto", opacity: 1}}
-                            exit={{height: 0, opacity: 0}} transition={{duration: 0.18}} className="px-4 pb-4">
-                    <div
-                        className="prose max-w-none text-sm text-base-content/80 whitespace-pre-wrap">{section.content}</div>
-                </motion.div>)}
-            </AnimatePresence>
-        </motion.div>
+                <AnimatePresence initial={false}> {expanded && (
+                    <motion.div key="content" initial={{height: 0, opacity: 0}} animate={{height: "auto", opacity: 1}}
+                                exit={{height: 0, opacity: 0}} transition={{duration: 0.18}} className="px-4 pb-4">
+                        <div
+                            className="prose max-w-none text-sm text-base-content/80 whitespace-pre-wrap">{section.content}</div>
+                    </motion.div>)}
+                </AnimatePresence>
+            </motion.div>
+
+            <DeleteConfirmModal
+                isOpen={showDeleteModal}
+                onConfirm={handleDeleteSection}
+                onCancel={() => setShowDeleteModal(false)}
+                itemName={section.title}
+            />
+        </>
     );
 };
