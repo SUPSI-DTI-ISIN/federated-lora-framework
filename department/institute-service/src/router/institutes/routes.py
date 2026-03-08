@@ -4,7 +4,7 @@ from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
-from schemas.institute import InstituteDTO, InstituteCreationRequestDTO
+from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO
 from services.institute import InstituteServiceInterface
 from .dependencies import get_institute_service
 
@@ -25,6 +25,19 @@ async def create_institute(
 ):
     return await institute_service.create_new_institute(institute_creation_request_dto=institute_creation_request_dto)
 
+@router.put(
+    "/{institute_id}",
+    response_model=InstituteDTO,
+    status_code=status.HTTP_201_CREATED,
+    tags=tags
+)
+async def update_institute(
+        institute_id: int,
+        institute_update_request_dto: InstituteUpdateRequestDTO,
+        institute_service: InstituteServiceInterface = Depends(get_institute_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await institute_service.update_institute(institute_id=institute_id, institute_update_request_dto=institute_update_request_dto)
 
 @router.get(
     "",
