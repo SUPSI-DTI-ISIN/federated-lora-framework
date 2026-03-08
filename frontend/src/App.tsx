@@ -9,6 +9,7 @@ import {ProtectedRoute} from "./routes/ProtectedRoute.tsx";
 import {RealmsPage} from "./pages/RealmsPage.tsx";
 import {RealmsAdminPage} from "./pages/RealmsAdminPage.tsx";
 import {AdaptersAdminPage} from "./pages/AdaptersAdminPage.tsx";
+import {FederatedLearningJobsPage} from "./pages/FederatedLearningJobsPage.tsx";
 import {Header} from "./components/common/header/Header.tsx";
 import {ThemedToaster} from "./components/common/ThemedToaster.tsx";
 import {Footer} from "./components/common/Footer.tsx";
@@ -78,6 +79,15 @@ const App = () => {
                         element={
                             <ProtectedRoute departmentAdminOnly={true}>
                                 <AdaptersAdminPage/>
+                            </ProtectedRoute>
+                        }
+                    />
+
+                    <Route
+                        path="/federated-learning-jobs"
+                        element={
+                            <ProtectedRoute departmentAdminOnly={true}>
+                                <FederatedLearningJobsPage/>
                             </ProtectedRoute>
                         }
                     />

@@ -5,12 +5,13 @@ from shared_auth_library.entities import User
 from sse_starlette import EventSourceResponse
 from starlette.requests import Request
 
-from auth import jwt_validator
+from .dependencies_sse import get_sse_service, get_custom_ping
+from .dependencies import get_federated_learning_job_service, get_celery_job_service
+from services.sse import SseServiceInterface
 from schemas.federated_learning_job import FederatedLearningJobDTO
 from services.federated_learning_job import FederatedLearningJobServiceInterface
 from services.celery import CeleryJobServiceInterface
-from services.sse import SseServiceInterface
-from .dependencies import get_federated_learning_job_service, get_celery_job_service, get_custom_ping, get_sse_service
+from auth import jwt_validator
 
 router = APIRouter(prefix="/jobs")
 tags = ["jobs"]
@@ -56,7 +57,6 @@ async def get_all_federated_learning_job(
         _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await federated_learning_job_service.get_all_federated_learning_jobs()
-
 
 @router.get("/sse")
 async def job_events(request: Request, sse_service: SseServiceInterface = Depends(get_sse_service)):

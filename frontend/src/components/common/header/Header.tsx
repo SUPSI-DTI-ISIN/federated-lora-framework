@@ -1,7 +1,7 @@
 import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {useNavigate} from "react-router-dom";
-import {Home, FileText, MessageSquare, Menu, X, Microchip, LayoutGrid} from "lucide-react";
+import {Home, FileText, MessageSquare, Menu, X, Microchip, LayoutGrid, Network} from "lucide-react";
 import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
 import {ThemeToggle} from "./ThemeToggle.tsx";
 import {InstituteBadge} from "./InstituteBadge.tsx";
@@ -32,6 +32,7 @@ export const Header = () => {
     const departmentAdminProtectedLinks = [
         {path: "/realms-admin", labelKey: "header.nav.realms", icon: LayoutGrid},
         {path: "/adapters-admin", labelKey: "header.nav.adapters", icon: Microchip},
+        {path: "/federated-learning-jobs", labelKey: "header.nav.federatedLearning", icon: Network},
     ];
 
     const visibleLinks = useMemo(() => {

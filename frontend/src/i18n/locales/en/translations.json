@@ -8,6 +8,7 @@
       "chat": "AI Chat",
       "adapters": "Adapters",
       "realms": "Realms",
+      "federatedLearning": "FL Jobs",
       "settings": "Settings",
       "logout": "Logout"
     },
@@ -312,6 +313,20 @@
     "delete": {
       "success": "Realm deleted successfully",
       "error": "Failed to delete realm"
+    }
+  },
+  "federatedLearning": {
+    "title": "Federated Learning Jobs",
+    "subtitle": "Monitor and manage federated learning fine-tuning jobs",
+    "errorFetch": "Error loading federated learning jobs",
+    "search": {
+      "placeholder": "Search by ID or Celery Task ID..."
+    },
+    "empty": {
+      "title": "No Jobs Yet",
+      "description": "Start a new federated learning job to see it here",
+      "noResults": "No Results Found",
+      "noResultsDescription": "Try adjusting your search query"
     }
   }
 }

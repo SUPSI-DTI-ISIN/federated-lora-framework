@@ -10,7 +10,6 @@ import {DepartmentAdaptersList} from "../components/adapters/department/Departme
 import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
 import {SearchBar} from "../components/common/SearchBar.tsx";
-import {FederatedLearningActions} from "../components/adapters/department/FederatedLearningActions.tsx";
 
 export const AdaptersAdminPage = () => {
     useFederatedLearningJobSse();
@@ -55,7 +54,6 @@ export const AdaptersAdminPage = () => {
         <div className="min-h-screen bg-base-100 py-12 px-4 sm:px-8 relative">
 
             <div className="relative z-10 max-w-7xl mx-auto">
-                {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -74,15 +72,12 @@ export const AdaptersAdminPage = () => {
                     </div>
                 </motion.div>
 
-                {/* Search Bar and Actions */}
-                <div className="flex flex-col sm:flex-row gap-4 mb-6 items-start sm:items-center justify-between">
+                <div className="mb-6">
                     <SearchBar
                         value={query}
                         onChange={setQuery}
                         placeholder={t("adapters.filter.searchPlaceholder")}
                     />
-
-                    <FederatedLearningActions />
                 </div>
 
                 <DepartmentAdaptersList

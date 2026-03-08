@@ -6,8 +6,9 @@
       "home": "Home",
       "documents": "Documenti",
       "chat": "Chat AI",
-      "adapters": "Adapters",
+      "adapters": "Adattatori",
       "realms": "Realms",
+      "federatedLearning": "Lavori FL",
       "settings": "Impostazioni",
       "logout": "Esci"
     },
@@ -310,6 +311,20 @@
     "delete": {
       "success": "Realm eliminato con successo",
       "error": "Impossibile eliminare il realm"
+    }
+  },
+  "federatedLearning": {
+    "title": "Lavori di Federated Learning",
+    "subtitle": "Monitora e gestisci i lavori di fine-tuning federato",
+    "errorFetch": "Errore nel caricamento dei lavori di federated learning",
+    "search": {
+      "placeholder": "Cerca per ID o Celery Task ID..."
+    },
+    "empty": {
+      "title": "Nessun Lavoro",
+      "description": "Avvia un nuovo lavoro di federated learning per vederlo qui",
+      "noResults": "Nessun Risultato Trovato",
+      "noResultsDescription": "Prova a modificare la tua ricerca"
     }
   }
 }

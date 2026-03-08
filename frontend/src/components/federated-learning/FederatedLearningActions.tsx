@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Play, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "react-hot-toast";
-import {useStartFederatedLearning} from "../../../hooks/department/federated-learning/useStartFederatedLearning.ts";
-import {getFlowerCeleryJobsUrl} from "../../../utils/envUtils.ts";
+import {useStartFederatedLearning} from "../../hooks/department/federated-learning/useStartFederatedLearning.ts";
+import {getFlowerCeleryJobsUrl} from "../../utils/envUtils.ts";
 import {useTranslation} from "react-i18next";
 
 
