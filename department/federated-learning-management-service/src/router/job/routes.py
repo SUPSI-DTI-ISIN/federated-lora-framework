@@ -5,13 +5,13 @@ from shared_auth_library.entities import User
 from sse_starlette import EventSourceResponse
 from starlette.requests import Request
 
+from auth import jwt_validator
+from services.federated_learning_job import FederatedLearningJobServiceInterface
+from services.sse import SseServiceInterface
+from services.celery import CeleryJobServiceInterface
+from schemas.federated_learning_job import FederatedLearningJobDTO
 from .dependencies_sse import get_sse_service, get_custom_ping
 from .dependencies import get_federated_learning_job_service, get_celery_job_service
-from services.sse import SseServiceInterface
-from schemas.federated_learning_job import FederatedLearningJobDTO
-from services.federated_learning_job import FederatedLearningJobServiceInterface
-from services.celery import CeleryJobServiceInterface
-from auth import jwt_validator
 
 router = APIRouter(prefix="/jobs")
 tags = ["jobs"]
@@ -31,20 +31,6 @@ async def start_federated_learning(
     await federated_learning_job_service.ensure_no_job_in_progress()
     celery_task_id = celery_job_service.start_federated_learning()
     return await federated_learning_job_service.create_federated_learning_job(celery_task_id=celery_task_id)
-
-
-@router.get(
-    "/{job_id}",
-    status_code=status.HTTP_200_OK,
-    response_model=FederatedLearningJobDTO,
-    tags=tags
-)
-async def get_federated_learning_job_by_id(
-        job_id: int,
-        federated_learning_job_service: FederatedLearningJobServiceInterface = Depends(get_federated_learning_job_service),
-        _: User = Depends(jwt_validator.get_current_user_required)
-):
-    return await federated_learning_job_service.get_federated_learning_job_by_id(federated_learning_job_id=job_id)
 
 @router.get(
     "",

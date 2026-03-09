@@ -1,3 +1,5 @@
+import {formatEnum} from "../../utils/enumUtils.ts";
+
 interface FederatedLearningJobStatusBadgeProps {
     status: string;
 }
@@ -27,7 +29,7 @@ export const FederatedLearningJobStatusBadge = ({status}: FederatedLearningJobSt
             role="status"
             aria-label={`Status: ${status}`}
         >
-      {status}
+      {formatEnum(status)}
     </span>
     );
 }

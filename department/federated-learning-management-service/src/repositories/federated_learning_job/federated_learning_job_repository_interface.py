@@ -14,10 +14,6 @@ class FederatedLearningJobRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, federated_learning_job_id: int) -> Optional[FederatedLearningJobModel]:
-        raise NotImplementedError
-
-    @abstractmethod
     async def get_by_status(self, status: FederatedLearningJobStatus) -> Optional[FederatedLearningJobModel]:
         raise NotImplementedError
 

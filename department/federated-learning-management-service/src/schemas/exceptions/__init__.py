@@ -1,7 +1,6 @@
-from .federated_learning_job_errors import FederatedLearningJobNotFoundError, StartFederatedLearningJobFoundError
+from .federated_learning_job_errors import StartFederatedLearningJobFoundError
 
 __all__ = [
-    'FederatedLearningJobNotFoundError',
     'StartFederatedLearningJobFoundError'
 ]
 

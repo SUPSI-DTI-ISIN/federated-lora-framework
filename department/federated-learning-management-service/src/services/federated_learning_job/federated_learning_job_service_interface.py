@@ -15,10 +15,6 @@ class FederatedLearningJobServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_federated_learning_job_by_id(self, federated_learning_job_id: int) -> FederatedLearningJobDTO:
-        raise NotImplementedError
-
-    @abstractmethod
     async def ensure_no_job_in_progress(self) -> None:
         raise NotImplementedError
 

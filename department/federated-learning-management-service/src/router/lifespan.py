@@ -15,11 +15,10 @@ async def lifespan(app: FastAPI):
 
     await DatabaseConnector.test_connection()
 
-    async for session in DatabaseConnector.get_db_session():
-        federated_learning_job_repository: FederatedLearningJobRepositoryInterface = FederatedLearningJobRepository(db_session=session)
-        federated_learning_job_service: FederatedLearningJobServiceInterface = FederatedLearningJobService(federated_learning_job_repository=federated_learning_job_repository)
-        redis_job_event_consumer: RedisJobEventConsumerInterface = RedisJobEventConsumer(redis_client_async=redis_client_async, federated_learning_job_service=federated_learning_job_service)
-        asyncio.create_task(redis_job_event_consumer.start())
+    redis_job_event_consumer: RedisJobEventConsumerInterface = RedisJobEventConsumer(
+        redis_client_async=redis_client_async,
+    )
+    asyncio.create_task(redis_job_event_consumer.start())
 
     yield
 

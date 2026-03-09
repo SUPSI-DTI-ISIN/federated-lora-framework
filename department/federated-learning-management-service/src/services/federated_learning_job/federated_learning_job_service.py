@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from entities import FederatedLearningJobModel, FederatedLearningJobStatus
 from repositories.federated_learning_job import FederatedLearningJobRepositoryInterface
 from schemas.celery import CeleryJobDTO, CeleryJobResultType
-from schemas.exceptions import FederatedLearningJobNotFoundError, StartFederatedLearningJobFoundError
+from schemas.exceptions import StartFederatedLearningJobFoundError
 from schemas.federated_learning_job import FederatedLearningJobDTO
 from .federated_learning_job_service_interface import FederatedLearningJobServiceInterface
 
@@ -22,14 +22,6 @@ class FederatedLearningJobService(FederatedLearningJobServiceInterface):
 
         new_federated_learning_job_created = await self.__federated_learning_job_repository.save(federated_learning_job_model=new_federated_learning_job)
         return FederatedLearningJobDTO.model_validate(new_federated_learning_job_created)
-
-    async def get_federated_learning_job_by_id(self, federated_learning_job_id: int) -> FederatedLearningJobDTO:
-        federated_learning_job = await self.__federated_learning_job_repository.get_by_id(federated_learning_job_id=federated_learning_job_id)
-
-        if federated_learning_job is None:
-            raise FederatedLearningJobNotFoundError(federated_learning_job_id=federated_learning_job_id)
-
-        return FederatedLearningJobDTO.model_validate(federated_learning_job)
 
     async def get_all_federated_learning_jobs(self) -> List[FederatedLearningJobDTO]:
         federated_learning_jobs = await self.__federated_learning_job_repository.get_all()

@@ -29,13 +29,6 @@ class FederatedLearningJobRepository(FederatedLearningJobRepositoryInterface):
         except SQLAlchemyError as exc:
             raise exc
 
-    async def get_by_id(self, federated_learning_job_id: int) -> Optional[FederatedLearningJobModel]:
-        try:
-            model = await self._db_session.get(FederatedLearningJobModel, federated_learning_job_id)
-            return model
-        except SQLAlchemyError as exc:
-            raise exc
-
     async def get_by_status(self, status: FederatedLearningJobStatus) -> Optional[FederatedLearningJobModel]:
         try:
             stmt = select(FederatedLearningJobModel).where(

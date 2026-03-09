@@ -45,3 +45,9 @@ class DatabaseConnector:
                 yield session
             finally:
                 await session.close()
+
+    @classmethod
+    def get_session_factory(cls) -> async_sessionmaker:
+        if cls._async_session_local is None:
+            raise RuntimeError("Database connector does not initialize connection")
+        return cls._async_session_local
