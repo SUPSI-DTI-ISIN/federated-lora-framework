@@ -50,17 +50,15 @@ def start_federated_learning_celery_task(self, flwr_app_base_path: str, federate
 
     logger.info("Return code: %s", result.returncode)
     logger.info("STDOUT: %r", result.stdout)
-    logger.info("STDERR: %r", result.stderr)
 
-    logger.info("Process finished with return code %s", result.returncode)
+    if result.stderr.strip():
+        logger.warning("STDERR: %r", result.stderr)
 
-    if result.returncode != 0 or result.stderr.strip():
-        logger.error("FLWR stderr: %s", result.stderr)
+    if result.returncode != 0:
         raise RuntimeError(
             f"FL run failed (exit {result.returncode}):\n"
             f"stdout: {result.stdout}\n"
             f"stderr: {result.stderr}"
         )
 
-    logger.info("FLWR stdout: %s", result.stdout)
     return result.stdout

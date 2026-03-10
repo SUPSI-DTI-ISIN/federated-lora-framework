@@ -1,5 +1,4 @@
 import os
-import torch
 
 from flwr.app import ArrayRecord, ConfigRecord, Context
 from flwr.serverapp import Grid, ServerApp
@@ -26,7 +25,17 @@ def main(grid: Grid, context: Context) -> None:
     lr: float = context.run_config.get("lr", 0.01)
 
     pretrained_global_model: PreTrainedModel = ModelService.load_model(model_path=federated_data_dto.model_path, device_map=settings.device_map)
-    peft_model = ModelService.get_peft_model(model=pretrained_global_model)
+
+    if federated_data_dto.latest_adapter_path is None:
+        print("No previous adapter found. Initialising fresh LoRA adapter")
+        peft_model = ModelService.get_peft_model(model=pretrained_global_model)
+    else:
+        print(f"Resuming from existing adapter: {federated_data_dto.latest_adapter_path}")
+        peft_model = ModelService.load_peft_model(
+             model=pretrained_global_model,
+            adapter_path=federated_data_dto.latest_adapter_path
+        )
+
     del pretrained_global_model
 
     ModelService.print_trainable_parameters(model=peft_model)
@@ -53,4 +62,4 @@ def main(grid: Grid, context: Context) -> None:
     os.makedirs(federated_data_dto.new_adapter_path, exist_ok=True)
     peft_model.save_pretrained(federated_data_dto.new_adapter_path)
 
-    print(f"Adapter salvato correttamente in: {federated_data_dto.new_adapter_path}")
+    print(f"Adapter saved correctly to: {federated_data_dto.new_adapter_path}")

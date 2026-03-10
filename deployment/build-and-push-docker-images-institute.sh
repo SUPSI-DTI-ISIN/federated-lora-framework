@@ -73,4 +73,6 @@ docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-servic
 
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
 
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/nginx:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/nginx-service/docker/Dockerfile ../institute/nginx-service
+
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../federated-learning-service/docker/superexec.uv.Dockerfile ../federated-learning-service

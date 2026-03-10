@@ -41,6 +41,14 @@ class ModelService:
         return get_peft_model(model, lora_config if lora_config is not None else settings.lora_config)
 
     @classmethod
+    def load_peft_model(cls, model: PreTrainedModel, adapter_path: str) -> PeftModel:
+        return PeftModel.from_pretrained(
+            model,
+            adapter_path,
+            is_trainable=True
+        )
+
+    @classmethod
     def load_tokenizer(cls, model_path: str, access_token: Optional[str] = None) -> PreTrainedTokenizer:
         tokenizer = AutoTokenizer.from_pretrained(model_path,
                                                   #token=access_token

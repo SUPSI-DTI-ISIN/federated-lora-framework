@@ -76,4 +76,6 @@ docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/institute-servi
 
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/department/federated-learning-management-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../department/federated-learning-management-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../department/federated-learning-management-service
 
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/frontend:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../frontend/docker/Dockerfile --build-arg ENV_PATH="$FRONTEND_ENV_PATH" --build-arg NPM_TOKEN="$GITLAB_TOKEN" ../frontend
+
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../federated-learning-service/docker/superexec.uv.Dockerfile ../federated-learning-service

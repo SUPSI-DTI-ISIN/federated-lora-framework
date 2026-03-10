@@ -24,7 +24,6 @@ def lifespan(context: Context):
 
     print(f"Client node id {context.node_id}")
 
-    #data_service_url: str = context.run_config["data-service-url"]
     data_service_url = settings.data_service_url
     partition_id = context.node_config["partition-id"] if settings.is_simulation_running_environment else None
 

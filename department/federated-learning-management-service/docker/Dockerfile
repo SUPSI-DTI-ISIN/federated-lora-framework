@@ -6,7 +6,7 @@ ARG UV_INDEX_GITLAB_PASSWORD
 
 ENV PYTHONUNBUFFERED=1
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates netcat-openbsd
 
 # Download UV installer
 ADD https://astral.sh/uv/install.sh /uv-installer.sh
@@ -29,6 +29,8 @@ COPY $ENV_PATH .env
 COPY migrations/ migrations/
 COPY alembic.ini alembic.ini
 COPY docker/docker-entrypoint.sh docker-entrypoint.sh
+
+RUN chmod +x /app/docker-entrypoint.sh
 
 RUN uv sync
 

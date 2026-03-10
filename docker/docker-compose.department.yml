@@ -65,7 +65,7 @@ services:
   federated-learning-jobs-mysql-db:
     image: mysql:8.4.7
     ports:
-      - "33063:3306"
+      - "33061:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
@@ -76,6 +76,8 @@ services:
       retries: 10
     volumes:
       - federated-learning-jobs-mysql-data:/var/lib/mysql
+    networks:
+      - internal
 
   keycloak-postgres-db:
     image: postgres:15
@@ -208,6 +210,10 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DB_HOST: federated-learning-jobs-mysql-db
+      DB_PORT: 3306
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated_learning_management/health" ]
       interval: 20s
@@ -231,8 +237,11 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
       PYTHONPATH: src
     restart: always
+    entrypoint: ""
     command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
     depends_on:
       federated-learning-management-service:
@@ -249,10 +258,13 @@ services:
       FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
       REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
       REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
       PYTHONPATH: src
     restart: always
     ports:
       - "5555:5555"
+    entrypoint: ""
     command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "flower", "--port=5555" ]
     depends_on:
       federated-learning-management-service:
