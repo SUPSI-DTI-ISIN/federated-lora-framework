@@ -5,8 +5,6 @@ from fastapi import FastAPI
 from database import DatabaseConnector
 from clients.redis.service import RedisJobEventConsumerInterface, RedisJobEventConsumer
 from clients.redis.client import redis_client_async
-from repositories.federated_learning_job import FederatedLearningJobRepositoryInterface, FederatedLearningJobRepository
-from services.federated_learning_job import FederatedLearningJobServiceInterface, FederatedLearningJobService
 
 
 @asynccontextmanager

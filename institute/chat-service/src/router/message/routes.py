@@ -30,7 +30,7 @@ async def send_message(
         message_service: MessageServiceInterface = Depends(get_message_service),
         inference_service: InferenceServiceInterface = Depends(get_inference_service),
         chat_service: ChatServiceInterface = Depends(chat_dependencies.get_chat_service),
-        _: User = Depends(jwt_validator.get_current_user_required)
+        user: User = Depends(jwt_validator.get_current_user_required)
 ):
     user_message = MessageCreationRequestDTO(
         chat_id=chat_id,
@@ -49,21 +49,11 @@ async def send_message(
         for message in reversed(chat_messages[:-1])
     ]
 
-    inference_response_dto = await inference_service.inference_model(user_message=user_message_created, conversation_history=conversation_history)
+    is_doing_inference = await inference_service.inference_model(user_id=user.id, chat_id=chat_id, user_message=user_message_created, conversation_history=conversation_history)
 
-    assistant_message = MessageCreationRequestDTO(
-        chat_id=chat_id,
-        role=MessageRole.ASSISTANT,
-        content=inference_response_dto.response,
-        model_key=inference_request_dto.model_key,
-        adapter_version=inference_request_dto.adapter_version
-    )
+    await chat_service.update_chat_inference_state(chat_id=chat_id, is_doing_inference=is_doing_inference)
 
-    assistant_message_created = await message_service.create_new_message(message_creation_request_dto=assistant_message)
-
-    await chat_service.update_chat_modification_date(chat_id=chat_id)
-
-    return assistant_message_created
+    return user_message_created
 
 @router.get(
     "",

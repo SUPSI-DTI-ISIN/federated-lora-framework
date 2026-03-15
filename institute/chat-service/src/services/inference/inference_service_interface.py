@@ -8,5 +8,5 @@ from schemas.message import MessageDTO
 
 class InferenceServiceInterface(ABC):
     @abstractmethod
-    async def inference_model(self, user_message: MessageDTO, conversation_history: List[ConversationDTO]) -> QueryResponseDTO:
+    async def inference_model(self, user_id: str, chat_id: int, user_message: MessageDTO, conversation_history: List[ConversationDTO]) -> bool:
         raise NotImplementedError

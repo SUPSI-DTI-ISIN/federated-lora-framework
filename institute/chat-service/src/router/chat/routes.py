@@ -2,12 +2,16 @@ from typing import List
 
 from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
+from sse_starlette import EventSourceResponse
+from starlette.requests import Request
 
 from auth import jwt_validator
 
 from schemas.chat import ChatDTO, ChatCreationRequestDTO
 from services.chat import ChatServiceInterface
+from services.sse import SseServiceInterface
 from .dependencies import get_chat_service
+from .dependencies_sse import get_custom_ping, get_sse_service
 
 router = APIRouter(prefix="/chats")
 
@@ -63,3 +67,11 @@ async def delete_chat(
         _: User = Depends(jwt_validator.get_current_user_required)
 ):
     await chat_service.delete_chat_by_user(chat_id=chat_id)
+
+@router.get("/sse/{user_id}")
+async def inference_events(user_id: str, request: Request, sse_service: SseServiceInterface = Depends(get_sse_service)):
+    return EventSourceResponse(
+        sse_service.generate_sse_events(request=request, user_id=user_id),
+        ping=10,
+        ping_message_factory=get_custom_ping
+    )

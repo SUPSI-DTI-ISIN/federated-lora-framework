@@ -23,8 +23,8 @@ const queryClient = new QueryClient({
 });
 
 createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+        <StrictMode>
             <SelectorRealmProvider>
                 <AuthProviders>
                     <ApiProviders>
@@ -35,6 +35,6 @@ createRoot(document.getElementById('root')!).render(
                     </ApiProviders>
                 </AuthProviders>
             </SelectorRealmProvider>
-        </QueryClientProvider>
-    </StrictMode>,
+        </StrictMode>
+    </QueryClientProvider>
 )

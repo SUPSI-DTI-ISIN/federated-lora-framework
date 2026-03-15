@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Optional
 
 from entities import MessageModel
 
@@ -15,4 +15,8 @@ class MessageRepositoryInterface(ABC):
 
     @abstractmethod
     async def save_message(self, message_model: MessageModel) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_latest_by_chat(self, chat_id: int) -> Optional[MessageModel]:
         raise NotImplementedError

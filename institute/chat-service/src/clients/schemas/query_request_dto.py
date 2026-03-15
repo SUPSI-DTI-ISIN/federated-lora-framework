@@ -6,6 +6,8 @@ from schemas.chat import ConversationDTO
 
 
 class QueryRequestDTO(BaseModel):
+    user_id: str
+    chat_id: int
     model_key: str
     adapter_version: Optional[int]
     prompt: str

@@ -17,6 +17,8 @@ dependencies = [
     "shared-auth-library",
     "bitsandbytes>=0.49.2",
     "peft>=0.18.1",
+    "celery-types>=0.24.0",
+    "celery[redis]>=5.6.2",
 ]
 
 [tool.uv]
@@ -24,15 +26,15 @@ index-strategy = "unsafe-best-match"
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
-#shared-auth-library = { path = "../../shared-auth-library" }
-shared-auth-library = { index = "gitlab" }
+shared-auth-library = { path = "../../shared-auth-library" }
+#shared-auth-library = { index = "gitlab" }
 
 [[tool.uv.index]]
 name = "pytorch-cu128"
 url = "https://download.pytorch.org/whl/cu128"
 explicit = true
 
-[[tool.uv.index]]
-name = "gitlab"
-url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-authenticate = "always"
+#[[tool.uv.index]]
+#name = "gitlab"
+#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+#authenticate = "always"

@@ -7,5 +7,5 @@ from schemas.model import LoadedModel
 
 class InferenceServiceInterface(ABC):
     @abstractmethod
-    async def inference_model(self, query_request_dto: QueryRequestDTO, loaded_model: LoadedModel) -> QueryResponseDTO:
+    async def inference_model(self, query_request_dto: QueryRequestDTO) -> QueryResponseDTO:
         raise NotImplementedError

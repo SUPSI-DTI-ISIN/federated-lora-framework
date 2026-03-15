@@ -15,6 +15,10 @@ class ChatServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def update_chat_inference_state(self, chat_id: int, is_doing_inference: bool) -> ChatDTO:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_all_by_user(self, user_id: str) -> List[ChatDTO]:
         raise NotImplementedError
 

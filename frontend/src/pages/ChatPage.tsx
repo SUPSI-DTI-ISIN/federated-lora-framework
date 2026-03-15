@@ -12,8 +12,10 @@ import {useDeleteChat} from "../hooks/institute/chat/useDeleteChat.ts";
 import {DeleteConfirmModal} from "../components/common/DeleteConfirmModal.tsx";
 import toast from "react-hot-toast";
 import type {ChatDTO} from "@isin/chat-service-client";
+import {useChatSse} from "../hooks/institute/chat/useChatSse.ts";
 
 export const ChatPage = () => {
+    useChatSse();
     const {t} = useTranslation();
     const modelKey = getModelKey();
     const {data: chats, isLoading: isLoadingChats} = useGetAllChats();

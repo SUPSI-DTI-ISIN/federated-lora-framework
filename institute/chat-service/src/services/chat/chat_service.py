@@ -37,6 +37,18 @@ class ChatService(ChatServiceInterface):
 
         return ChatDTO.model_validate(chat_updated)
 
+    async def update_chat_inference_state(self, chat_id: int, is_doing_inference: bool) -> ChatDTO:
+        chat = await self.__chat_repository.get_by_id(chat_id=chat_id)
+
+        if chat is None:
+            raise ChatNotFoundError(chat_id=chat_id)
+
+        chat.is_doing_inference = is_doing_inference
+
+        chat_updated = await self.__chat_repository.save_chat(chat_model=chat)
+
+        return ChatDTO.model_validate(chat_updated)
+
     async def get_all_by_user(self, user_id: str) -> List[ChatDTO]:
         user_chats = await self.__chat_repository.get_all_by_user(user_id=user_id)
 

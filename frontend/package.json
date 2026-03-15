@@ -10,9 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@isin/chat-service-client": "0.1.0-dev.1773089688",
+    "@isin/chat-service-client": "file:../institute/chat-service/sdks/chat-service-client",
     "@isin/data-service-client": "0.1.0-dev.1773089622",
     "@isin/federated-learning-management-service-client": "0.1.0-dev.1773089783",
+    "@isin/inference-service-client": "file:../institute/inference-service/sdks/inference-service-client",
     "@isin/institute-service-client": "0.1.0-dev.1773089752",
     "@isin/mlflow-service-client": "0.1.0-dev.1773089723",
     "@isin/model-service-client": "0.1.0-dev.1773089653",

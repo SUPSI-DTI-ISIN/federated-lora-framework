@@ -1,0 +1,54 @@
+import { useEffect } from "react";
+import {useQueryClient} from "@tanstack/react-query";
+import {getChatSseUrl} from "../../../utils/sse/sseUrls.ts";
+import {useAuthWrapper} from "../../auth/useAuthWrapper.ts";
+import type {MessageDTO} from "@isin/chat-service-client";
+
+export const useChatSse = () => {
+    const queryClient = useQueryClient();
+    const {user} = useAuthWrapper();
+
+    useEffect(() => {
+        if (!user?.profile?.sub) return;
+
+        const eventSource = new EventSource(getChatSseUrl(user.profile.sub));
+
+        eventSource.addEventListener("inference_job_success", async (event) => {
+            try {
+                const assistantMessage: MessageDTO = JSON.parse(event.data);
+                console.log(assistantMessage);
+
+                queryClient.setQueryData<MessageDTO[]>(
+                    ['messages', assistantMessage.chat_id],
+                    (old) => old ? [...old, assistantMessage] : [assistantMessage]
+                );
+                await queryClient.invalidateQueries({queryKey: ['chats']});
+            } catch (err) {
+                console.error("Invalid SSE payload", err);
+            }
+        });
+
+        eventSource.addEventListener("inference_job_failure", async (event) => {
+            try {
+                const parsed = JSON.parse(event.data);
+                console.log(parsed);
+
+                await queryClient.invalidateQueries({queryKey: ['chats']});
+                await queryClient.invalidateQueries({
+                    queryKey: ['messages', parsed.result.chat_id],
+                    refetchType: "all"
+                });
+            } catch (err) {
+                console.error("Invalid SSE payload", err);
+            }
+        })
+
+        eventSource.onerror = (error) => {
+            console.error('SSE connection error:', error);
+        };
+
+        return () => {
+            eventSource.close();
+        };
+    }, [queryClient, user]);
+};

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
@@ -45,4 +45,17 @@ class MessageRepository(MessageRepositoryInterface):
             return message_model
         except SQLAlchemyError as exc:
             await self._db_session.rollback()
+            raise exc
+
+    async def get_latest_by_chat(self, chat_id: int) -> Optional[MessageModel]:
+        try:
+            stmt = (
+                select(MessageModel)
+                .where(MessageModel.chat_id == chat_id)
+                .order_by(MessageModel.created_at.desc())
+                .limit(1)
+            )
+            result = await self._db_session.execute(stmt)
+            return result.scalars().first()
+        except SQLAlchemyError as exc:
             raise exc

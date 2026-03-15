@@ -7,5 +7,6 @@ class ChatDTO(BaseModel):
     id: int
     user_id: str
     title: Optional[str]
+    is_doing_inference: bool
     created_at: datetime
     updated_at: datetime
