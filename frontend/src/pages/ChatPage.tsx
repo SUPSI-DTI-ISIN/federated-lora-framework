@@ -24,7 +24,7 @@ export const ChatPage = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [chatToDelete, setChatToDelete] = useState<ChatDTO | null>(null);
     const prefersReducedMotion = useReducedMotion();
-    
+
     const {mutateAsync: deleteChat} = useDeleteChat();
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -40,10 +40,10 @@ export const ChatPage = () => {
 
     const handleDeleteConfirm = async () => {
         if (!chatToDelete) return;
-        
+
         setIsDeleting(true);
         setShowDeleteModal(false);
-        
+
         try {
             await deleteChat(chatToDelete.id);
             if (selectedChatId === chatToDelete.id) setSelectedChatId(null);
@@ -59,7 +59,7 @@ export const ChatPage = () => {
 
     const sortedChats = useMemo(() => {
         if (!chats) return [];
-        return [...chats].sort((a, b) => 
+        return [...chats].sort((a, b) =>
             new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
     }, [chats]);
@@ -80,7 +80,7 @@ export const ChatPage = () => {
                             onClick={() => setShowCreateModal(true)}
                             className="btn btn-primary w-full gap-2 shadow-lg"
                         >
-                            <Plus size={20} />
+                            <Plus size={20}/>
                             {t("chat.sidebar.newChat")}
                         </button>
                     </div>
@@ -90,12 +90,12 @@ export const ChatPage = () => {
                         {isLoadingChats ? (
                             <div className="space-y-2">
                                 {Array.from({length: 5}).map((_, i) => (
-                                    <div key={i} className="h-16 bg-base-200 rounded-xl animate-pulse" />
+                                    <div key={i} className="h-16 bg-base-200 rounded-xl animate-pulse"/>
                                 ))}
                             </div>
                         ) : sortedChats.length === 0 ? (
                             <div className="text-center py-12">
-                                <MessageSquare size={48} className="mx-auto text-base-content/20 mb-4" />
+                                <MessageSquare size={48} className="mx-auto text-base-content/20 mb-4"/>
                                 <p className="text-sm text-base-content/60">{t("chat.sidebar.noChats")}</p>
                             </div>
                         ) : (
@@ -126,6 +126,11 @@ export const ChatPage = () => {
                                                     {new Date(chat.created_at).toLocaleDateString()}
                                                 </p>
                                             </div>
+                                            {chat.is_doing_inference && (
+                                                <span className={`loading loading-spinner loading-xs shrink-0 mt-1 ${
+                                                    selectedChatId === chat.id ? 'text-primary-content' : 'text-primary'
+                                                }`} aria-label="Inference in progress"/>
+                                            )}
                                             <button
                                                 onClick={(e) => handleDeleteClick(chat, e)}
                                                 disabled={isDeleting}
@@ -134,9 +139,9 @@ export const ChatPage = () => {
                                                 }`}
                                             >
                                                 {isDeleting && chatToDelete?.id === chat.id ? (
-                                                    <span className="loading loading-spinner loading-xs" />
+                                                    <span className="loading loading-spinner loading-xs"/>
                                                 ) : (
-                                                    <Trash2 size={14} />
+                                                    <Trash2 size={14}/>
                                                 )}
                                             </button>
                                         </div>
@@ -157,9 +162,13 @@ export const ChatPage = () => {
                 {/* Main Chat Area */}
                 <main className="flex-1 flex flex-col overflow-hidden">
                     {selectedChatId ? (
-                        <ChatInterface modelKey={modelKey} chatId={selectedChatId} />
+                        <ChatInterface
+                            modelKey={modelKey}
+                            chatId={selectedChatId}
+                            isDoingInference={chats?.find(c => c.id === selectedChatId)?.is_doing_inference ?? false}
+                        />
                     ) : (
-                        <EmptyChatState />
+                        <EmptyChatState/>
                     )}
                 </main>
             </motion.div>

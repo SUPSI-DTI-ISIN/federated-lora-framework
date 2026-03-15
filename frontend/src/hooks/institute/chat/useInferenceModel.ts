@@ -22,10 +22,11 @@ export const useInferenceModel = () => {
                 prompt: prompt
             }
         ).then(response => response.data),
-        onSuccess: (assistantOutputMessage, {chatId}) => {
+        onSuccess: (userMessage, {chatId}) => {
             queryClient.setQueryData<MessageDTO[]>(["messages", chatId], (oldData) => {
-                return oldData ? [...oldData, assistantOutputMessage] : [assistantOutputMessage];
+                return oldData ? [...oldData, userMessage] : [userMessage];
             });
+            queryClient.invalidateQueries({queryKey: ['chats']});
         }
     })
 }

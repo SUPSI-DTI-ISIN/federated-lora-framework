@@ -1,4 +1,4 @@
-import {useMemo, useRef, useState} from "react";
+import {useMemo, useRef} from "react";
 import {useTranslation} from "react-i18next";
 import toast from "react-hot-toast";
 import {ChatComposer} from "./ChatComposer";
@@ -10,19 +10,19 @@ import {useGetAllMessagesByChat} from "../../hooks/institute/chat/useGetAllMessa
 interface ChatInterfaceProps {
     modelKey: string;
     chatId: number;
+    isDoingInference: boolean;
 }
 
 export const ChatInterface = ({
                                   modelKey,
-                                  chatId
+                                  chatId,
+                                  isDoingInference,
                               }: ChatInterfaceProps) => {
-
     const {t} = useTranslation();
     const { data: messages, isLoading: isLoadingMessages, error: errorLoadingMessages } = useGetAllMessagesByChat(chatId);
 
     const scrollRef = useRef<HTMLDivElement | null>(null);
 
-    const [isRunningInference, setIsRunningInference] = useState<boolean>(false);
     const {mutateAsync: runInference} = useInferenceModel();
 
     const sortedMessages = useMemo(() => {
@@ -35,8 +35,7 @@ export const ChatInterface = ({
     }, [messages]);
 
     const handleSend = async (prompt: string, adapterVersion?: number | null) => {
-        if (isRunningInference) return;
-        setIsRunningInference(true);
+        if (isDoingInference) return;
         try {
             await runInference({
                 chatId: chatId,
@@ -47,8 +46,6 @@ export const ChatInterface = ({
         } catch (err: any) {
             console.error(err);
             toast.error(t("chat.errorInference") ?? "Errore inferenza");
-        } finally {
-            setIsRunningInference(false);
         }
     };
 
@@ -104,7 +101,7 @@ export const ChatInterface = ({
                 })}
             </div>
 
-            <ChatComposer modelKey={modelKey} onSubmit={handleSend} isSubmitting={isRunningInference} />
+            <ChatComposer modelKey={modelKey} onSubmit={handleSend} isSubmitting={isDoingInference} />
         </div>
     );
 };

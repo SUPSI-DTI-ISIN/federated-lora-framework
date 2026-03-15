@@ -17,6 +17,7 @@ class ChatService(ChatServiceInterface):
         new_chat = ChatModel(
             user_id=user_id,
             title=chat_creation_request_dto.title,
+            is_doing_inference=False,
             messages=[],
             created_at=datetime.now(timezone.utc),
             updated_at=datetime.now(timezone.utc)

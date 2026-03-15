@@ -53,6 +53,8 @@ async def send_message(
 
     await chat_service.update_chat_inference_state(chat_id=chat_id, is_doing_inference=is_doing_inference)
 
+    await chat_service.update_chat_modification_date(chat_id=chat_id)
+
     return user_message_created
 
 @router.get(

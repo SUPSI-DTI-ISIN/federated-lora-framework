@@ -18,22 +18,16 @@ class InferenceServiceClient(InferenceServiceClientInterface):
             cls.__INSTANCE = cls(inference_service_url=inference_service_url)
         return cls.__INSTANCE
 
-    async def inference_model(self, query_request_dto: QueryRequestDTO) -> QueryResponseDTO:
+    async def inference_model(self, query_request_dto: QueryRequestDTO) -> None:
         inference_url = f"{self.__inference_service_url}/api_inference/inference"
 
         try:
-            async with httpx.AsyncClient(timeout=600) as client:
+            async with httpx.AsyncClient(timeout=100) as client:
                 resp = await client.post(
                     inference_url,
-                    headers={"Accept": "application/json", "Content-Type": "application/json"},
+                    headers={"Content-Type": "application/json"},
                     json=query_request_dto.model_dump()
                 )
                 resp.raise_for_status()
         except requests.exceptions.HTTPError as err:
             raise RuntimeError(err)
-
-        data = resp.json()
-        try:
-            return QueryResponseDTO.model_validate(data)
-        except ValidationError as e:
-            raise RuntimeError(f"Invalid response shape: {e}")

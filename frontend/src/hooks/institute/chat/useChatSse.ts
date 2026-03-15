@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import {useQueryClient} from "@tanstack/react-query";
 import {getChatSseUrl} from "../../../utils/sse/sseUrls.ts";
 import {useAuthWrapper} from "../../auth/useAuthWrapper.ts";
-import type {MessageDTO} from "@isin/chat-service-client";
+import type {ChatDTO, MessageDTO} from "@isin/chat-service-client";
 
 export const useChatSse = () => {
     const queryClient = useQueryClient();
@@ -22,7 +22,16 @@ export const useChatSse = () => {
                     ['messages', assistantMessage.chat_id],
                     (old) => old ? [...old, assistantMessage] : [assistantMessage]
                 );
-                await queryClient.invalidateQueries({queryKey: ['chats']});
+                queryClient.setQueryData<ChatDTO[]>(
+                    ['chats'],
+                    (old) => old
+                        ? old.map((chat) =>
+                            chat.id === assistantMessage.chat_id
+                                ? {...chat, is_doing_inference: false}
+                                : chat
+                        )
+                        : old
+                );
             } catch (err) {
                 console.error("Invalid SSE payload", err);
             }
