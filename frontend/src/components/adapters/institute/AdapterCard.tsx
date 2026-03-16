@@ -3,17 +3,36 @@ import { useTranslation } from "react-i18next";
 import type { AdapterDTO } from "@isin/model-service-client";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "../../../hooks/useReducedMotion";
+import {useState} from "react";
+import {useSaveNewAdapter} from "../../../hooks/institute/model/useSaveNewAdapter.ts";
+import toast from "react-hot-toast";
 
 interface AdapterCardProps {
     adapter: AdapterDTO;
-    onDownload: (adapterVersion: number) => Promise<void> | void;
-    isDownloading?: boolean;
+    modelKey: string;
 }
 
-export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: AdapterCardProps) => {
+export const AdapterCard = ({ adapter, modelKey }: AdapterCardProps) => {
     const { t } = useTranslation();
     const { version, available_local } = adapter;
     const prefersReducedMotion = useReducedMotion();
+
+    const [isSavingNewAdapter, setIsSavingNewAdapter] = useState<boolean>(false);
+    const {mutateAsync: saveNewAdapter} = useSaveNewAdapter();
+
+    const handleDownload = async (adapterVersion: number) => {
+        try {
+            setIsSavingNewAdapter(true);
+            toast.loading(t("adapters.toast.downloading"), {id: "adapter-download"});
+            await saveNewAdapter({modelKey, adapterVersion});
+            toast.success(t("adapters.toast.downloaded"), {id: "adapter-download"});
+        } catch (err: any) {
+            console.error(err);
+            toast.error(t("adapters.toast.error"), {id: "adapter-download"});
+        } finally {
+            setIsSavingNewAdapter(false);
+        }
+    };
 
     return (
         <motion.div
@@ -63,17 +82,17 @@ export const AdapterCard = ({ adapter, onDownload, isDownloading = false }: Adap
                         </div>
                     ) : (
                         <button
-                            onClick={() => onDownload(version)}
-                            disabled={isDownloading}
+                            onClick={() => handleDownload(version)}
+                            disabled={isSavingNewAdapter}
                             className={`
                                 btn btn-md sm:btn-lg rounded-2xl min-h-[44px] min-w-[44px]
-                                ${isDownloading ? 'btn-ghost' : 'btn-info'} 
+                                ${isSavingNewAdapter ? 'btn-ghost' : 'btn-info'} 
                                 shadow-lg shadow-info/20 hover:scale-105 transition-all
                                 px-6
                             `}
                             aria-label={`Download adapter version ${version}`}
                         >
-                            {isDownloading ? (
+                            {isSavingNewAdapter ? (
                                 <span className="loading loading-spinner" aria-label="Downloading" />
                             ) : (
                                 <>

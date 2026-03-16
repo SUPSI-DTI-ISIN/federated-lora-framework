@@ -56,5 +56,5 @@ class RedisJobEventConsumer(RedisJobEventConsumerInterface):
                 except Exception as e:
                     print(f"Failed to process inference message: {e}")
         finally:
-            await pubsub.unsubscribe(f"{RedisChannel.INFERENCE_RESULT.value}:*")
+            await pubsub.punsubscribe(f"{RedisChannel.INFERENCE_RESULT.value}:*")
             await pubsub.close()

@@ -8,11 +8,10 @@ import { useReducedMotion } from "../../../hooks/useReducedMotion";
 
 interface AdaptersListProps {
     adapters: AdapterDTO[];
-    onDownload: (adapterVersion: number) => Promise<void> | void;
-    isDownloading?: boolean;
+    modelKey: string;
 }
 
-export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: AdaptersListProps) => {
+export const AdaptersList = ({ adapters, modelKey }: AdaptersListProps) => {
     const { t } = useTranslation();
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
     const prefersReducedMotion = useReducedMotion();
@@ -75,8 +74,7 @@ export const AdaptersList = ({ adapters, onDownload, isDownloading = false }: Ad
                         >
                             <AdapterCard
                                 adapter={adapter}
-                                onDownload={onDownload}
-                                isDownloading={isDownloading}
+                                modelKey={modelKey}
                             />
                         </motion.div>
                     ))}

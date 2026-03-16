@@ -1,4 +1,20 @@
 services:
+  redis-inference-service:
+    image: redis:8.6.1
+    ports:
+      - "${HOST_REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    restart: always
+    volumes:
+      - redis-inference-data:/data
+    networks:
+      - internal
+
   documents-mysql-db:
     image: mysql:8.4.7
     ports:
@@ -41,11 +57,14 @@ services:
       #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       MODEL_SERVICE_URL: http://model-service:8090
+      REDIS_URL: http://redis-inference-service:6379
     restart: always
     ports:
       - "${HOST_INFERENCE_SERVICE_PORT:-8095}:8095"
     depends_on:
       model-service:
+        condition: service_healthy
+      redis-inference-service:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8095/api_inference/health" ]
@@ -56,7 +75,33 @@ services:
       - models:/models
     networks:
       - internal
-      - external
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  inference-service-worker:
+    image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/institute/inference-service:${DOCKER_IMAGE_TAG}
+    working_dir: /app
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      MODEL_SERVICE_URL: http://model-service:8090
+      REDIS_URL: http://redis-inference-service:6379
+      PYTHONPATH: src
+    restart: always
+    entrypoint: ""
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
+    depends_on:
+      inference-service:
+        condition: service_healthy
+    networks:
+      - internal
     deploy:
       resources:
         reservations:
@@ -125,6 +170,7 @@ services:
       DB_HOST: chats-mysql-db
       DB_PORT: 3306
       FRONTEND_URL: ${FRONTEND_URL}
+      REDIS_URL: http://redis-inference-service:6379
     restart: always
     ports:
       - "${HOST_CHAT_SERVICE_PORT:-8081}:8081"
@@ -132,6 +178,8 @@ services:
       chats-mysql-db:
         condition: service_healthy
       inference-service:
+        condition: service_healthy
+      redis-inference-service:
         condition: service_healthy
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8081/api_chat/health" ]
@@ -214,6 +262,8 @@ services:
               capabilities: [ gpu ]
 
 volumes:
+  redis-inference-data:
+    driver: local
   documents-mysql-data:
     driver: local
   chats-mysql-data:

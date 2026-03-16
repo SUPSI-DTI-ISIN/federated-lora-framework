@@ -1,10 +1,8 @@
 import {useMemo, useState} from "react";
 import {useTranslation} from "react-i18next";
-import toast from "react-hot-toast";
 import {AdaptersList} from "../components/adapters/institute/AdaptersList.tsx";
 import {useGetAllAvailableAdapters} from "../hooks/institute/model/useGetAllAvailableAdapters.ts";
 import {getModelKey} from "../utils/envUtils.ts";
-import {useSaveNewAdapter} from "../hooks/institute/model/useSaveNewAdapter.ts";
 import type {AdapterDTO} from "@isin/model-service-client";
 import {motion} from "framer-motion";
 import {Cpu} from "lucide-react";
@@ -23,9 +21,6 @@ export const AdaptersPage = () => {
         error: errorLoadingAdapters
     } = useGetAllAvailableAdapters(modelKey);
 
-    const [isSavingNewAdapter, setIsSavingNewAdapter] = useState<boolean>(false);
-    const {mutateAsync: saveNewAdapter} = useSaveNewAdapter();
-
     const [query, setQuery] = useState("");
     const [localOnly, setLocalOnly] = useState(false);
 
@@ -36,20 +31,6 @@ export const AdaptersPage = () => {
         const matchLocal = !localOnly || adapter.available_local;
         return matchQuery && matchLocal;
     });
-
-    const handleDownload = async (adapterVersion: number) => {
-        try {
-            setIsSavingNewAdapter(true);
-            toast.loading(t("adapters.toast.downloading"), {id: "adapter-download"});
-            await saveNewAdapter({modelKey, adapterVersion});
-            toast.success(t("adapters.toast.downloaded"), {id: "adapter-download"});
-        } catch (err: any) {
-            console.error(err);
-            toast.error(t("adapters.toast.error"), {id: "adapter-download"});
-        } finally {
-            setIsSavingNewAdapter(false);
-        }
-    };
 
     if (isLoadingAdapters) {
         return (
@@ -169,8 +150,7 @@ export const AdaptersPage = () => {
                 ) : (
                     <AdaptersList
                         adapters={filtered}
-                        onDownload={handleDownload}
-                        isDownloading={isSavingNewAdapter}
+                        modelKey={modelKey}
                     />
                 )}
             </div>

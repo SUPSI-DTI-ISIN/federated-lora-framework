@@ -23,7 +23,9 @@ export const useSaveNewAdapter = () => {
             const updater = (old: AvailableAdaptersDTO | undefined): AvailableAdaptersDTO => ({
                 model_key: modelKey,
                 adapters: old?.adapters
-                    ? [newAdapter, ...old.adapters]
+                    ? old.adapters.map(adapter =>
+                        adapter.version === newAdapter.version ? newAdapter : adapter
+                    )
                     : [newAdapter],
             });
 
@@ -32,10 +34,7 @@ export const useSaveNewAdapter = () => {
                 updater
             );
 
-            queryClient.setQueryData<AvailableAdaptersDTO>(
-                ["adapters", "local"],
-                updater
-            );
+            queryClient.invalidateQueries({queryKey: ["adapters", "local"]});
         }
     })
 }
