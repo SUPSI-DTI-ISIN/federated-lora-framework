@@ -10,4 +10,5 @@ class DocumentDTO(BaseModel):
     id: int
     number: str
     title: str
+    is_trainable: bool
     sections: List[SectionDTO]

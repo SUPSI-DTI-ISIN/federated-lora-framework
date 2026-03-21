@@ -20,7 +20,7 @@ class DataServiceClient(DataServiceClientInterface):
         return cls._INSTANCE
 
     def get_documents(self) -> List[DocumentDTO]:
-        documents_url: str = f"{self.__data_service_url}/api_data/documents"
+        documents_url: str = f"{self.__data_service_url}/api_data/documents/trainable"
         try:
             resp = requests.get(documents_url, headers={"Accept": "application/json"})
             resp.raise_for_status()

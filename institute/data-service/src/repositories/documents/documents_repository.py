@@ -29,6 +29,15 @@ class DocumentsRepository(DocumentsRepositoryInterface):
         except SQLAlchemyError as exc:
             raise exc
 
+    async def get_all_trainable(self, is_trainable: bool = True) -> List[DocumentModel]:
+        try:
+            result = await self._db_session.execute(
+                select(DocumentModel).where(DocumentModel.is_trainable == is_trainable)
+            )
+            return list(result.scalars().all())
+        except SQLAlchemyError as exc:
+            raise exc
+
     async def get_by_id(self, document_id: int) -> Optional[DocumentModel]:
         try:
             model = await self._db_session.get(DocumentModel, document_id)

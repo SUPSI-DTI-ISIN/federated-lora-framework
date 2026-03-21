@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO
+from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, \
+    InstituteTrainingParticipationDTO
 
 
 class InstituteServiceInterface(ABC):
@@ -27,4 +28,8 @@ class InstituteServiceInterface(ABC):
 
     @abstractmethod
     async def delete_institute_by_id(self, institute_id: int) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_institutes_training_participation(self) -> List[InstituteTrainingParticipationDTO]:
         raise NotImplementedError

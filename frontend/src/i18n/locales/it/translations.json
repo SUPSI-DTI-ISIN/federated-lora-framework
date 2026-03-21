@@ -151,8 +151,14 @@
       "deleteConfirm": "Sei sicuro di voler eliminare questo documento? Questa azione non può essere annullata.",
       "deleteSuccess": "Documento eliminato con successo.",
       "deleteError": "Impossibile eliminare il documento.",
+      "trainabilityUpdateSuccess": "Addestrabilità aggiornata con successo.",
+      "trainabilityUpdateError": "Impossibile aggiornare l'addestrabilità.",
+      "trainable": "Addestrabile",
+      "notTrainable": "Non addestrabile",
       "actions": {
-        "delete": "Elimina"
+        "delete": "Elimina",
+        "enableTraining": "Abilita per l'addestramento",
+        "disableTraining": "Disabilita dall'addestramento"
       }
     },
     "upload": {
@@ -325,6 +331,25 @@
       "description": "Avvia un nuovo lavoro di federated learning per vederlo qui",
       "noResults": "Nessun Risultato Trovato",
       "noResultsDescription": "Prova a modificare la tua ricerca"
+    },
+    "jobs": {
+      "title": "Lavori di Federated Learning"
+    },
+    "participation": {
+      "title": "Partecipazione degli Istituti all'Addestramento",
+      "samples": "Campioni addestrabili",
+      "unreachable": "Non raggiungibile",
+      "reachable": "Raggiungibile",
+      "unreachableNote": "Alcuni istituti non sono raggiungibili — il conteggio dei campioni non è disponibile.",
+      "error": "Errore nel caricamento dei dati di partecipazione.",
+      "empty": "Nessun dato di partecipazione disponibile.",
+      "viewTable": "Vista tabella",
+      "viewChart": "Vista grafico",
+      "col": {
+        "name": "Istituto",
+        "samples": "Campioni Addestrabili",
+        "status": "Stato"
+      }
     }
   }
 }

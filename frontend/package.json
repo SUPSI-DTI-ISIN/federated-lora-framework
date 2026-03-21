@@ -10,12 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@isin/chat-service-client": "0.1.0-dev.1773589678",
-    "@isin/data-service-client": "0.1.0-dev.1773589634",
-    "@isin/federated-learning-management-service-client": "0.1.0-dev.1773589754",
-    "@isin/institute-service-client": "0.1.0-dev.1773589730",
-    "@isin/mlflow-service-client": "0.1.0-dev.1773589707",
-    "@isin/model-service-client": "0.1.0-dev.1773589657",
+    "@isin/chat-service-client": "file:../institute/chat-service/sdks/chat-service-client",
+    "@isin/data-service-client": "file:../institute/data-service/sdks/data-service-client",
+    "@isin/federated-learning-management-service-client": "file:../department/federated-learning-management-service/sdks/federated-learning-management-service-client",
+    "@isin/institute-service-client": "file:../department/institute-service/sdks/institute-service-client",
+    "@isin/mlflow-service-client": "file:../department/mlflow-service/sdks/mlflow-service-client",
+    "@isin/model-service-client": "file:../institute/model-service/sdks/model-service-client",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.26",
@@ -30,7 +30,8 @@
     "react-i18next": "^16.5.0",
     "react-icons": "^5.5.0",
     "react-oidc-context": "^3.3.0",
-    "react-router-dom": "^7.11.0"
+    "react-router-dom": "^7.11.0",
+    "recharts": "^3.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

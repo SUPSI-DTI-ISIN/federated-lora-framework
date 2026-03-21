@@ -14,6 +14,10 @@ class DocumentsRepositoryInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_all_trainable(self, is_trainable: bool = True) -> List[DocumentModel]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_by_id(self, document_id: int) -> Optional[DocumentModel]:
         raise NotImplementedError
 

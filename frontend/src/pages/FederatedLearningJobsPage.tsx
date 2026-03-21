@@ -7,10 +7,10 @@ import {useNavigate} from "react-router-dom";
 import {useGetAllFederatedLearningJobs} from "../hooks/department/federated-learning/useGetAllFederatedLearningJobs.ts";
 import {useFederatedLearningJobSse} from "../hooks/department/federated-learning/useFederatedLearningJobSse.ts";
 import {LoadingSkeleton} from "../components/common/LoadingSkeleton.tsx";
-import {FederatedLearningJobsTable} from "../components/federated-learning/FederatedLearningJobsTable.tsx";
 import {FederatedLearningActions} from "../components/federated-learning/FederatedLearningActions.tsx";
-import {EmptyState} from "../components/common/EmptyState.tsx";
 import {SearchBar} from "../components/common/SearchBar.tsx";
+import {InstituteTrainingParticipationCard} from "../components/federated-learning/institute-participation/InstituteTrainingParticipationCard.tsx";
+import {FederatedLearningJobsCard} from "../components/federated-learning/job/FederatedLearningJobsCard.tsx";
 
 export const FederatedLearningJobsPage = () => {
     useFederatedLearningJobSse();
@@ -86,23 +86,10 @@ export const FederatedLearningJobsPage = () => {
                     />
                 </div>
 
-                {filteredJobs.length === 0 ? (
-                    <EmptyState
-                        icon={Network}
-                        title={
-                            searchQuery
-                                ? t("federatedLearning.empty.noResults")
-                                : t("federatedLearning.empty.title")
-                        }
-                        description={
-                            searchQuery
-                                ? t("federatedLearning.empty.noResultsDescription")
-                                : t("federatedLearning.empty.description")
-                        }
-                    />
-                ) : (
-                    <FederatedLearningJobsTable jobs={filteredJobs}/>
-                )}
+                <div className="flex flex-col gap-4">
+                    <InstituteTrainingParticipationCard />
+                    <FederatedLearningJobsCard jobs={filteredJobs} searchQuery={searchQuery} />
+                </div>
             </div>
         </div>
     );

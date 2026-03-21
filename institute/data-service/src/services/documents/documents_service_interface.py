@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from schemas.documents import DocumentDTO
+from schemas.documents import DocumentDTO, TrainingSamplesDTO
 
 
 class DocumentsServiceInterface(ABC):
@@ -14,7 +14,19 @@ class DocumentsServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_all_trainable(self, is_trainable: bool = True) -> List[DocumentDTO]:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_training_samples(self) -> TrainingSamplesDTO:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_by_id(self, document_id: int) -> DocumentDTO:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_document_trainable(self, document_id: int, is_trainable: bool) -> DocumentDTO:
         raise NotImplementedError
 
     @abstractmethod

@@ -4,7 +4,8 @@ from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
-from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO
+from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, \
+    InstituteTrainingParticipationDTO
 from services.institute import InstituteServiceInterface
 from .dependencies import get_institute_service
 
@@ -49,6 +50,17 @@ async def list_institutes(
         institute_service: InstituteServiceInterface = Depends(get_institute_service)
 ):
     return await institute_service.get_all()
+
+@router.get(
+    "/training-participation",
+    response_model=List[InstituteTrainingParticipationDTO],
+    status_code=status.HTTP_200_OK,
+    tags=tags
+)
+async def get_institutes_training_participation(
+        institute_service: InstituteServiceInterface = Depends(get_institute_service)
+):
+    return await institute_service.get_institutes_training_participation()
 
 @router.get(
     "/{institute_id}",

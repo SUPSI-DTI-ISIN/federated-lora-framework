@@ -1,15 +1,20 @@
 from typing import List
 
+from clients.institute.institute_node_client_interface import InstituteNodeClientInterface
 from entities import InstituteModel
 from repositories.institute import InstituteRepositoryInterface
-from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO
-from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError, InstituteCannotBeDeletedError
+from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, \
+    InstituteTrainingParticipationDTO
+from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError, InstituteCannotBeDeletedError, \
+    InstituteUnreachableError
 from .institute_service_interface import InstituteServiceInterface
 
 
 class InstituteService(InstituteServiceInterface):
-    def __init__(self, institute_repository: InstituteRepositoryInterface):
+    def __init__(self, institute_repository: InstituteRepositoryInterface, institute_node_client: InstituteNodeClientInterface, department_realm_name: str):
         self.__institute_repository = institute_repository
+        self.__institute_node_client = institute_node_client
+        self.__department_realm_name = department_realm_name
 
     async def create_new_institute(self, institute_creation_request_dto: InstituteCreationRequestDTO) -> InstituteDTO:
         new_institute = InstituteModel(
@@ -64,3 +69,32 @@ class InstituteService(InstituteServiceInterface):
             raise InstituteCannotBeDeletedError(institute_id=institute_id)
 
         await self.__institute_repository.delete_institute_by_id(institute_model=institute)
+
+    async def get_institutes_training_participation(self) -> List[InstituteTrainingParticipationDTO]:
+        institutes = await self.__institute_repository.get_all()
+
+        institute_training_participation_list: List[InstituteTrainingParticipationDTO] = []
+        for institute in institutes:
+            if institute.name == self.__department_realm_name:
+                continue
+            try:
+                institute_training_participation = await self.__institute_node_client.get_institute_training_participation(institute_base_url=institute.url)
+                institute_training_participation_list.append(
+                    InstituteTrainingParticipationDTO(
+                        id=institute.id,
+                        institute_name=institute_training_participation.institute_name,
+                        trainable_samples_number=institute_training_participation.trainable_samples_number,
+                        is_reachable=True
+                    )
+                )
+            except InstituteUnreachableError:
+                institute_training_participation_list.append(
+                    InstituteTrainingParticipationDTO(
+                        id=institute.id,
+                        institute_name=institute.name,
+                        trainable_samples_number=None,
+                        is_reachable=False
+                    )
+                )
+
+        return institute_training_participation_list

@@ -1,4 +1,4 @@
-import {formatEnum} from "../../utils/enumUtils.ts";
+import {formatEnum} from "../../../utils/enumUtils.ts";
 
 interface FederatedLearningJobStatusBadgeProps {
     status: string;

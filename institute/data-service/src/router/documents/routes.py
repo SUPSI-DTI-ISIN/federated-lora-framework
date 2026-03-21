@@ -4,7 +4,7 @@ from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File,
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
-from schemas.documents import DocumentDTO
+from schemas.documents import DocumentDTO, UpdateDocumentTrainableRequestDTO, TrainingSamplesDTO
 from services.documents import DocumentsServiceInterface
 from .dependencies import get_documents_service
 
@@ -47,10 +47,33 @@ async def upload(
 )
 async def get_all(
         documents_service: DocumentsServiceInterface = Depends(get_documents_service),
-        #_: User = Depends(jwt_validator.get_current_user_required)
+        _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await documents_service.get_all()
 
+@router.get(
+    "/trainable",
+    status_code=status.HTTP_200_OK,
+    response_model=List[DocumentDTO],
+    tags=tags
+)
+async def get_all_trainable(
+        documents_service: DocumentsServiceInterface = Depends(get_documents_service),
+        #_: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await documents_service.get_all_trainable()
+
+@router.get(
+    "/training-samples",
+    status_code=status.HTTP_200_OK,
+    response_model=TrainingSamplesDTO,
+    tags=tags
+)
+async def get_training_samples(
+        documents_service: DocumentsServiceInterface = Depends(get_documents_service),
+        #_: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await documents_service.get_training_samples()
 
 @router.get(
     "/{document_id}",
@@ -64,6 +87,20 @@ async def get_by_id(
         _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await service.get_by_id(document_id=document_id)
+
+@router.put(
+    "/{document_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=DocumentDTO,
+    tags=tags
+)
+async def update_document_trainable(
+        document_id: int,
+        update_document_trainable_request_dto: UpdateDocumentTrainableRequestDTO,
+        service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await service.update_document_trainable(document_id=document_id, is_trainable=update_document_trainable_request_dto.is_trainable)
 
 
 @router.delete(

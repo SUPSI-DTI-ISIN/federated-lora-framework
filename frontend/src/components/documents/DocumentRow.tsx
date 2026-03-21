@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { DocumentDTO } from "@isin/data-service-client";
 import { motion } from "framer-motion";
-import { FileText, Trash2, Eye } from "lucide-react";
+import { FileText, Trash2, Eye, BrainCircuit } from "lucide-react";
 import { useDeleteDocument } from "../../hooks/institute/data/documents/useDeleteDocument.ts";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DeleteConfirmModal } from "../common/DeleteConfirmModal";
+import {useUpdateDocumentTrainability} from "../../hooks/institute/data/documents/useUpdateDocumentTrainability.ts";
 
 interface DocumentRowProps {
     document: DocumentDTO;
@@ -18,6 +19,9 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
     const { mutateAsync: deleteDocument } = useDeleteDocument();
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const {mutateAsync: updateDocumentTrainability} = useUpdateDocumentTrainability();
+    const [isUpdating, setIsUpdating] = useState(false);
     const navigate = useNavigate();
 
     const handleDelete = async () => {
@@ -36,6 +40,19 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
 
     const handleNavigateToSections = () => {
         navigate(`/documents/${document.id}/sections`);
+    };
+
+    const handleToggleTrainability = async () => {
+        setIsUpdating(true);
+        try {
+            await updateDocumentTrainability({ documentId: document.id, isTrainable: !document.is_trainable });
+            toast.success(t("documents.list.trainabilityUpdateSuccess"));
+        } catch (e) {
+            console.error(e);
+            toast.error(t("documents.list.trainabilityUpdateError"));
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     return (
@@ -59,10 +76,30 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                         <span className="text-xs font-mono text-base-content/40 bg-base-200 px-2 py-1 rounded">
                             ID: {document.number}
                         </span>
+                        <span
+                            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded ${
+                                document.is_trainable
+                                    ? "bg-success/10 text-success"
+                                    : "bg-base-content/5 text-base-content/40"
+                            }`}
+                        >
+                            <BrainCircuit size={12} />
+                            {document.is_trainable ? t("documents.list.trainable") : t("documents.list.notTrainable")}
+                        </span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100 shrink-0">
+                    <button
+                        onClick={handleToggleTrainability}
+                        disabled={isDeleting || isUpdating}
+                        className={`btn btn-circle btn-sm btn-ghost ${document.is_trainable ? "text-success hover:bg-success/10" : "text-base-content/40 hover:bg-base-content/10"}`}
+                        title={document.is_trainable ? t("documents.list.actions.disableTraining") : t("documents.list.actions.enableTraining")}
+                        aria-label={document.is_trainable ? t("documents.list.actions.disableTraining") : t("documents.list.actions.enableTraining")}
+                    >
+                        {isUpdating ? <span className="loading loading-spinner loading-xs" /> : <BrainCircuit size={18} />}
+                    </button>
+
                     <button
                         onClick={handleNavigateToSections}
                         disabled={isDeleting}
