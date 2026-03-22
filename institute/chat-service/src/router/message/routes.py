@@ -14,7 +14,7 @@ from services.message import MessageServiceInterface
 from .dependencies import get_message_service, get_inference_service
 import router.chat.dependencies as chat_dependencies
 
-router = APIRouter(prefix="/chat/{chat_id}/messages")
+router = APIRouter(prefix="/chats/{chat_id}/messages")
 
 tags = ["messages"]
 

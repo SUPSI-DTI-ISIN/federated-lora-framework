@@ -7,6 +7,6 @@ export const useGetAllMessagesByChat = (chatId: number) => {
 
     return useQuery<MessageDTO[], Error>({
         queryKey: ['messages', chatId],
-        queryFn: async () => messagesApi.getMessagesApiChatChatChatIdMessagesGet(chatId).then(response => response.data)
+        queryFn: async () => messagesApi.getMessagesApiChatChatsChatIdMessagesGet(chatId).then(response => response.data)
     })
 }

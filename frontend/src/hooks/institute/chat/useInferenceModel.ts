@@ -14,7 +14,7 @@ export const useInferenceModel = () => {
     const {messagesApi} = useChatApi();
 
     return useMutation<MessageDTO, Error, InferenceModelParams>({
-        mutationFn: async ({chatId, modelKey, adapterVersion, prompt}: InferenceModelParams) => messagesApi.sendMessageApiChatChatChatIdMessagesPost(
+        mutationFn: async ({chatId, modelKey, adapterVersion, prompt}: InferenceModelParams) => messagesApi.sendMessageApiChatChatsChatIdMessagesPost(
             chatId,
             {
                 model_key: modelKey,

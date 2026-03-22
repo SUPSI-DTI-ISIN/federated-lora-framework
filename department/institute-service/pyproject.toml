@@ -16,6 +16,7 @@ dependencies = [
     "cryptography>=46.0.5",
     "shared-auth-library",
     "requests>=2.32.5",
+    "greenlet>=3.3.2",
 ]
 
 [tool.uv.sources]
