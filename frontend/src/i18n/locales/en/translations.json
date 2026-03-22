@@ -309,6 +309,16 @@
       "error": {
         "failed": "Failed to delete section"
       }
+    },
+    "update": {
+      "save": "Save",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "editLabel": "Edit section content",
+      "success": "Section updated successfully",
+      "error": {
+        "failed": "Failed to update section"
+      }
     }
   },
   "realms": {

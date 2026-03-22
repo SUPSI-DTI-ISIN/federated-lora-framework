@@ -6,6 +6,10 @@ from models import SectionModel
 
 class SectionsRepositoryInterface(ABC):
     @abstractmethod
+    async def save_section(self, section_model: SectionModel) -> Optional[SectionModel]:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_by_id(self, section_id: int) -> Optional[SectionModel]:
         raise NotImplementedError
 

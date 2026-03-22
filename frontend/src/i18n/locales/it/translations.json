@@ -307,6 +307,16 @@
       "error": {
         "failed": "Impossibile eliminare la sezione"
       }
+    },
+    "update": {
+      "save": "Salva",
+      "edit": "Modifica",
+      "cancel": "Annulla",
+      "editLabel": "Modifica contenuto sezione",
+      "success": "Sezione aggiornata con successo",
+      "error": {
+        "failed": "Impossibile aggiornare la sezione"
+      }
     }
   },
   "realms": {
