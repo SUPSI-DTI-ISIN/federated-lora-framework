@@ -29,7 +29,8 @@ async def lifespan(app: FastAPI):
                 institute_creation_request_dto=InstituteCreationRequestDTO(
                     name=settings.realm_name,
                     url=settings.department_url,
-                    deletable=False
+                    deletable=False,
+                    updatable=False
                 )
             )
 

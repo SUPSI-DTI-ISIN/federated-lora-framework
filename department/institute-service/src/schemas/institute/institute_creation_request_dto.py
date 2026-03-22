@@ -6,3 +6,4 @@ class InstituteCreationRequestDTO(BaseModel):
     name: str
     url: str
     deletable: Optional[bool] = True
+    updatable: Optional[bool] = True

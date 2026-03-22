@@ -6,3 +6,4 @@ class InstituteDTO(BaseModel):
     name: str
     url: str
     deletable: bool
+    updatable: bool

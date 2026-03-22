@@ -6,12 +6,13 @@ from repositories.institute import InstituteRepositoryInterface
 from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, \
     InstituteTrainingParticipationDTO
 from schemas.exceptions import InstituteNotFoundError, InstituteNameNotFoundError, InstituteCannotBeDeletedError, \
-    InstituteUnreachableError
+    InstituteUnreachableError, InstituteCannotBeUpdatedError
 from .institute_service_interface import InstituteServiceInterface
 
 
 class InstituteService(InstituteServiceInterface):
-    def __init__(self, institute_repository: InstituteRepositoryInterface, institute_node_client: InstituteNodeClientInterface, department_realm_name: str):
+    def __init__(self, institute_repository: InstituteRepositoryInterface,
+                 institute_node_client: InstituteNodeClientInterface, department_realm_name: str):
         self.__institute_repository = institute_repository
         self.__institute_node_client = institute_node_client
         self.__department_realm_name = department_realm_name
@@ -20,17 +21,22 @@ class InstituteService(InstituteServiceInterface):
         new_institute = InstituteModel(
             name=institute_creation_request_dto.name,
             url=institute_creation_request_dto.url,
-            deletable=institute_creation_request_dto.deletable
+            deletable=institute_creation_request_dto.deletable,
+            updatable=institute_creation_request_dto.updatable
         )
 
         new_institute_created = await self.__institute_repository.save(institute_model=new_institute)
         return InstituteDTO.model_validate(new_institute_created)
 
-    async def update_institute(self, institute_id: int, institute_update_request_dto: InstituteUpdateRequestDTO) -> InstituteDTO:
+    async def update_institute(self, institute_id: int,
+                               institute_update_request_dto: InstituteUpdateRequestDTO) -> InstituteDTO:
         institute = await self.__institute_repository.get_by_id(institute_id=institute_id)
 
         if institute is None:
             raise InstituteNotFoundError(institute_id=institute_id)
+
+        if not institute.updatable:
+            raise InstituteCannotBeUpdatedError(institute_id=institute_id)
 
         institute.name = institute_update_request_dto.name if institute_update_request_dto.name is not None else institute.name
         institute.url = institute_update_request_dto.url if institute_update_request_dto.url is not None else institute.url
@@ -78,7 +84,8 @@ class InstituteService(InstituteServiceInterface):
             if institute.name == self.__department_realm_name:
                 continue
             try:
-                institute_training_participation = await self.__institute_node_client.get_institute_training_participation(institute_base_url=institute.url)
+                institute_training_participation = await self.__institute_node_client.get_institute_training_participation(
+                    institute_base_url=institute.url)
                 institute_training_participation_list.append(
                     InstituteTrainingParticipationDTO(
                         id=institute.id,

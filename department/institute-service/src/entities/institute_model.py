@@ -10,3 +10,4 @@ class InstituteModel(BaseModel):
     name: Mapped[str] = mapped_column(String(36), nullable=False, index=True, unique=True)
     url: Mapped[str] = mapped_column(String(25), nullable=False)
     deletable: Mapped[bool] = mapped_column(Boolean)
+    updatable: Mapped[bool] = mapped_column(Boolean)

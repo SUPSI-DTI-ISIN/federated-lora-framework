@@ -54,24 +54,26 @@ export const RealmCard = ({ realm, onSelect, isAdmin = false }: RealmCardProps) 
                             )}
                         </div>
 
-                        <div className="flex-1 truncate">
+                        <div className="flex-1 min-w-0">
                             <h3 className="text-xl font-bold text-base-content group-hover:text-primary transition-colors truncate">
                                 {realm.name}
                             </h3>
-                            <p className="text-sm text-base-content/50 font-medium truncate">
+                            <p className="text-sm text-base-content/50 font-medium break-all">
                                 {realm.url}
                             </p>
                         </div>
 
                         {isAdmin ? (
                             <div className="flex gap-2 items-center opacity-0 group-hover:opacity-100 transition-all">
-                                <button
-                                    onClick={handleOpenEdit}
-                                    className="btn btn-ghost btn-circle hover:bg-primary/10"
-                                    title={t("realms.update.title")}
-                                >
-                                    <Edit2 size={18} />
-                                </button>
+                                {realm.updatable && (
+                                    <button
+                                        onClick={handleOpenEdit}
+                                        className="btn btn-ghost btn-circle hover:bg-primary/10"
+                                        title={t("realms.update.title")}
+                                    >
+                                        <Edit2 size={18} />
+                                    </button>
+                                )}
 
                                 {realm.deletable && (
                                     <button
