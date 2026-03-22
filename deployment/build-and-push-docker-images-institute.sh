@@ -65,14 +65,14 @@ echo "$GITLAB_DOCKER_REGISTRY_TOKEN" | docker login "$GITLAB_DOCKER_REGISTRY_HOS
 #
 #docker buildx inspect --bootstrap
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/chat-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/chat-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../institute/chat-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/chat-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/data-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/data-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/data-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/data-service:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../institute/data-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/data-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/inference-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/inference-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/inference-service:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../institute/inference-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/inference-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/model-service:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../institute/model-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/model-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/nginx:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/nginx-service/docker/Dockerfile ../institute/nginx-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/nginx:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../institute/nginx-service/docker/Dockerfile ../institute/nginx-service
 
-docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../federated-learning-service/docker/superexec.uv.Dockerfile ../federated-learning-service
+docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/superexec:${IMAGE_TAG}" "$PLATFORM_ARG" --push --provenance=false --sbom=false -f ../federated-learning-service/docker/superexec.uv.Dockerfile ../federated-learning-service
