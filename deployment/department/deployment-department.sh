@@ -13,8 +13,8 @@ LOCAL_KEYCLOAK_INITIAL_CONFIGURATION_PATH="../../keycloak-initial-configuration"
 LOCAL_DOCKER_COMPOSE_PATH="../../docker/docker-compose.department.yml"
 LOCAL_DOCKER_COMPOSE_ENV_FILE_PATH=".env.department.docker.nvidia-environment"
 
-REMOTE_USER="admin"
-REMOTE_HOST="10.11.13.6"
+REMOTE_USER="lucafanto"
+REMOTE_HOST="10.11.13.17"
 
 REMOTE_BASE_PATH="/home/${REMOTE_USER}/decentralised-ai"
 

@@ -8,8 +8,7 @@ from .dataset_utils import DatasetUtils
 
 from src.federated_learning_client.clients.schemas import DocumentDTO
 from src.federated_learning_client.domain.training import TrainingDataset
-from src.federated_learning_client.utils import FileUtils
-from ...utils import Llama2Utils
+from src.federated_learning_client.utils import FileUtils, Llama2Utils
 
 
 class DatasetService:

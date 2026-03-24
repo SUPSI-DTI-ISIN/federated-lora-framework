@@ -1,13 +1,11 @@
 import math
 
 import torch
-from torch.utils.data import DataLoader
 
 from typing import Optional
 from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
 
-from federated_learning_client.utils import Llama2Utils
-from src.federated_learning_client.utils import FileUtils
+from src.federated_learning_client.utils import Llama2Utils, FileUtils
 
 
 class TrainingService:

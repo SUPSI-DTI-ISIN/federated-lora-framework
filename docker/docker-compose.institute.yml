@@ -57,7 +57,7 @@ services:
       #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       MODEL_SERVICE_URL: http://model-service:8090
-      REDIS_URL: http://redis-inference-service:6379
+      REDIS_URL: redis://redis-inference-service:6379
     restart: always
     ports:
       - "${HOST_INFERENCE_SERVICE_PORT:-8095}:8095"
@@ -92,7 +92,7 @@ services:
       #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
       FRONTEND_URL: ${FRONTEND_URL}
       MODEL_SERVICE_URL: http://model-service:8090
-      REDIS_URL: http://redis-inference-service:6379
+      REDIS_URL: redis://redis-inference-service:6379
       PYTHONPATH: src
     restart: always
     entrypoint: ""
@@ -170,7 +170,7 @@ services:
       DB_HOST: chats-mysql-db
       DB_PORT: 3306
       FRONTEND_URL: ${FRONTEND_URL}
-      REDIS_URL: http://redis-inference-service:6379
+      REDIS_URL: redis://redis-inference-service:6379
     restart: always
     ports:
       - "${HOST_CHAT_SERVICE_PORT:-8081}:8081"
