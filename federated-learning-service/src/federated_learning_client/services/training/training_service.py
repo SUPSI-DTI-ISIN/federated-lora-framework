@@ -19,7 +19,10 @@ class TrainingService:
             user    = examples["input"][i]
             assistant = examples["output"][i]
 
-            full_text, prompt_length = Llama2Utils.format_llama2_chat(system=system, user=user, assistant=assistant)
+            formatted = Llama2Utils.format_llama2_chat(system=system, user=user, assistant=assistant)
+
+            full_text = formatted["text"]
+            prompt_length = int(formatted["prompt_length"])
 
             full_texts.append(full_text)
             prompt_lengths.append(prompt_length)
@@ -62,6 +65,9 @@ class TrainingService:
     @classmethod
     def train(cls, model, tokenizer, train_dataset, partition_id: Optional[int] = None):
         use_cpu, fp16, bf16 = cls.__get_precision_flags()
+
+        print("Dataset columns:", train_dataset.column_names)
+        print("First example:", train_dataset[0])
 
         train_dataset = train_dataset.map(
             lambda examples: cls.__preprocess(examples, tokenizer),
