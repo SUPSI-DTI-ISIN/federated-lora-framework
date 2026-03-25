@@ -10,7 +10,7 @@ from src.federated_learning_client.utils import Llama2Utils, FileUtils
 
 class TrainingService:
     @staticmethod
-    def __preprocess(examples, tokenizer, max_length: int = 1024):
+    def __preprocess(examples, tokenizer, max_length: int = 512):
         full_texts = []
         prompt_lengths = []
 
@@ -83,10 +83,10 @@ class TrainingService:
         training_args = TrainingArguments(
             output_dir=training_folder,
 
-            num_train_epochs=5,
+            num_train_epochs=3,
             per_device_train_batch_size=1,
-            gradient_accumulation_steps=8,
-            learning_rate=1e-4,
+            gradient_accumulation_steps=16,
+            learning_rate=2e-4,
 
             fp16=fp16,
             bf16=bf16,
@@ -94,8 +94,8 @@ class TrainingService:
             gradient_checkpointing=True,
 
             optim="paged_adamw_32bit",
-            weight_decay=0.001,
-            warmup_ratio=0.05,
+            weight_decay=0.01,
+            warmup_ratio=0.03,
             lr_scheduler_type="cosine",
 
             # Logging and saving
@@ -103,7 +103,7 @@ class TrainingService:
             save_strategy="epoch",
             save_total_limit=3,
 
-            max_grad_norm=1.0,
+            max_grad_norm=0.3,
             group_by_length=True,
         )
 
