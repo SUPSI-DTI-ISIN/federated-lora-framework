@@ -18,7 +18,7 @@ wait_for_npm_package() {
   local sleep_sec=1
 
   while [ $attempt -le $max_attempts ]; do
-    echo "Checking registry for $pkg@$ver (attempt $attempt/$max_attempts)..."
+    echo "Checking registry for ${pkg}@${ver} (attempt ${attempt}/${max_attempts})..."
     if npm view "${pkg}@${ver}" version --registry "${registry}"; then
       echo "Found $pkg@$ver in registry"
       return 0

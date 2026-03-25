@@ -16,10 +16,10 @@ dependencies = [
 ]
 
 [tool.uv.sources]
-shared-auth-library = { path = "../../shared-auth-library" }
-#shared-auth-library = { index = "gitlab" }
+#shared-auth-library = { path = "../../shared-auth-library" }
+shared-auth-library = { index = "gitlab" }
 
-#[[tool.uv.index]]
-#name = "gitlab"
-#url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
-#authenticate = "always"
+[[tool.uv.index]]
+name = "gitlab"
+url = "https://gitlab-edu.supsi.ch/api/v4/projects/1401/packages/pypi/simple"
+authenticate = "always"
