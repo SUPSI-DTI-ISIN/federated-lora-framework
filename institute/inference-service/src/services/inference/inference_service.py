@@ -1,5 +1,4 @@
 from schemas.inference import QueryRequestDTO
-from schemas.model import LoadedModel
 from .inference_service_interface import InferenceServiceInterface
 from .tasks import inference_celery_task
 

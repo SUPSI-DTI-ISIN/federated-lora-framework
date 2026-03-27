@@ -15,8 +15,8 @@ class TrainingService:
         prompt_lengths = []
 
         for i in range(len(examples["instruction"])):
-            system  = examples["instruction"][i]
-            user    = examples["input"][i]
+            system = examples["instruction"][i]
+            user = examples["input"][i]
             assistant = examples["output"][i]
 
             formatted = Llama2Utils.format_llama2_chat(system=system, user=user, assistant=assistant)

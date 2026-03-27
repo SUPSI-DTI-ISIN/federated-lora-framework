@@ -24,7 +24,7 @@ def inference_celery_task(self, query_request_dto):
 
     prompt_ids = TokenizerUtils.prompt_to_tokens_list(prompt=query_request_dto.prompt, tokenizer=loaded_model.tokenizer)
 
-    response_ids = ModelResponseUtils.generate_model_response(prompt_ids=prompt_ids, model=loaded_model.model)
+    response_ids = ModelResponseUtils.generate_model_response(prompt_ids=prompt_ids, model=loaded_model.model, tokenizer=loaded_model.tokenizer)
 
     output = TokenizerUtils.response_ids_to_str(token_ids=response_ids, tokenizer=loaded_model.tokenizer)
 
