@@ -5,9 +5,6 @@ import './index.css'
 import App from './App.tsx'
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
-import {AuthProviders} from "./providers/auth/AuthProviders.tsx";
-import {SelectorRealmProvider} from "./providers/realm/SelectorRealmProvider.tsx";
-import {ApiProviders} from "./providers/api/ApiProviders.tsx";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -23,18 +20,12 @@ const queryClient = new QueryClient({
 });
 
 createRoot(document.getElementById('root')!).render(
-    <QueryClientProvider client={queryClient}>
-        <StrictMode>
-            <SelectorRealmProvider>
-                <AuthProviders>
-                    <ApiProviders>
-                        <BrowserRouter>
-                            <App/>
-                            <ReactQueryDevtools initialIsOpen={false}/>
-                        </BrowserRouter>
-                    </ApiProviders>
-                </AuthProviders>
-            </SelectorRealmProvider>
-        </StrictMode>
-    </QueryClientProvider>
+    <StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <BrowserRouter>
+                <App/>
+                <ReactQueryDevtools initialIsOpen={false}/>
+            </BrowserRouter>
+        </QueryClientProvider>
+    </StrictMode>
 )

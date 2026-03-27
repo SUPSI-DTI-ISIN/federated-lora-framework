@@ -3,20 +3,21 @@ import {useQueryClient} from "@tanstack/react-query";
 import {getChatSseUrl} from "../../../utils/sse/sseUrls.ts";
 import {useAuthWrapper} from "../../auth/useAuthWrapper.ts";
 import type {ChatDTO, MessageDTO} from "@isin/chat-service-client";
+import {useApiBasePath} from "../../api/useApiBasePath.ts";
 
 export const useChatSse = () => {
     const queryClient = useQueryClient();
     const {user} = useAuthWrapper();
+    const { basePath } = useApiBasePath();
 
     useEffect(() => {
         if (!user?.profile?.sub) return;
 
-        const eventSource = new EventSource(getChatSseUrl(user.profile.sub));
+        const eventSource = new EventSource(getChatSseUrl(basePath, user.profile.sub));
 
         eventSource.addEventListener("inference_job_success", async (event) => {
             try {
                 const assistantMessage: MessageDTO = JSON.parse(event.data);
-                console.log(assistantMessage);
 
                 queryClient.setQueryData<MessageDTO[]>(
                     ['messages', assistantMessage.chat_id],
@@ -40,7 +41,6 @@ export const useChatSse = () => {
         eventSource.addEventListener("inference_job_failure", async (event) => {
             try {
                 const parsed = JSON.parse(event.data);
-                console.log(parsed);
 
                 await queryClient.invalidateQueries({queryKey: ['chats']});
                 await queryClient.invalidateQueries({
