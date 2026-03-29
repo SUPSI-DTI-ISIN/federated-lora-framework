@@ -19,7 +19,7 @@ class ModelServiceClient(ModelServiceClientInterface):
 
 
     def get_model_path(self, model_key: str) -> ModelPathDTO:
-        model_path_url: str = f"{self.__model_service_url}/api_model/model/{model_key}/path"
+        model_path_url: str = f"{self.__model_service_url}/api_model/models/{model_key}/path"
         try:
             resp = requests.get(model_path_url, headers={"Accept": "application/json"})
             resp.raise_for_status()
