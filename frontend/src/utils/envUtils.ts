@@ -25,3 +25,7 @@ const getEnvironment = (): string => {
 export const isInDevelopmentEnvironment = (): boolean => {
     return getEnvironment() === "development" || getEnvironment() === "dev"
 }
+
+export const getDepartmentRealm = (): string => {
+    return import.meta.env.VITE_DEPARTMENT_REALM;
+}

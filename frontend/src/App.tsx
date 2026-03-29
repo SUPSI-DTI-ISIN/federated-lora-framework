@@ -21,11 +21,11 @@ const App = () => {
     return (
         <SelectorRealmProvider>
             <AuthProviders>
-                <ApiProviders>
-                    <div className="flex flex-col min-h-screen">
-                        <ThemedToaster/>
-                        <Header/>
-                        <main className="flex-1 w-full">
+                <div className="flex flex-col min-h-screen">
+                    <ThemedToaster/>
+                    <Header/>
+                    <main className="flex-1 w-full">
+                        <ApiProviders>
                             <Routes>
                                 <Route
                                     path="/"
@@ -98,10 +98,10 @@ const App = () => {
                                     }
                                 />
                             </Routes>
-                        </main>
-                        <Footer/>
-                    </div>
-                </ApiProviders>
+                        </ApiProviders>
+                    </main>
+                    <Footer/>
+                </div>
             </AuthProviders>
         </SelectorRealmProvider>
     )

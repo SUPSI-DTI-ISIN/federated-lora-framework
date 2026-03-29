@@ -59,5 +59,5 @@ export const useChatSse = () => {
         return () => {
             eventSource.close();
         };
-    }, [queryClient, user]);
+    }, [queryClient, user, basePath]);
 };

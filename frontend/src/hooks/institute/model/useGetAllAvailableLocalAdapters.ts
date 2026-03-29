@@ -7,7 +7,7 @@ export const useGetAllAvailableLocalAdapters = (modelKey: string) => {
 
     return useQuery<AvailableAdaptersDTO, Error>({
         queryKey: ['adapters', 'local'],
-        queryFn: async () => adaptersApi.getAvailableLocalAdaptersApiModelModelModelKeyAdaptersLocalGet(
+        queryFn: async () => adaptersApi.getAvailableLocalAdaptersApiModelModelsModelKeyAdaptersLocalGet(
             modelKey
         ).then(response => response.data)
     })

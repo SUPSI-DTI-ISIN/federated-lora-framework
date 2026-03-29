@@ -13,7 +13,7 @@ export const useSaveNewAdapter = () => {
     const {adaptersApi} = useModelApi();
 
     return useMutation<AdapterDTO, Error, SaveNewAdapterParams>({
-        mutationFn: async ({modelKey, adapterVersion}: SaveNewAdapterParams) => adaptersApi.saveNewAdapterApiModelModelModelKeyAdaptersPost(
+        mutationFn: async ({modelKey, adapterVersion}: SaveNewAdapterParams) => adaptersApi.saveNewAdapterApiModelModelsModelKeyAdaptersPost(
             modelKey,
             {
                 version: adapterVersion

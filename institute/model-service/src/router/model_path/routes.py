@@ -6,7 +6,7 @@ from schemas.model import ModelPathDTO
 from services.model_path import ModelPathServiceInterface
 from .dependencies import get_model_path_service
 
-router = APIRouter(prefix="/model/{model_key}/path")
+router = APIRouter(prefix="/models/{model_key}/path")
 tags = ["path"]
 
 @router.get(

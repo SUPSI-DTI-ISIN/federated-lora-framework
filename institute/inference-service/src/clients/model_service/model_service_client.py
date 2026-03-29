@@ -21,7 +21,7 @@ class ModelServiceClient(ModelServiceClientInterface):
         return cls.__INSTANCE
 
     def get_model_path_for_inference(self, model_key: str, adapter_version: Optional[int]) -> ModelPathDTO:
-        base_url = f"{self.__model_service_url}/api_model/model/{model_key}/path"
+        base_url = f"{self.__model_service_url}/api_model/models/{model_key}/path"
 
         params = {}
         if adapter_version is not None:

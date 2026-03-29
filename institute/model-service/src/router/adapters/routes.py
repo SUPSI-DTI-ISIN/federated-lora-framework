@@ -6,7 +6,7 @@ from schemas.model import AvailableAdaptersDTO, NewAdapterRequestDTO, AdapterDTO
 from services.adapter import AdapterRegistryServiceInterface
 from .dependencies import get_adapter_registry_service
 
-router = APIRouter(prefix="/model/{model_key}/adapters")
+router = APIRouter(prefix="/models/{model_key}/adapters")
 tags = ["adapters"]
 
 @router.get(
