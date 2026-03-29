@@ -6,7 +6,7 @@ from src.federated_learning_client.domain.training import TrainingTaskType
 from src.federated_learning_client.clients.schemas import DocumentDTO
 from src.federated_learning_client.domain.training import TrainingRow
 
-LLAMA2_SYSTEM = (
+LLM_SYSTEM = (
     "You are an expert in Swiss research funding and Innosuisse project proposals. "
     "You help researchers write, review, and improve their project submissions."
 )
@@ -31,7 +31,7 @@ class DatasetUtils:
                 f"Write the \"{section.title}\" section in a professional, technical, and persuasive style."
             )
             rows.append(TrainingRow(
-                instruction=LLAMA2_SYSTEM,
+                instruction=LLM_SYSTEM,
                 input=prompt,
                 output=section.content,
                 section_title=section.title,
@@ -61,7 +61,7 @@ class DatasetUtils:
                 f"innovation potential, and implementation plan to the reviewers."
             )
             rows.append(TrainingRow(
-                instruction=LLAMA2_SYSTEM,
+                instruction=LLM_SYSTEM,
                 input=question,
                 output=answer,
                 section_title="",
@@ -88,7 +88,7 @@ class DatasetUtils:
                 f"{section.content.strip()}"
             )
             rows.append(TrainingRow(
-                instruction=LLAMA2_SYSTEM,
+                instruction=LLM_SYSTEM,
                 input=question,
                 output=answer,
                 section_title=section.title,
@@ -119,7 +119,7 @@ class DatasetUtils:
                 f"Here is a more complete version:\n\n{content}"
             )
             rows.append(TrainingRow(
-                instruction=LLAMA2_SYSTEM,
+                instruction=LLM_SYSTEM,
                 input=prompt,
                 output=output,
                 section_title=section.title,
@@ -152,7 +152,7 @@ class DatasetUtils:
                 + "\n\n".join(summary_parts)
         )
         return [TrainingRow(
-            instruction=LLAMA2_SYSTEM,
+            instruction=LLM_SYSTEM,
             input=prompt,
             output=output,
             section_title="",

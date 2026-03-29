@@ -5,7 +5,7 @@ import torch
 from typing import Optional
 from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
 
-from src.federated_learning_client.utils import Llama2Utils, FileUtils
+from src.federated_learning_client.utils import Llama31Utils, FileUtils
 
 
 class TrainingService:
@@ -19,7 +19,7 @@ class TrainingService:
             user = examples["input"][i]
             assistant = examples["output"][i]
 
-            formatted = Llama2Utils.format_llama2_chat(system=system, user=user, assistant=assistant)
+            formatted = Llama31Utils.format_chat(system=system, user=user, assistant=assistant)
 
             full_text = formatted["text"]
             prompt_length = int(formatted["prompt_length"])
