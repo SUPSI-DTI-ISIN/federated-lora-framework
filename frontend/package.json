@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@isin/chat-service-client": "0.1.0-dev.1774798115",
-    "@isin/data-service-client": "file:../institute/data-service/sdks/data-service-client",
-    "@isin/mlflow-service-client": "file:../department/mlflow-service/sdks/mlflow-service-client",
-    "@isin/model-service-client": "0.1.0-dev.1774798104",
+    "@isin/chat-service-client": "0.1.0-dev.1774799568",
+    "@isin/data-service-client": "0.1.0-dev.1774799538",
+    "@isin/federated-learning-management-service-client": "0.1.0-dev.1774799647",
+    "@isin/institute-service-client": "0.1.0-dev.1774799626",
+    "@isin/mlflow-service-client": "0.1.0-dev.1774799610",
+    "@isin/model-service-client": "0.1.0-dev.1774799553",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",
     "framer-motion": "^12.23.26",

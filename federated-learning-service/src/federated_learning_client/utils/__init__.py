@@ -1,5 +1,5 @@
 from .file_utils import FileUtils
-from .llama2_utils import Llama31Utils
+from .llama3_utils import Llama31Utils
 
 __all__ = [
     'FileUtils',
