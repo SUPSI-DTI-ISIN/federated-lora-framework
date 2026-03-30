@@ -1,3 +1,4 @@
+#TODO: fix using strategy pattern
 class Llama31Utils:
     @classmethod
     def format_chat(cls, system: str, user: str, assistant: str) -> dict:
