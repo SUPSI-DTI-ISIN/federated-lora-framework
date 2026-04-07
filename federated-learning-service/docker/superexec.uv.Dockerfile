@@ -11,8 +11,10 @@ ENV PATH="/root/.local/bin/:$PATH"
 
 WORKDIR /app
 COPY pyproject.toml .
+COPY .python-version .
 
 #RUN sed -i 's/.*flwr\[simulation\].*//' pyproject.toml
+RUN uv python install
 RUN uv sync
 
 ENV PATH="/app/.venv/bin:$PATH"

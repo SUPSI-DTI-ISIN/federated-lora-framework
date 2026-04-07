@@ -9,7 +9,7 @@ from src.federated_learning_common.config import settings
 
 class ModelService:
     @classmethod
-    def load_model(cls, model_path: str, device_map: str, access_token: Optional[str] = None) -> PreTrainedModel:
+    def load_model(cls, model_path: str, device_map: str) -> PreTrainedModel:
         if torch.cuda.is_available() and getattr(torch.cuda, "is_bf16_supported", lambda: False)():
             compute_dtype = torch.bfloat16
         else:
@@ -32,7 +32,6 @@ class ModelService:
         )
 
         model.config.use_cache = False
-        model.gradient_checkpointing_enable()
 
         return model
 

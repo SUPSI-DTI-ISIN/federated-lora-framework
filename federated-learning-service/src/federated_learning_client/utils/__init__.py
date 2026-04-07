@@ -1,9 +1,9 @@
 from .file_utils import FileUtils
-from .llama3_utils import Llama31Utils
+from .llama2_utils import Llama2Utils
 
 __all__ = [
     'FileUtils',
-    'Llama31Utils',
+    'Llama2Utils',
 ]
 
 __version__ = "1.0.0"

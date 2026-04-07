@@ -58,7 +58,10 @@ def train(msg: Message, context: Context):
     pretrained_model: PreTrainedModel = ModelService.load_model(model_path=model_path_dto.model_base_path, device_map=device_map)
     tokenizer: PreTrainedTokenizer = ModelService.load_tokenizer(model_path=model_path_dto.model_base_path)
 
-    pretrained_model = prepare_model_for_kbit_training(pretrained_model)
+    pretrained_model = prepare_model_for_kbit_training(
+        pretrained_model,
+        use_gradient_checkpointing=True
+    )
     peft_model = ModelService.get_peft_model(model=pretrained_model)
 
     ModelService.print_trainable_parameters(peft_model)
