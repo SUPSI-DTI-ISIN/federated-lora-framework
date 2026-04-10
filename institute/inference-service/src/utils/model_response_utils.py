@@ -4,8 +4,8 @@ from transformers import PreTrainedTokenizer
 class ModelResponseUtils:
     @classmethod
     def generate_model_response(cls, prompt_ids: list, model, tokenizer: PreTrainedTokenizer) -> list:
-        input_ids = torch.tensor( [prompt_ids] , device=model.device)
-        attention_mask = torch.ones_like( input_ids )
+        input_ids = torch.tensor([prompt_ids], device=model.device)
+        attention_mask = torch.ones_like(input_ids)
 
         with torch.no_grad():
             outputs = model.generate(
@@ -19,4 +19,4 @@ class ModelResponseUtils:
                 pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
             )
 
-        return outputs[0]
+        return outputs[0][len(prompt_ids):]

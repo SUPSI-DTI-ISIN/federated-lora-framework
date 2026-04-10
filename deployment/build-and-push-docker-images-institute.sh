@@ -57,13 +57,13 @@ GITLAB_DOCKER_REGISTRY_URL="${GITLAB_DOCKER_REGISTRY_HOST}${GITLAB_DOCKER_REGIST
 
 echo "$GITLAB_DOCKER_REGISTRY_TOKEN" | docker login "$GITLAB_DOCKER_REGISTRY_HOST" -u "$GITLAB_DOCKER_REGISTRY_USERNAME" --password-stdin
 
-#if ! docker buildx inspect multiarch-builder > /dev/null 2>&1; then
-#  docker buildx create --use --name multiarch-builder --driver docker-container --driver-opt network=host
-#else
-#  docker buildx use multiarch-builder
-#fi
-#
-#docker buildx inspect --bootstrap
+if ! docker buildx inspect multiarch-builder > /dev/null 2>&1; then
+  docker buildx create --use --name multiarch-builder --driver docker-container --driver-opt network=host
+else
+  docker buildx use multiarch-builder
+fi
+
+docker buildx inspect --bootstrap
 
 docker buildx build -t "${GITLAB_DOCKER_REGISTRY_URL}/institute/chat-service:${IMAGE_TAG}" $PLATFORM_ARG --push --provenance=false --sbom=false -f ../institute/chat-service/docker/Dockerfile --build-arg ENV_PATH="$SERVICES_ENV_PATH" --build-arg UV_INDEX_GITLAB_USERNAME="$UV_INDEX_GITLAB_USERNAME" --build-arg UV_INDEX_GITLAB_PASSWORD="$UV_INDEX_GITLAB_PASSWORD" ../institute/chat-service
 
