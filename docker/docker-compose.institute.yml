@@ -219,7 +219,7 @@ services:
       DATA_SERVICE_URL: http://data-service:8080
       MODEL_SERVICE_URL: http://model-service:8090
     ports:
-      - "${HOST_SUPERNODE_PORT:-80}:9094"
+      - "${HOST_SUPERNODE_PORT:-9094}:9094"
     command:
       - --insecure
       - --superlink

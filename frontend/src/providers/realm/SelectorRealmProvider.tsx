@@ -9,7 +9,9 @@ export const SelectorRealmProvider = ({children}: SelectorRealmProviderProps) =>
     const [selectedRealm, setSelectedRealm] = useState<string | undefined>(() => {
         return localStorage.getItem("selected-realm") ?? undefined;
     });
-    const [pendingLogin, setPendingLogin] = useState(false);
+    const [pendingLogin, setPendingLogin] = useState<boolean>(() => {
+        return !!localStorage.getItem("selected-realm");
+    });
 
     const setRealm = useCallback((realm: string | undefined) => {
         setSelectedRealm(realm);

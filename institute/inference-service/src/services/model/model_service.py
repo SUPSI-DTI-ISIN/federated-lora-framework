@@ -6,8 +6,12 @@ from typing import Optional
 from datetime import datetime, timezone
 
 from transformers import PreTrainedModel, PreTrainedTokenizer, AutoModelForCausalLM, AutoTokenizer
+from accelerate.hooks import remove_hook_from_module
+from accelerate import dispatch_model, infer_auto_device_map
+from accelerate.utils import get_balanced_memory
 
 from clients.model_service import ModelServiceClientInterface
+from schemas.exceptions import ModelLoadingError
 from schemas.model import LoadedModel
 from utils import TorchDtypeUtils, QuantizationUtils
 from .model_service_interface import ModelServiceInterface
@@ -36,6 +40,9 @@ class ModelService(ModelServiceInterface):
 
     def get_or_load_model(self, model_key: str, adapter_version: Optional[int]) -> LoadedModel:
         self.__ensure_base_model(model_key)
+
+        if self.__model is None or self.__tokenizer is None:
+            raise ModelLoadingError(model_key=model_key)
 
         if adapter_version is None:
             if self.__loaded_adapters:
@@ -73,7 +80,7 @@ class ModelService(ModelServiceInterface):
             model_paths.model_base_path,
             device_map=self.__device_map,
             quantization_config=QuantizationUtils.get_quantization_config(),
-            torch_dtype=TorchDtypeUtils.get_torch_dtype(),
+            dtype=TorchDtypeUtils.get_torch_dtype(),
             use_safetensors=True,
         )
         self.__tokenizer = AutoTokenizer.from_pretrained(model_paths.model_base_path)
@@ -109,7 +116,13 @@ class ModelService(ModelServiceInterface):
         )
 
         adapter_name = f"v{adapter_version}"
+        remove_hook_from_module(self.__model, recurse=True)
         self.__model.load_adapter(model_paths.adapter_path, adapter_name=adapter_name)
+        
+        max_memory = get_balanced_memory(self.__model)
+        device_map = infer_auto_device_map(self.__model, max_memory=max_memory)
+        self.__model = dispatch_model(self.__model, device_map=device_map)
+
         self.__loaded_adapters[adapter_version] = adapter_name
         self.__adapter_lru.append(adapter_version)
 

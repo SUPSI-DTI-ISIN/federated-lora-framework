@@ -52,5 +52,5 @@ class TokenizerUtils:
 
         full_prompt = "".join(parts)
 
-        token_ids = tokenizer(full_prompt, return_tensors="np")["input_ids"]
+        token_ids = tokenizer(full_prompt, return_tensors="np", add_special_tokens=False)["input_ids"]
         return token_ids[0].tolist()

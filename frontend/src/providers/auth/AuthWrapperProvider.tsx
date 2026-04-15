@@ -32,13 +32,12 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
         if (auth.error) {
             clearPendingLogin();
             setRealm(undefined);
-
             setHasTriedSignin(true);
         }
     }, [auth.error, clearPendingLogin, setRealm]);
 
     useEffect(() => {
-        if (auth.isLoading || auth.activeNavigator || auth.error) return;
+        if (auth.isLoading || auth.activeNavigator) return;
         if (pendingLogin && !auth.user) {
             clearPendingLogin();
             auth.signinRedirect();
@@ -81,7 +80,7 @@ export const AuthWrapperProvider = ({children}: AuthWrapperProviderProps) => {
             login,
             logout,
         }),
-        [auth.user, isLoading, auth.isAuthenticated, login, logout]
+        [auth.user, isLoading, auth.isAuthenticated, login, logout, realm]
     );
 
     return (
