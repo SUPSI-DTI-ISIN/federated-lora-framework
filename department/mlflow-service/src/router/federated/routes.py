@@ -1,9 +1,8 @@
 from fastapi import status, Depends, HTTPException, APIRouter
 
-from services.adapter import AdapterRegistryServiceInterface
-from .dependencies import get_model_registry_service, get_adapter_registry_service
+from services.adapter import AdapterRegistryServiceInterface, get_adapter_registry_service
 from schemas.model import FederatedDataDTO
-from services.model import ModelRegistryServiceInterface
+from services.model import ModelRegistryServiceInterface, get_model_registry_service
 
 router = APIRouter(prefix="/federated/{model_key}")
 tags = ["federated"]

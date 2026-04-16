@@ -8,11 +8,9 @@ from entities import MessageRole
 from schemas.chat import ConversationDTO
 
 from schemas.message import MessageDTO, InferenceRequestDTO, MessageCreationRequestDTO
-from services.chat import ChatServiceInterface
-from services.inference import InferenceServiceInterface
-from services.message import MessageServiceInterface
-from .dependencies import get_message_service, get_inference_service
-import router.chat.dependencies as chat_dependencies
+from services.chat import ChatServiceInterface, get_chat_service
+from services.inference import InferenceServiceInterface, get_inference_service
+from services.message import MessageServiceInterface, get_message_service
 
 router = APIRouter(prefix="/chats/{chat_id}/messages")
 
@@ -29,7 +27,7 @@ async def send_message(
         inference_request_dto: InferenceRequestDTO,
         message_service: MessageServiceInterface = Depends(get_message_service),
         inference_service: InferenceServiceInterface = Depends(get_inference_service),
-        chat_service: ChatServiceInterface = Depends(chat_dependencies.get_chat_service),
+        chat_service: ChatServiceInterface = Depends(get_chat_service),
         user: User = Depends(jwt_validator.get_current_user_required)
 ):
     user_message = MessageCreationRequestDTO(
@@ -46,7 +44,7 @@ async def send_message(
 
     conversation_history = [
         ConversationDTO(role=message.role, content=message.content)
-        for message in reversed(chat_messages[:-1])
+        for message in chat_messages[:-1]
     ]
 
     is_doing_inference = await inference_service.inference_model(user_id=user.id, chat_id=chat_id, user_message=user_message_created, conversation_history=conversation_history)

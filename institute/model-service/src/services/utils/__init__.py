@@ -1,10 +1,10 @@
-from .init_model_downloader_service import InitModelDownloaderService
+from .dependencies import build_init_model_downloader_service
 from .init_model_downloader_service_interface import InitModelDownloaderServiceInterface
 
 
 __all__ = [
     'InitModelDownloaderServiceInterface',
-    'InitModelDownloaderService'
+    'build_init_model_downloader_service'
 ]
 
 __version__ = "1.0.0"

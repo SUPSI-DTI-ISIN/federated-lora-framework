@@ -1,12 +1,11 @@
-from config import settings
-from .celery_client_interface import CeleryClientInterface
-from .celery_client import CeleryClient
+from .celery_client_service_interface import CeleryClientServiceInterface
+from .celery_client_service import CeleryClientService
+from .dependencies import get_celery_client_service
 
-celery_client = CeleryClient.get_instance(settings.redis_url)
-celery = celery_client.get_celery_client()
+celery = get_celery_client_service().get_celery_client()
 
 __all__ = [
-    'celery'
+    'get_celery_client_service'
 ]
 
 __version__ = "1.0.0"

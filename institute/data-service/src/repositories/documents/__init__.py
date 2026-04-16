@@ -1,9 +1,9 @@
-from repositories.documents.documents_repository_interface import DocumentsRepositoryInterface
-from repositories.documents.documents_repository import DocumentsRepository
+from .documents_repository_interface import DocumentsRepositoryInterface
+from .dependencies import get_documents_repository
 
 __all__ = [
     'DocumentsRepositoryInterface',
-    'DocumentsRepository'
+    'get_documents_repository'
 ]
 
 __version__ = "1.0.0"

@@ -13,7 +13,7 @@ class TokenizerUtils:
         return tokenizer.decode(
             token_ids,
             skip_special_tokens=True
-        )
+        ).strip()
 
     @classmethod
     def build_chat_prompt_to_tokens_list(
@@ -23,34 +23,17 @@ class TokenizerUtils:
             conversation_history: list[ConversationDTO],
             system_prompt: str,
     ) -> list:
-        turns: list[tuple[str, str]] = []
-        pending_user: str | None = None
+        messages = [{"role": "system", "content": system_prompt}]
 
         for msg in conversation_history:
-            if msg.role == "user":
-                pending_user = msg.content
-            elif msg.role == "assistant" and pending_user is not None:
-                turns.append((pending_user, msg.content))
-                pending_user = None
+            messages.append({"role": msg.role, "content": msg.content})
 
-        parts: list[str] = []
+        messages.append({"role": "user", "content": prompt})
 
-        for i, (user_msg, assistant_msg) in enumerate(turns):
-            if i == 0:
-                user_block = f"<<SYS>>\n{system_prompt}\n<</SYS>>\n\n{user_msg}"
-            else:
-                user_block = user_msg
+        token_ids = tokenizer.apply_chat_template(
+            messages,
+            tokenize=True,
+            add_generation_prompt=True,
+        )
 
-            parts.append(f"<s>[INST] {user_block} [/INST] {assistant_msg} </s>")
-
-        if not turns:
-            current_block = f"<<SYS>>\n{system_prompt}\n<</SYS>>\n\n{prompt}"
-        else:
-            current_block = prompt
-
-        parts.append(f"<s>[INST] {current_block} [/INST]")
-
-        full_prompt = "".join(parts)
-
-        token_ids = tokenizer(full_prompt, return_tensors="np", add_special_tokens=False)["input_ids"]
-        return token_ids[0].tolist()
+        return token_ids

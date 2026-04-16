@@ -1,0 +1,6 @@
+from .inference_service_client import InferenceServiceClient
+from .inference_service_client_interface import InferenceServiceClientInterface
+from config import settings
+
+def get_inference_service_client() -> InferenceServiceClientInterface:
+    return InferenceServiceClient.get_instance(inference_service_url=settings.inference_service_url)

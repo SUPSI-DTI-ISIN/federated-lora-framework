@@ -6,12 +6,10 @@ from sse_starlette import EventSourceResponse
 from starlette.requests import Request
 
 from auth import jwt_validator
-from services.federated_learning_job import FederatedLearningJobServiceInterface
-from services.sse import SseServiceInterface
-from services.celery import CeleryJobServiceInterface
+from services.federated_learning_job import FederatedLearningJobServiceInterface, get_federated_learning_job_service
+from services.sse import SseServiceInterface, get_sse_service, get_custom_ping
+from services.celery import CeleryJobServiceInterface, get_celery_job_service
 from schemas.federated_learning_job import FederatedLearningJobDTO
-from .dependencies_sse import get_sse_service, get_custom_ping
-from .dependencies import get_federated_learning_job_service, get_celery_job_service
 
 router = APIRouter(prefix="/jobs")
 tags = ["jobs"]

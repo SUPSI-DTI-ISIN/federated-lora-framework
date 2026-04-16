@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 
 from schemas.inference import QueryResponseDTO
 from schemas.inference.query_request_dto import QueryRequestDTO
-from schemas.model import LoadedModel
 
 
 class InferenceServiceInterface(ABC):

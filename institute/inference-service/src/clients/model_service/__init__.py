@@ -1,7 +1,7 @@
 from .model_service_client_interface import ModelServiceClientInterface
-from .model_service_client import ModelServiceClient
+from .dependencies import build_model_service_client
 
 __all__ = [
     'ModelServiceClientInterface',
-    'ModelServiceClient'
+    'build_model_service_client'
 ]

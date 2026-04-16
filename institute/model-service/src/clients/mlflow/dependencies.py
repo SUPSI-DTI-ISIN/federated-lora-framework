@@ -1,0 +1,6 @@
+from .mlflow_service_client_interface import MlFlowServiceClientInterface
+from .mlflow_service_client import MlFlowServiceClient
+from config import settings
+
+def get_mlflow_service_client(mlflow_department_service_url: str = settings.mlflow_department_service_url) -> MlFlowServiceClientInterface:
+    return MlFlowServiceClient.get_instance(mlflow_department_service_url=mlflow_department_service_url)

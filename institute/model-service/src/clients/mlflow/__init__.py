@@ -1,9 +1,9 @@
 from .mlflow_service_client_interface import MlFlowServiceClientInterface
-from .mlflow_service_client import MlFlowServiceClient
+from .dependencies import get_mlflow_service_client
 
 __all__ = [
     'MlFlowServiceClientInterface',
-    'MlFlowServiceClient'
+    'get_mlflow_service_client'
 ]
 
 __version__ = "1.0.0"

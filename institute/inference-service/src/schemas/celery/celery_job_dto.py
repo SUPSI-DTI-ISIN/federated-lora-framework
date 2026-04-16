@@ -9,5 +9,6 @@ from schemas.inference import QueryResponseDTO
 class CeleryJobDTO(BaseModel):
     job_id: str
     result_type: CeleryJobResultType
+    chat_id: int
     result: Optional[QueryResponseDTO] = None
     error: Optional[str] = None

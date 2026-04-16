@@ -11,7 +11,7 @@ class ModelResponseUtils:
             outputs = model.generate(
                 input_ids,
                 attention_mask=attention_mask,
-                max_new_tokens=256,
+                max_new_tokens=512,
                 do_sample=True,
                 temperature=0.7,
                 top_p=0.9,
@@ -19,4 +19,4 @@ class ModelResponseUtils:
                 pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
             )
 
-        return outputs[0][len(prompt_ids):]
+        return outputs[0][input_ids.shape[1]:].tolist()

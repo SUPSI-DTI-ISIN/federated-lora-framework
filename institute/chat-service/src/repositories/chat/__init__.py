@@ -1,9 +1,10 @@
 from .chat_repository_interface import ChatRepositoryInterface
-from .chat_repository import ChatRepository
+from .dependencies import get_chat_repository, build_chat_repository
 
 __all__ = [
     'ChatRepositoryInterface',
-    'ChatRepository'
+    'get_chat_repository',
+    'build_chat_repository'
 ]
 
 __version__ = "1.0.0"

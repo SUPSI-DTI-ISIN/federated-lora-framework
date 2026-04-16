@@ -1,14 +1,12 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from clients.institute.institute_node_client import InstituteNodeClient
-from clients.institute.institute_node_client_interface import InstituteNodeClientInterface
 from database import DatabaseConnector
-from repositories.institute import InstituteRepositoryInterface, InstituteRepository
+from repositories.institute import build_institute_repository
 from schemas.exceptions import InstituteNameNotFoundError
 from schemas.institute import InstituteCreationRequestDTO
 from config import settings
-from services.institute import InstituteServiceInterface, InstituteService
+from services.institute import build_institute_service
 
 
 @asynccontextmanager
@@ -18,9 +16,8 @@ async def lifespan(app: FastAPI):
     await DatabaseConnector.test_connection()
 
     async for session in DatabaseConnector.get_db_session():
-        institute_node_client: InstituteNodeClientInterface = InstituteNodeClient.get_instance()
-        institute_repository = InstituteRepository(db_session=session)
-        institute_service = InstituteService(institute_repository=institute_repository, institute_node_client=institute_node_client, department_realm_name=settings.realm_name)
+        institute_repository = build_institute_repository(db=session)
+        institute_service = build_institute_service(institute_repository=institute_repository)
 
         try:
             await institute_service.get_by_name(institute_name=settings.realm_name)
@@ -32,7 +29,7 @@ async def lifespan(app: FastAPI):
                     deletable=False,
                     updatable=False
                 )
-            )
+        )
 
     yield
 

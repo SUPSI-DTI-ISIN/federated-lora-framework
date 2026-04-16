@@ -1,0 +1,8 @@
+from fastapi import Depends
+
+from .inference_service import InferenceService
+from .inference_service_interface import InferenceServiceInterface
+from clients.inference_service import InferenceServiceClientInterface, get_inference_service_client
+
+def get_inference_service(inference_service_client: InferenceServiceClientInterface = Depends(get_inference_service_client)) -> InferenceServiceInterface:
+    return InferenceService.get_instance(inference_service_client=inference_service_client)

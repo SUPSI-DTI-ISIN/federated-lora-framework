@@ -1,9 +1,9 @@
-from services.inference.inference_service_interface import InferenceServiceInterface
-from services.inference.inference_service import InferenceService
+from .inference_service_interface import InferenceServiceInterface
+from .dependencies import get_inference_service
 
 __all__ = [
     'InferenceServiceInterface',
-    'InferenceService'
+    'get_inference_service'
 ]
 
 __version__ = "1.0.0"

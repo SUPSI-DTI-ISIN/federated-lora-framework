@@ -1,9 +1,8 @@
 from fastapi import status, Depends, HTTPException, APIRouter
 from fastapi.responses import FileResponse
 
-from .dependencies import get_model_registry_service
 from schemas.model import ManifestDTO
-from services.model import ModelRegistryServiceInterface
+from services.model import ModelRegistryServiceInterface, get_model_registry_service
 
 router = APIRouter(prefix="/model/{model_key}")
 tags = ["model", "base"]

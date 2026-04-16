@@ -1,9 +1,9 @@
 from .model_registry_service_interface import ModelRegistryServiceInterface
-from .model_registry_service import ModelRegistryService
+from .dependencies import get_model_registry_service
 
 __all__ = [
     'ModelRegistryServiceInterface',
-    'ModelRegistryService'
+    'get_model_registry_service'
 ]
 
 __version__ = "1.0.0"

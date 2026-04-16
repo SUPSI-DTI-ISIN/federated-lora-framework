@@ -1,0 +1,6 @@
+from .init_model_downloader_service_interface import InitModelDownloaderServiceInterface
+from .init_model_downloader_service import InitModelDownloaderService
+from clients.mlflow import MlFlowServiceClientInterface, get_mlflow_service_client
+
+def build_init_model_downloader_service(mlflow_service_client: MlFlowServiceClientInterface = get_mlflow_service_client()) -> InitModelDownloaderServiceInterface:
+    return InitModelDownloaderService.get_instance(mlflow_service_client=mlflow_service_client)

@@ -1,9 +1,9 @@
 from .model_service_interface import ModelServiceInterface
-from .model_service import ModelService
+from .dependencies import build_model_service
 
 __all__ = [
     'ModelServiceInterface',
-    'ModelService'
+    'build_model_service'
 ]
 
 __version__ = "1.0.0"

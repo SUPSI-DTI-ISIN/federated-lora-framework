@@ -1,9 +1,9 @@
 from .sections_repository_interface import SectionsRepositoryInterface
-from .sections_repository import SectionsRepository
+from .dependencies import get_sections_repository
 
 __all__ = [
     'SectionsRepositoryInterface',
-    'SectionsRepository'
+    'get_sections_repository'
 ]
 
 __version__ = "1.0.0"

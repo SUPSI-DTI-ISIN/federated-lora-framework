@@ -1,12 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File, Path
+from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
 from schemas.documents import DocumentDTO, UpdateDocumentTrainableRequestDTO, TrainingSamplesDTO
-from services.documents import DocumentsServiceInterface
-from .dependencies import get_documents_service
+from services.documents import DocumentsServiceInterface, get_documents_service
 
 router = APIRouter(prefix="/documents")
 

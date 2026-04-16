@@ -1,9 +1,9 @@
 from .celery_job_service_interface import CeleryJobServiceInterface
-from .celery_job_service import CeleryJobService
+from .dependencies import get_celery_job_service
 
 __all__ = [
     'CeleryJobServiceInterface',
-    'CeleryJobService'
+    'get_celery_job_service'
 ]
 
 __version__ = "1.0.0"

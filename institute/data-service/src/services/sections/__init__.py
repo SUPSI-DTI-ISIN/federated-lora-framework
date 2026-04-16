@@ -1,9 +1,9 @@
 from .sections_service_interface import SectionsServiceInterface
-from .sections_service import SectionsService
+from .dependencies import get_sections_service
 
 __all__ = [
     'SectionsServiceInterface',
-    'SectionsService'
+    'get_sections_service'
 ]
 
 __version__ = "1.0.0"

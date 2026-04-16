@@ -1,0 +1,8 @@
+from fastapi import Depends
+
+from .federated_learning_job_service import FederatedLearningJobService
+from .federated_learning_job_service_interface import FederatedLearningJobServiceInterface
+from repositories.federated_learning_job import get_federated_learning_job_repository, FederatedLearningJobRepositoryInterface
+
+def get_federated_learning_job_service(federated_learning_job_repository: FederatedLearningJobRepositoryInterface = Depends(get_federated_learning_job_repository)) -> FederatedLearningJobServiceInterface:
+    return FederatedLearningJobService(federated_learning_job_repository=federated_learning_job_repository)

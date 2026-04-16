@@ -1,7 +1,6 @@
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import List
 
 from tqdm import tqdm
 

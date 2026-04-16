@@ -1,9 +1,9 @@
-from services.documents.documents_service_interface import DocumentsServiceInterface
-from services.documents.documents_service import DocumentsService
+from .documents_service_interface import DocumentsServiceInterface
+from .dependencies import get_documents_service
 
 __all__ = [
     'DocumentsServiceInterface',
-    'DocumentsService'
+    'get_documents_service'
 ]
 
 __version__ = "1.0.0"

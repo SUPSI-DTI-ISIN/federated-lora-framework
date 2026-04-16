@@ -4,10 +4,8 @@ from fastapi import APIRouter, status, Depends
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
-from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, \
-    InstituteTrainingParticipationDTO
-from services.institute import InstituteServiceInterface
-from .dependencies import get_institute_service
+from schemas.institute import InstituteDTO, InstituteCreationRequestDTO, InstituteUpdateRequestDTO, InstituteTrainingParticipationDTO
+from services.institute import InstituteServiceInterface, get_institute_service
 
 router = APIRouter(prefix="/institutes")
 

@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 
 from config import settings
-from database import DatabaseConnector
 from router import api_router, lifespan
 from router.exceptions import register_exception_handlers
 
@@ -30,8 +29,6 @@ def create_app() -> FastAPI:
     register_exception_handlers(app=app)
 
     app.include_router(router=api_router, prefix="/api_chat")
-
-    DatabaseConnector.init_database_connection()
 
     return app
 

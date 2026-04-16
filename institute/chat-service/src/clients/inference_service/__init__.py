@@ -1,9 +1,9 @@
 from .inference_service_client_interface import InferenceServiceClientInterface
-from .inference_service_client import InferenceServiceClient
+from .dependencies import get_inference_service_client
 
 __all__ = [
     'InferenceServiceClientInterface',
-    'InferenceServiceClient'
+    'get_inference_service_client'
 ]
 
 __version__ = "1.0.0"

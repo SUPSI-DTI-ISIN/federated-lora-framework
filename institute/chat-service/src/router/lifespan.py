@@ -2,9 +2,8 @@ import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-from clients.redis.service import RedisJobEventConsumerInterface, RedisJobEventConsumer
+from services.inference.redis import get_inference_result_redis_event_consumer
 from database import DatabaseConnector
-from clients.redis.client import redis_client_async
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -12,10 +11,8 @@ async def lifespan(app: FastAPI):
 
     await DatabaseConnector.test_connection()
 
-    redis_job_event_consumer: RedisJobEventConsumerInterface = RedisJobEventConsumer(
-        redis_client_async=redis_client_async,
-    )
-    asyncio.create_task(redis_job_event_consumer.start())
+    inference_result_redis_event_consumer = get_inference_result_redis_event_consumer()
+    asyncio.create_task(inference_result_redis_event_consumer.start_redis_event_consumer())
 
     yield
 

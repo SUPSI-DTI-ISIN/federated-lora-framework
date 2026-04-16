@@ -4,8 +4,7 @@ from shared_auth_library.entities import User
 
 from auth import jwt_validator
 from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
-from services.adapter import AdapterRegistryServiceInterface
-from .dependencies import get_adapter_registry_service
+from services.adapter import AdapterRegistryServiceInterface, get_adapter_registry_service
 
 router = APIRouter(prefix="/model/{model_key}/adapters")
 tags = ["model", "adapter"]

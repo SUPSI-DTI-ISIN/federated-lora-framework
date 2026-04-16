@@ -1,9 +1,9 @@
-from .message_service import MessageService
+from .dependencies import get_message_service
 from .message_service_interface import MessageServiceInterface
 
 __all__ = [
     'MessageServiceInterface',
-    'MessageService'
+    'get_message_service'
 ]
 
 __version__ = "1.0.0"

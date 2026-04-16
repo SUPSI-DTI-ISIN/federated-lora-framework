@@ -1,9 +1,9 @@
 from .federated_learning_job_service_interface import FederatedLearningJobServiceInterface
-from .federated_learning_job_service import FederatedLearningJobService
+from .dependencies import get_federated_learning_job_service
 
 __all__ = [
     'FederatedLearningJobServiceInterface',
-    'FederatedLearningJobService'
+    'get_federated_learning_job_service'
 ]
 
 __version__ = "1.0.0"

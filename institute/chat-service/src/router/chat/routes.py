@@ -8,10 +8,8 @@ from starlette.requests import Request
 from auth import jwt_validator
 
 from schemas.chat import ChatDTO, ChatCreationRequestDTO
-from services.chat import ChatServiceInterface
-from services.sse import SseServiceInterface
-from .dependencies import get_chat_service
-from .dependencies_sse import get_custom_ping, get_sse_service
+from services.chat import ChatServiceInterface, get_chat_service
+from services.sse import SseServiceInterface, get_sse_service, get_custom_ping
 
 router = APIRouter(prefix="/chats")
 

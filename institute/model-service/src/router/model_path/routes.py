@@ -3,8 +3,7 @@ from typing import Optional
 from fastapi import status, Depends, APIRouter, HTTPException
 
 from schemas.model import ModelPathDTO
-from services.model_path import ModelPathServiceInterface
-from .dependencies import get_model_path_service
+from services.model_path import ModelPathServiceInterface, get_model_path_service
 
 router = APIRouter(prefix="/models/{model_key}/path")
 tags = ["path"]

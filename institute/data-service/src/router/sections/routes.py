@@ -3,8 +3,7 @@ from shared_auth_library.entities import User
 
 from auth import jwt_validator
 from schemas.documents import SectionDTO, UpdateSectionRequestDTO
-from services.sections import SectionsServiceInterface
-from .dependencies import get_sections_service
+from services.sections import SectionsServiceInterface, get_sections_service
 
 router = APIRouter(prefix="/sections")
 

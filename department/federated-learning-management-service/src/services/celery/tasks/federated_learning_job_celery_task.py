@@ -3,7 +3,9 @@ import subprocess
 from pathlib import Path
 from celery.utils.log import get_task_logger
 
-from clients.celery import celery
+from clients.celery import get_celery_client_service
+
+celery = get_celery_client_service().get_celery_client()
 
 logger = get_task_logger(__name__)
 
