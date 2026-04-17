@@ -52,6 +52,7 @@ def main(grid: Grid, context: Context) -> None:
         initial_arrays=arrays,
         train_config=ConfigRecord({"lr": lr}),
         num_rounds=num_rounds,
+        timeout=7200
     )
 
     print("\nSaving final model to disk...")

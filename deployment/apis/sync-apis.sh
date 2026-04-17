@@ -9,29 +9,35 @@ set -a
 source .env.config
 set +a
 
-wait_for_npm_package() {
-  local pkg="$1"
-  local ver="$2"
-  local registry="$3"
-  local max_attempts=10
-  local attempt=1
-  local sleep_sec=1
+npm_install() {
+    REGISTRY="$1"
+    PACKAGE_NAME="$2"
+    DEV_VERSION="$3"
 
-  while [ $attempt -le $max_attempts ]; do
-    echo "Checking registry for ${pkg}@${ver} (attempt ${attempt}/${max_attempts})..."
-    if npm view "${pkg}@${ver}" version --registry "${registry}"; then
-      echo "Found $pkg@$ver in registry"
-      return 0
-    fi
-    echo "Not visible yet. Sleeping ${sleep_sec}s..."
-    sleep $sleep_sec
-    attempt=$((attempt+1))
-    sleep_sec=$((sleep_sec*2))
-    if [ $sleep_sec -gt 5 ]; then sleep_sec=5; fi
-  done
+    max_attempts=5
+    attempt=1
 
-  echo "Package did not appear in registry after $max_attempts attempts."
-  return 1
+    echo "Installing from registry..."
+
+    while [ $attempt -le $max_attempts ]; do
+        echo "Attempt $attempt..."
+
+        if npm install --prefer-online --registry "$REGISTRY" "${PACKAGE_NAME}@${DEV_VERSION}"; then
+            echo "Install succeeded"
+            return 0
+        fi
+
+        if [ $attempt -eq $max_attempts ]; then
+            echo "Install failed after $max_attempts attempts"
+            return 1
+        fi
+
+        sleep_time=$((attempt * 2))
+        echo "Retrying in $sleep_time seconds..."
+        sleep $sleep_time
+
+        attempt=$((attempt + 1))
+    done
 }
 
 publish_sdk() {
@@ -60,13 +66,13 @@ publish_sdk() {
     cd ../../../../frontend
     PACKAGE_NAME="@isin/${CLIENT_NAME}"
 
-    if wait_for_npm_package "$PACKAGE_NAME" "$DEV_VERSION" "$REGISTRY"; then
-      echo "Installing from registry..."
-      npm install --save-exact --registry "$REGISTRY" "${PACKAGE_NAME}@${DEV_VERSION}"
-    else
-      echo "Registry lookup failed; client package is not reachable from GitLab Package Registry."
-      exit 1
-    fi
+    #if wait_for_npm_package "$PACKAGE_NAME" "$DEV_VERSION" "$REGISTRY"; then
+    echo "Installing from registry..."
+    npm_install "$REGISTRY" "$PACKAGE_NAME" "$DEV_VERSION"
+    #else
+     # echo "Registry lookup failed; client package is not reachable from GitLab Package Registry."
+     # exit 1
+    #fi
   )
   echo "Published $CLIENT_NAME@$DEV_VERSION"
 }
