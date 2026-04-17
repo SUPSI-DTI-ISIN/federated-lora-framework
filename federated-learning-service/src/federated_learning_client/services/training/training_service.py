@@ -5,48 +5,76 @@ import torch
 from typing import Optional
 from transformers import TrainingArguments, Trainer, DataCollatorForLanguageModeling
 
-from src.federated_learning_client.utils import Llama2Utils, FileUtils
+from src.federated_learning_client.utils import FileUtils
 
 
 class TrainingService:
     @staticmethod
-    def __preprocess(examples, tokenizer, max_length: int = 512):
-        full_texts = []
-        prompt_lengths = []
+    def __build_messages(system: str, user: str, assistant: str) -> list:
+        return [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+            {"role": "assistant", "content": assistant},
+        ]
+
+    @staticmethod
+    def __build_prompt_messages(system: str, user: str) -> list:
+        return [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ]
+
+    @classmethod
+    def __preprocess(cls, examples, tokenizer, max_length: int = 1024):
+        all_input_ids = []
+        all_attention_masks = []
+        all_labels = []
 
         for i in range(len(examples["instruction"])):
             system = examples["instruction"][i]
             user = examples["input"][i]
             assistant = examples["output"][i]
 
-            formatted = Llama2Utils.format_chat(system=system, user=user, assistant=assistant)
+            full_messages = cls.__build_messages(system, user, assistant)
+            full_text = tokenizer.apply_chat_template(
+                full_messages,
+                tokenize=False,
+                add_generation_prompt=False,
+            )
 
-            full_text = formatted["text"]
-            prompt_length = int(formatted["prompt_length"])
+            prompt_messages = cls.__build_prompt_messages(system, user)
+            prompt_text = tokenizer.apply_chat_template(
+                prompt_messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
 
-            full_texts.append(full_text)
-            prompt_lengths.append(prompt_length)
-
-        tokenized = tokenizer(
-            full_texts,
-            max_length=max_length,
-            truncation=True,
-            padding=False,
-        )
-
-        labels = []
-        for i, ids in enumerate(tokenized["input_ids"]):
-            prompt_token_count = len(tokenizer(
-                full_texts[i][:prompt_lengths[i]],
-                truncation=True,
+            full_tokenized = tokenizer(
+                full_text,
                 max_length=max_length,
-            )["input_ids"])
+                truncation=True,
+                padding=False,
+            )
+            prompt_tokenized = tokenizer(
+                prompt_text,
+                max_length=max_length,
+                truncation=True,
+                padding=False,
+            )
 
-            masked = [-100] * prompt_token_count + ids[prompt_token_count:]
-            labels.append(masked)
+            input_ids = full_tokenized["input_ids"]
+            prompt_len = len(prompt_tokenized["input_ids"])
+            labels = [-100] * prompt_len + input_ids[prompt_len:]
 
-        tokenized["labels"] = labels
-        return tokenized
+            all_input_ids.append(input_ids)
+            all_attention_masks.append(full_tokenized["attention_mask"])
+            all_labels.append(labels)
+
+        return {
+            "input_ids": all_input_ids,
+            "attention_mask": all_attention_masks,
+            "labels": all_labels,
+        }
 
     @staticmethod
     def __get_precision_flags():

@@ -8,7 +8,7 @@ from .dataset_utils import DatasetUtils
 
 from src.federated_learning_client.clients.schemas import DocumentDTO
 from src.federated_learning_client.domain.training import TrainingDataset
-from src.federated_learning_client.utils import FileUtils, Llama2Utils
+from src.federated_learning_client.utils import FileUtils
 
 
 class DatasetService:
@@ -27,13 +27,13 @@ class DatasetService:
         dataset_output_file = FileUtils.get_dataset_output_file(partition_id=partition_id)
         with open(dataset_output_file, 'w', encoding='utf-8') as output:
             for training_row in training_dataset.training_rows:
-                formatted_training_row = Llama2Utils.format_chat(
-                    system=training_row.instruction,
-                    user=training_row.input,
-                    assistant=training_row.output
-                )
+                #formatted_training_row = Llama2Utils.format_chat(
+                #    system=training_row.instruction,
+                #    user=training_row.input,
+                #    assistant=training_row.output
+                #)
                 training_row_record = asdict(training_row)
-                training_row_record.update(formatted_training_row)
+                #training_row_record.update(formatted_training_row)
                 output.write(json.dumps(training_row_record, ensure_ascii=False) + '\n')
 
     @staticmethod
