@@ -7,6 +7,10 @@ from schemas.model import ModelAdaptersVersionDTO, ManifestDTO
 
 class AdapterRegistryServiceInterface(ABC):
     @abstractmethod
+    def ensure_init_adapter(self, model_key: str) -> None:
+        raise NotImplementedError
+
+    @abstractmethod
     def get_adapters_version(self, model_key: str) -> ModelAdaptersVersionDTO:
         raise NotImplementedError
 
@@ -15,7 +19,7 @@ class AdapterRegistryServiceInterface(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_latest_adapter_path(self, model_key: str) -> Optional[str]:
+    def get_latest_adapter_path(self, model_key: str) -> str:
         raise NotImplementedError
 
     @abstractmethod

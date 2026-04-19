@@ -165,12 +165,19 @@ services:
       test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
       interval: 20s
       timeout: 5s
-      retries: 10
+      retries: 20
     volumes:
       - models:/models
     networks:
       - internal
       - external
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
 
   institute-service:
     image: gitlab-edu.supsi.ch:5050/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/department/institute-service:${DOCKER_IMAGE_TAG}

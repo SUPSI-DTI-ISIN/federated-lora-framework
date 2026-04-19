@@ -31,11 +31,3 @@ class ModelRegistryService(ModelRegistryServiceInterface):
             raise FileNotFoundError(f"Model with {model_key} does not exist")
 
         return FileUtils.join_paths(base_path=Path(model_base_path), file_name=file_name)
-
-    def get_model_path(self, model_key: str) -> str:
-        model_base_path = Path(ModelPathUtils.get_model_base_path(model_key=model_key))
-
-        if not model_base_path.exists():
-            raise FileNotFoundError(f"Model with {model_key} does not exist")
-
-        return str(model_base_path.resolve())

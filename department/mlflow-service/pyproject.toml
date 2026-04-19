@@ -10,12 +10,40 @@ dependencies = [
     "fastapi>=0.127.0",
     "uvicorn>=0.40.0",
     "python-multipart>=0.0.21",
-    "shared-auth-library",
+    "peft>=0.18.1",
+    "torch==2.9.1",
+    "transformers==4.57.2",
+    "accelerate==1.12.0",
+    "bitsandbytes>=0.49.1",
+    "shared-auth-library"
+]
+
+[tool.uv]
+index-strategy = "unsafe-best-match"
+required-environments = [
+    "sys_platform == 'linux'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'win32'",
 ]
 
 [tool.uv.sources]
+torch = [
+    { index = "pytorch-cu130", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-cu130", marker = "sys_platform == 'win32'" },
+    { index = "pytorch-cpu",   marker = "sys_platform == 'darwin'" },
+]
 #shared-auth-library = { path = "../../shared-auth-library" }
 shared-auth-library = { index = "gitlab" }
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
 
 [[tool.uv.index]]
 name = "gitlab"

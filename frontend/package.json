@@ -14,7 +14,7 @@
     "@isin/data-service-client": "^1.0.0-dev.1776411806",
     "@isin/federated-learning-management-service-client": "^1.0.0-dev.1776411896",
     "@isin/institute-service-client": "^1.0.0-dev.1776411879",
-    "@isin/mlflow-service-client": "^1.0.0-dev.1776411862",
+    "@isin/mlflow-service-client": "^1.0.0-dev.1776624721",
     "@isin/model-service-client": "^1.0.0-dev.1776411823",
     "@tanstack/react-query": "^5.90.12",
     "axios": "^1.13.2",

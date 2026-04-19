@@ -12,7 +12,3 @@ class ModelRegistryServiceInterface(ABC):
     @abstractmethod
     def get_model_file(self, model_key: str, file_name: str) -> Path:
         raise NotImplementedError
-
-    @abstractmethod
-    def get_model_path(self, model_key: str) -> str:
-        raise NotImplementedError

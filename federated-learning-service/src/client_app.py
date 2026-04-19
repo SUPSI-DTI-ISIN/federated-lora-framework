@@ -33,6 +33,11 @@ def lifespan(context: Context):
     training_dataset = DatasetService.build_dataset_from_documents(documents=documents)
     DatasetService.save_dataset_to_jsonl(training_dataset=training_dataset, partition_id=partition_id)
 
+    if torch.cuda.is_available():
+        dummy = torch.zeros(1, device="cuda")
+        del dummy
+        torch.cuda.synchronize()
+
     yield
 
     torch.cuda.empty_cache()

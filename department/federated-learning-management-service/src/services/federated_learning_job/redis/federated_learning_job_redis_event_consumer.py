@@ -27,7 +27,7 @@ class FederatedLearningJobRedisEventConsumer(RedisEventConsumerServiceInterface)
             async for message in pubsub.listen():
                 if message is None:
                     continue
-                if message.get("type") != "pmessage":
+                if message.get("type") != "message":
                     continue
                 try:
                     celery_job_dto = CeleryJobDTO.model_validate_json(message["data"])
@@ -36,7 +36,7 @@ class FederatedLearningJobRedisEventConsumer(RedisEventConsumerServiceInterface)
                 except Exception as e:
                     print(f"Failed to process job update message: {e}")
         finally:
-            await pubsub.punsubscribe(f"{RedisChannel.JOB_UPDATES.value}:*")
+            await pubsub.unsubscribe(RedisChannel.JOB_UPDATES.value)
             await pubsub.close()
 
     async def __update_federated_learning_job(self, celery_job_dto: CeleryJobDTO) -> None:
