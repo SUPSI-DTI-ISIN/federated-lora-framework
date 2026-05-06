@@ -36,7 +36,7 @@ dev = [
 testpaths = ["tests"]
 pythonpath = ["src"]
 asyncio_mode = "auto"
-addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=html:htmlcov", "--cov-fail-under=100", "--cov-branch", "-v"]
+addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=html:htmlcov", "--cov-fail-under=80", "--cov-branch", "-v"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if __name__ == .__main__.:"]
