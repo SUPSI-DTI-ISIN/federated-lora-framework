@@ -114,9 +114,7 @@ class TestPdfParserServiceContextManager:
 
         with patch("utils.pdf_parsing.pdf_parser_service.pymupdf.open", return_value=mock_doc):
             parser = PdfParserService(pdf_file=pdf_file)
-            # Simulate closed state by setting _document to None
             parser._document = None
-            # Re-enter should reopen
             mock_page2 = MagicMock()
             mock_page2.get_textpage.return_value.extractText.return_value = full_text
             mock_doc2 = MagicMock()

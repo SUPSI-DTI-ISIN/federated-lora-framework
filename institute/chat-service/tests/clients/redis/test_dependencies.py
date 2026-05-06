@@ -22,7 +22,6 @@ class TestBuildRedisClientAsync:
 
 class TestGetRedisClientAsync:
     def test_returns_async_redis_client(self):
-        # get_redis_client_async uses FastAPI Depends, so inject the service directly
         svc = get_redis_client()
         client = get_redis_client_async(redis_client_service=svc)
         assert client is not None

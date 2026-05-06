@@ -19,7 +19,6 @@ class TestSettings:
         assert self._make().max_cached_adapters == 5
 
     def test_default_device_map(self):
-        # env var DEVICE_MAP=cpu is set in conftest, so it overrides the "auto" default
         s = self._make()
         assert s.device_map in ("auto", "cpu")
 
@@ -30,7 +29,6 @@ class TestSettings:
         assert self._make().model_service_url == "http://localhost:8090"
 
     def test_keycloak_global_hostname_url_default(self):
-        # env var is set to "" in conftest
         s = self._make()
         assert s.keycloak_global_hostname_url == ""
 

@@ -7,9 +7,6 @@ from shared_auth_library.jwt_validator import JWTValidator
 from shared_auth_library.entities import User
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 
 def _make_validator(**kwargs):
     defaults = dict(keycloak_url="http://keycloak.test", realm="TestRealm")
@@ -36,9 +33,6 @@ def _jwt_payload(**kwargs):
     return defaults
 
 
-# ---------------------------------------------------------------------------
-# Construction
-# ---------------------------------------------------------------------------
 
 class TestJWTValidatorInit:
     def test_builds_jwks_uri_from_keycloak_url_and_realm(self):
@@ -83,9 +77,6 @@ class TestJWTValidatorInit:
         )
 
 
-# ---------------------------------------------------------------------------
-# __verify_token — success path
-# ---------------------------------------------------------------------------
 
 class TestVerifyTokenSuccess:
     def test_returns_payload_on_valid_token(self):
@@ -159,9 +150,6 @@ class TestVerifyTokenSuccess:
         assert options["verify_aud"] is True
 
 
-# ---------------------------------------------------------------------------
-# __verify_token — error paths
-# ---------------------------------------------------------------------------
 
 class TestVerifyTokenErrors:
     def _validator_with_mock_jwks(self):
@@ -257,9 +245,6 @@ class TestVerifyTokenErrors:
         assert exc_info.value.status_code == 500
 
 
-# ---------------------------------------------------------------------------
-# get_current_user_required
-# ---------------------------------------------------------------------------
 
 class TestGetCurrentUserRequired:
     async def test_returns_user_on_valid_credentials(self):
@@ -338,9 +323,6 @@ class TestGetCurrentUserRequired:
         assert user.email == "alice@example.com"
 
 
-# ---------------------------------------------------------------------------
-# get_current_user_optional
-# ---------------------------------------------------------------------------
 
 class TestGetCurrentUserOptional:
     async def test_returns_user_on_valid_credentials(self):

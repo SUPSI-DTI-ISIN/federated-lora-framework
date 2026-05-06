@@ -77,7 +77,6 @@ class TestBuildChatPromptToTokensList:
         )
 
         messages = tokenizer.apply_chat_template.call_args[0][0]
-        # system + 2 history + 1 user = 4
         assert len(messages) == 4
         assert messages[1]["role"] == "user"
         assert messages[1]["content"] == "Previous question"
@@ -125,5 +124,4 @@ class TestBuildChatPromptToTokensList:
         )
 
         messages = tokenizer.apply_chat_template.call_args[0][0]
-        # system + user = 2
         assert len(messages) == 2

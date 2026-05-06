@@ -96,7 +96,6 @@ async def _collect_events(service, redis_client, messages, message_repo_side_eff
         )
 
     request = MagicMock()
-    # Disconnect after first iteration to stop the loop
     call_count = [0]
 
     async def _is_disconnected():
@@ -121,7 +120,6 @@ class TestGenerateSseEvents:
 
     async def test_disconnects_when_request_disconnected(self, service, redis_client, message_repo):
         events, pubsub = await _collect_events(service, redis_client, [])
-        # No events since no messages were published
         assert events == []
 
     async def test_yields_failure_event_on_failure_dto(self, service, redis_client, message_repo):
@@ -131,7 +129,6 @@ class TestGenerateSseEvents:
         events, _ = await _collect_events(service, redis_client, messages)
 
         assert len(events) == 1
-        # The event data contains the failure DTO
         assert "failure" in events[0].data
 
     async def test_yields_success_event_when_assistant_message_found(self, service, redis_client, message_repo):
@@ -151,7 +148,6 @@ class TestGenerateSseEvents:
         dto = _success_celery_dto(chat_id=10)
         messages = [{"data": dto.model_dump_json()}]
 
-        # Poll always returns None
         events, _ = await _collect_events(
             service, redis_client, messages,
             message_repo_side_effect=[None, None]
@@ -161,6 +157,5 @@ class TestGenerateSseEvents:
         assert "failure" in events[0].event
 
     async def test_skips_none_messages(self, service, redis_client, message_repo):
-        # None message should be skipped without yielding
         events, _ = await _collect_events(service, redis_client, [None])
         assert events == []

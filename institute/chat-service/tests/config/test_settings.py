@@ -48,9 +48,7 @@ class TestSettings:
         assert s.conversation_history_limit == 11
 
     def test_keycloak_global_hostname_url_defaults_to_none(self):
-        # The field is typed as str, not Optional[str], so it defaults to empty string from env
         s = self._make_settings()
-        # In conftest, KEYCLOAK_GLOBAL_HOSTNAME_URL is set to ""
         assert s.keycloak_global_hostname_url == ""
 
     def test_keycloak_global_hostname_url_can_be_set(self):

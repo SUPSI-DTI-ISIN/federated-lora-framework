@@ -37,7 +37,6 @@ class TestDeleteSectionById:
 
     def test_returns_404_when_not_found(self, client, mock_service):
         mock_service.delete_by_id = AsyncMock(side_effect=SectionNotFoundError(section_id=1))
-        # SectionNotFoundError has no registered handler → 500 from unhandled exception
         response = client.delete("/sections/1")
         assert response.status_code in [404, 500]
 

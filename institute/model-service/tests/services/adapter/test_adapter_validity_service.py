@@ -87,7 +87,6 @@ class TestFetchAdapter:
                 files_to_download=["a.bin"],
             )
 
-        # Only a.bin should be submitted
         assert mock_dl.call_count == 1
         assert mock_dl.call_args[0][3] == "a.bin"
 
@@ -164,7 +163,6 @@ class TestDownloadAdapterFile:
 
         mock_response = MagicMock()
         mock_response.headers = {"content-length": str(len(content))}
-        # Mix of empty and non-empty chunks
         mock_response.iter_content.return_value = [b"", content, b""]
 
         mlflow_client = MagicMock()

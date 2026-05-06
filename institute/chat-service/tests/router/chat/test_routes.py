@@ -93,7 +93,6 @@ class TestGetChatById:
 
 class TestSseEndpoint:
     def test_sse_endpoint_is_reachable(self, client, mock_sse_service):
-        # SSE endpoint — TestClient handles streaming; verify the route is wired up
         async def _empty_gen(request, user_id):
             return
             yield  # make it an async generator

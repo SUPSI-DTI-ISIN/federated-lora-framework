@@ -80,7 +80,6 @@ class TestGetAvailableAdapters:
     def test_marks_local_adapters_correctly(self, service, mlflow_client, tmp_path):
         mlflow_client.get_adapters_version.return_value = _adapters_dto(versions=[1, 2, 3])
         adapters_path = tmp_path / "adapters"
-        # Create local adapter dirs for v1 and v2 (with content)
         for v in [1, 2]:
             vdir = adapters_path / str(v)
             vdir.mkdir(parents=True)
@@ -97,7 +96,6 @@ class TestGetAvailableAdapters:
         assert by_version[3].available_local is False
 
     def test_deletes_local_only_adapters_not_in_remote(self, service, mlflow_client, tmp_path):
-        # Remote has v1, v2. Local has v1, v2, v99 (orphan).
         mlflow_client.get_adapters_version.return_value = _adapters_dto(versions=[1, 2])
         adapters_path = tmp_path / "adapters"
         for v in [1, 2, 99]:
@@ -112,7 +110,6 @@ class TestGetAvailableAdapters:
                    side_effect=lambda model_key, version: str(adapters_path / str(version))):
             result = service.get_available_adapters(model_key="llama-3")
 
-        # v99 dir should have been deleted
         assert not (adapters_path / "99").exists()
 
     def test_returns_empty_adapters_when_remote_versions_none_and_local_exist(self, service, mlflow_client, tmp_path):
@@ -169,7 +166,6 @@ class TestGetAvailableLocalAdapters:
 
     def test_ignores_empty_adapter_dirs(self, service, tmp_path):
         adapters_path = tmp_path / "adapters"
-        # v1 has content, v2 is empty
         (adapters_path / "1").mkdir(parents=True)
         (adapters_path / "1" / "adapter.bin").write_bytes(b"data")
         (adapters_path / "2").mkdir(parents=True)  # empty

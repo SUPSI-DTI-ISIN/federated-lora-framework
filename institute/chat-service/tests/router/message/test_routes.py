@@ -107,7 +107,6 @@ class TestSendMessage:
         )
 
         call_kwargs = mock_inference_service.inference_model.call_args.kwargs
-        # conversation_history excludes the last message (the new user message)
         assert len(call_kwargs["conversation_history"]) == 2
 
 

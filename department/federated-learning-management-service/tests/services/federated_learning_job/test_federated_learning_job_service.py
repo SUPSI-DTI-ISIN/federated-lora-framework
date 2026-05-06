@@ -130,7 +130,6 @@ class TestUpdateJobStatusFromCelery:
         repo.save = AsyncMock(return_value=job)
 
         unknown_dto = CeleryJobDTO(job_id="task-1", result_type=CeleryJobResultType.SUCCESS)
-        # Patch result_type to an unknown value after construction
         unknown_dto = unknown_dto.model_copy(update={"result_type": MM()})
 
         await service.update_job_status_from_celery(unknown_dto)

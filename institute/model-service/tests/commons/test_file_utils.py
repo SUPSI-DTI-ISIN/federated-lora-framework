@@ -71,7 +71,6 @@ class TestDeleteFiles:
         assert not f.exists()
 
     def test_skips_non_existing_files(self, tmp_path):
-        # Should not raise
         FileUtils.delete_files(target_folder_path=tmp_path, model_files=["nonexistent.bin"])
 
     def test_deletes_multiple_files(self, tmp_path):

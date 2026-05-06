@@ -14,7 +14,6 @@ def _make_module(name: str, **attrs) -> types.ModuleType:
     return mod
 
 
-# --- redis stubs ---
 _redis_asyncio_mod = _make_module("redis.asyncio")
 _redis_asyncio_mod.Redis = MagicMock
 _redis_asyncio_mod.from_url = MagicMock(return_value=MagicMock())
@@ -24,12 +23,10 @@ _redis_mod.asyncio = _redis_asyncio_mod
 _redis_mod.Redis = MagicMock
 _redis_mod.from_url = MagicMock(return_value=MagicMock())
 
-# --- sse_starlette stubs ---
 _sse_mod = _make_module("sse_starlette")
 _sse_mod.EventSourceResponse = MagicMock
 _sse_mod.ServerSentEvent = MagicMock
 
-# --- shared_auth_library stubs ---
 class _FakeJWTValidator:
     def __init__(self, **kwargs):
         pass

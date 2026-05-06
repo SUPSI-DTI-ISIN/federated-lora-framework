@@ -16,7 +16,6 @@ class TestSettings:
         assert s.model_key == "mistral"
 
     def test_default_model_base_path(self):
-        # env var MODEL_BASE_PATH=/tmp/models set in conftest
         s = self._make()
         assert s.model_base_path in ("./model", "/tmp/models")
 

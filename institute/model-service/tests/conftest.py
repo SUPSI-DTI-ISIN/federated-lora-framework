@@ -14,7 +14,6 @@ def _make_module(name: str, **attrs) -> types.ModuleType:
     return mod
 
 
-# --- shared_auth_library stubs ---
 class _FakeJWTValidator:
     def __init__(self, **kwargs):
         pass

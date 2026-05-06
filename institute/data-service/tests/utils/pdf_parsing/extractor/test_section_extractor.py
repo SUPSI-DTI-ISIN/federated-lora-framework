@@ -82,7 +82,6 @@ Duplicate content.
             text=text, project_number="DOC-001"
         )
         titles = [s.title for s in sections]
-        # Duplicate titles should be excluded
         assert titles.count("1. Introduction") == 0
 
     def test_section_content_is_trimmed(self):

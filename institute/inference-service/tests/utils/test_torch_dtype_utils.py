@@ -30,7 +30,6 @@ class TestTorchDtypeUtils:
     def test_returns_float16_when_bf16_supported_attr_missing(self):
         with patch("utils.torch_dtype_utils.torch") as mock_torch:
             mock_torch.cuda.is_available.return_value = True
-            # is_bf16_supported not present — getattr fallback returns False
             del mock_torch.cuda.is_bf16_supported
             mock_torch.float16 = "float16"
             result = TorchDtypeUtils.get_torch_dtype()

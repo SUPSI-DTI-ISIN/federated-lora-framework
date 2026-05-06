@@ -21,8 +21,6 @@ class TestPdfParserServiceClose:
         with patch("utils.pdf_parsing.pdf_parser_service.pymupdf.open", return_value=mock_doc):
             parser = PdfParserService(pdf_file=pdf_file)
 
-        # Set document to None so _is_document_open() returns False
         parser._document = None
-        # Calling _close when already closed should not raise
         parser._close()
         assert parser._document is None

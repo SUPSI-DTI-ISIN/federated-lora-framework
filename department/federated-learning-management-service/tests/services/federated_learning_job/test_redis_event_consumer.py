@@ -143,7 +143,6 @@ class TestStartRedisEventConsumer:
             return_value=mock_pubsub
         )
 
-        # Should not raise — exceptions are caught and printed
         await consumer.start_redis_event_consumer()
 
     async def test_skips_none_message(self, consumer):
@@ -160,7 +159,6 @@ class TestStartRedisEventConsumer:
             return_value=mock_pubsub
         )
 
-        # Should not raise — None messages are skipped
         await consumer.start_redis_event_consumer()
 
     async def test_skips_non_message_type(self, consumer):

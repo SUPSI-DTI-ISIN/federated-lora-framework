@@ -69,7 +69,6 @@ class TestPollAssistantMessage:
         assert result.role == MessageRole.ASSISTANT.value
 
     async def test_returns_none_when_no_assistant_message_after_max_attempts(self, service, message_repo):
-        # Always returns a user message (not assistant)
         message_repo.get_latest_by_chat = AsyncMock(return_value=_user_message())
 
         result = await service._SseService__poll_assistant_message(chat_id=10)

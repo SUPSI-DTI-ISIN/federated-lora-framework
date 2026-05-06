@@ -92,11 +92,8 @@ class TestGetOrLoadModelNoAdapter:
         mock_client.get_model_path_for_inference.return_value = _model_path()
 
         with _patch_model_loading():
-            # First load the model
             service.get_or_load_model(model_key="llama-3", adapter_version=None)
-            # Simulate that adapters were loaded
             service._ModelService__loaded_adapters = {1: "v1"}
-            # Now request without adapter — should call disable_adapters
             result = service.get_or_load_model(model_key="llama-3", adapter_version=None)
 
         service._ModelService__model.disable_adapters.assert_called()
@@ -111,7 +108,6 @@ class TestGetOrLoadModelNoAdapter:
             service.get_or_load_model(model_key="llama-3", adapter_version=None)
             call_count_after_second = mock_client.get_model_path_for_inference.call_count
 
-        # Second call should not reload the base model
         assert call_count_after_second == call_count_after_first
 
     def test_reloads_model_for_different_key(self, service, mock_client):
@@ -121,7 +117,6 @@ class TestGetOrLoadModelNoAdapter:
             service.get_or_load_model(model_key="llama-3", adapter_version=None)
             service.get_or_load_model(model_key="mistral-7b", adapter_version=None)
 
-        # Should have been called for both models
         assert mock_client.get_model_path_for_inference.call_count >= 2
 
 
@@ -148,7 +143,6 @@ class TestGetOrLoadModelWithAdapter:
             service.get_or_load_model(model_key="llama-3", adapter_version=1)
             call_count_after_second = mock_client.get_model_path_for_inference.call_count
 
-        # Adapter already cached — no extra client call for adapter
         assert call_count_after_second == call_count_after_first
 
     def test_evicts_lru_adapter_when_cache_full(self, service, mock_client):
@@ -158,14 +152,12 @@ class TestGetOrLoadModelWithAdapter:
         )
 
         with _patch_model_loading():
-            # Load 3 adapters to fill the cache
             for v in [1, 2, 3]:
                 service.get_or_load_model(model_key="llama-3", adapter_version=v)
 
             assert len(service._ModelService__loaded_adapters) == 3
             assert 1 in service._ModelService__loaded_adapters
 
-            # Load a 4th — should evict adapter v1 (LRU)
             service.get_or_load_model(model_key="llama-3", adapter_version=4)
 
         assert len(service._ModelService__loaded_adapters) == 3
@@ -182,9 +174,7 @@ class TestGetOrLoadModelWithAdapter:
             service.get_or_load_model(model_key="llama-3", adapter_version=1)
             service.get_or_load_model(model_key="llama-3", adapter_version=2)
             service.get_or_load_model(model_key="llama-3", adapter_version=3)
-            # Re-access v1 — makes v2 the LRU
             service.get_or_load_model(model_key="llama-3", adapter_version=1)
-            # Load v4 — should evict v2 (now LRU)
             service.get_or_load_model(model_key="llama-3", adapter_version=4)
 
         assert 2 not in service._ModelService__loaded_adapters
@@ -209,14 +199,12 @@ class TestUnloadBaseModel:
         assert service._ModelService__adapter_lru == []
 
     def test_unload_does_nothing_when_model_is_none(self, service):
-        # Should not raise
         service._ModelService__unload_base_model()
         assert service._ModelService__model is None
 
 
 class TestEvictLruAdapter:
     def test_evict_does_nothing_when_lru_empty(self, service):
-        # Should not raise
         service._ModelService__evict_lru_adapter()
 
     def test_evict_removes_oldest_adapter(self, service, mock_client):

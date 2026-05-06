@@ -101,7 +101,6 @@ class TestHandleAssistantInferenceMessage:
                 celery_job_dto=dto,
             )
 
-        # Verify message was saved with assistant role and response content
         mock_msg_repo.save_message.assert_awaited_once()
         saved_msg = mock_msg_repo.save_message.call_args.kwargs["message_model"]
         assert saved_msg.role == MessageRole.ASSISTANT
@@ -138,7 +137,6 @@ class TestHandleAssistantInferenceMessage:
         assert saved_msg.content == "Error during inference"
 
     async def test_skips_when_dto_is_none(self, consumer):
-        # Should return early without error
         await consumer._InferenceResultRedisEventConsumer__handle_assistant_inference_message(
             is_inference_failed=False,
             celery_job_dto=None,
@@ -301,7 +299,6 @@ class TestStartRedisEventConsumer:
 
             await consumer.start_redis_event_consumer()
 
-        # Failure message creates an error assistant message
         mock_msg_repo.save_message.assert_awaited_once()
         saved_msg = mock_msg_repo.save_message.call_args.kwargs["message_model"]
         assert saved_msg.content == "Error during inference"
@@ -348,7 +345,6 @@ class TestStartRedisEventConsumer:
         mock_pubsub.punsubscribe.assert_awaited_once()
 
     async def test_handles_exception_in_message_processing(self, consumer, redis_client):
-        # Invalid JSON should be caught and not crash the consumer
         messages = [
             {"type": "pmessage", "data": "not-valid-json"},
         ]
@@ -365,7 +361,6 @@ class TestStartRedisEventConsumer:
         redis_client.pubsub = MagicMock(return_value=mock_pubsub)
 
         with patch("services.inference.redis.inference_result_redis_event_consumer.DatabaseConnector"):
-            # Should not raise
             await consumer.start_redis_event_consumer()
 
         mock_pubsub.punsubscribe.assert_awaited_once()

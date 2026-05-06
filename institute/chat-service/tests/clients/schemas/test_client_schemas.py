@@ -20,7 +20,6 @@ class TestConversationDTO:
 
 class TestQueryRequestDTO:
     def test_valid_dto(self):
-        # conversation_history uses schemas.chat.ConversationDTO (not clients.schemas)
         from schemas.chat import ConversationDTO as ChatConversationDTO
         dto = QueryRequestDTO(
             user_id="u-1",

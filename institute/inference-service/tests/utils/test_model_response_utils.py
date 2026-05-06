@@ -11,12 +11,10 @@ class TestGenerateModelResponse:
         tokenizer.eos_token_id = 2
         tokenizer.pad_token_id = 0
 
-        # input has 3 tokens, output has 5 (3 input + 2 new)
         mock_input_tensor = MagicMock()
         mock_input_tensor.shape = (1, 3)
 
         mock_output = MagicMock()
-        # outputs[0] = [1, 2, 3, 4, 5] — first 3 are input, last 2 are new
         mock_output.__getitem__ = MagicMock(return_value=MagicMock(
             __getitem__=MagicMock(return_value=MagicMock(tolist=MagicMock(return_value=[4, 5])))
         ))
@@ -70,5 +68,4 @@ class TestGenerateModelResponse:
             )
 
         call_kwargs = model.generate.call_args.kwargs
-        # pad_token_id should fall back to eos_token_id
         assert call_kwargs["pad_token_id"] == 2
