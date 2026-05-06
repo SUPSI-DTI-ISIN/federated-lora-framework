@@ -14,6 +14,7 @@ def reset_singleton():
 
 def _doc_data():
     return [{"id": 1, "number": "DOC-001", "title": "My Project",
+             "is_externally_approved": False,
              "sections": [{"id": 1, "title": "1. Intro", "content": "Content"}]}]
 
 

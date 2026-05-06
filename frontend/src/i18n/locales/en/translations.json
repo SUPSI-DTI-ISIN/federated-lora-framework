@@ -157,10 +157,17 @@
       "trainabilityUpdateError": "Could not update trainability.",
       "trainable": "Trainable",
       "notTrainable": "Not trainable",
+      "externallyApproved": "Externally approved",
+      "notExternallyApproved": "Not approved",
+      "externalApprovedEnabled": "Marked as externally approved",
+      "externalApprovedDisabled": "Marked as not externally approved",
+      "externalApprovedUpdateError": "Failed to update external approval",
       "actions": {
         "delete": "Delete",
         "enableTraining": "Enable for training",
-        "disableTraining": "Disable from training"
+        "disableTraining": "Disable from training",
+        "markExternallyApproved": "Mark as externally approved",
+        "markNotExternallyApproved": "Remove external approval"
       }
     },
     "upload": {
@@ -175,7 +182,11 @@
       "error": {
         "invalidType": "Invalid file type. Only PDFs are accepted.",
         "failed": "Upload failed. Please try again."
-      }
+      },
+      "externallyApproved": "Externally approved",
+      "externallyApprovedHint": "Mark if this document was approved outside the system",
+      "externallyApprovedYes": "Approved externally",
+      "externallyApprovedNo": "Not externally approved"
     }
   },
   "chat": {

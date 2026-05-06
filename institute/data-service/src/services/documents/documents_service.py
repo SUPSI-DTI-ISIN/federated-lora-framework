@@ -18,7 +18,7 @@ class DocumentsService(DocumentsServiceInterface):
         self.__documents_repository = documents_repository
         self.__institute_name = institute_name
 
-    async def upload_data(self, file_content: bytes) -> DocumentDTO:
+    async def upload_data(self, file_content: bytes, is_externally_approved: bool) -> DocumentDTO:
         if not file_content or len(file_content) == 0:
             raise InvalidFileError("File content is empty")
 
@@ -39,6 +39,7 @@ class DocumentsService(DocumentsServiceInterface):
 
             document_model: DocumentModel = DocumentMapper.to_model(document=parsed_document)
             document_model.is_trainable = False
+            document_model.is_externally_approved = is_externally_approved
             document_model_saved: DocumentModel = await self.__documents_repository.save_document(document_model=document_model)
             return DocumentDTO.model_validate(document_model_saved)
         finally:
@@ -76,6 +77,15 @@ class DocumentsService(DocumentsServiceInterface):
             raise DocumentNotFoundError(document_id=document_id)
 
         document_model.is_trainable = is_trainable
+        updated_document_model = await self.__documents_repository.save_document(document_model=document_model)
+        return DocumentDTO.model_validate(updated_document_model)
+
+    async def update_document_externally_approved(self, document_id: int, is_externally_approved: bool) -> DocumentDTO:
+        document_model = await self.__documents_repository.get_by_id(document_id=document_id)
+        if document_model is None:
+            raise DocumentNotFoundError(document_id=document_id)
+
+        document_model.is_externally_approved = is_externally_approved
         updated_document_model = await self.__documents_repository.save_document(document_model=document_model)
         return DocumentDTO.model_validate(updated_document_model)
 

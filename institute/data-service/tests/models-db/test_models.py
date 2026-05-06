@@ -11,11 +11,13 @@ class TestDocumentModel:
         doc.number = "DOC-001"
         doc.title = "Test Document"
         doc.is_trainable = False
+        doc.is_externally_approved = False
 
         assert doc.id == 1
         assert doc.number == "DOC-001"
         assert doc.title == "Test Document"
         assert doc.is_trainable is False
+        assert doc.is_externally_approved is False
 
     def test_is_subclass_of_base_model(self):
         assert issubclass(DocumentModel, BaseModel)

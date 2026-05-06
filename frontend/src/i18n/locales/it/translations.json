@@ -131,7 +131,6 @@
   "documents": {
     "title": "Documenti",
     "subtitle": "Tutti i documenti caricati sono elencati qui.",
-    "upload": "Carica Documento",
     "uploadButton": "Carica Documento",
     "empty": "Nessun documento. Carica il tuo primo documento per iniziare.",
     "error": "Impossibile caricare i documenti. Riprova più tardi.",
@@ -155,10 +154,17 @@
       "trainabilityUpdateError": "Impossibile aggiornare l'addestrabilità.",
       "trainable": "Addestrabile",
       "notTrainable": "Non addestrabile",
+      "externallyApproved": "Approvato esternamente",
+      "notExternallyApproved": "Non approvato",
+      "externalApprovedEnabled": "Contrassegnato come approvato esternamente",
+      "externalApprovedDisabled": "Contrassegnato come non approvato esternamente",
+      "externalApprovedUpdateError": "Errore durante l'aggiornamento dell'approvazione esterna",
       "actions": {
         "delete": "Elimina",
         "enableTraining": "Abilita per l'addestramento",
-        "disableTraining": "Disabilita dall'addestramento"
+        "disableTraining": "Disabilita dall'addestramento",
+        "markExternallyApproved": "Segna come approvato esternamente",
+        "markNotExternallyApproved": "Rimuovi approvazione esterna"
       }
     },
     "upload": {
@@ -173,7 +179,11 @@
       "error": {
         "invalidType": "Tipo di file non valido. Accettati solo PDF.",
         "failed": "Caricamento fallito. Riprova."
-      }
+      },
+      "externallyApproved": "Approvazione esterna",
+      "externallyApprovedHint": "Indica se il documento è già stato approvato fuori dal sistema",
+      "externallyApprovedYes": "Già approvato esternamente",
+      "externallyApprovedNo": "Da approvare nel sistema"
     }
   },
   "adapters": {

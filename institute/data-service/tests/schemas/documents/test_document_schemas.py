@@ -3,8 +3,10 @@ from schemas.documents import (
     DocumentDTO,
     SectionDTO,
     UpdateDocumentTrainableRequestDTO,
+    UpdateDocumentExternallyApprovedRequestDTO,
     TrainingSamplesDTO,
     UpdateSectionRequestDTO,
+    UploadDocumentRequestDTO,
 )
 
 
@@ -33,27 +35,37 @@ class TestSectionDTO:
 class TestDocumentDTO:
     def test_valid_dto(self):
         sections = [SectionDTO(id=1, title="1. Intro", content="Content")]
-        dto = DocumentDTO(id=1, number="DOC-001", title="My Doc", is_trainable=False, sections=sections)
+        dto = DocumentDTO(id=1, number="DOC-001", title="My Doc", is_trainable=False,
+                          is_externally_approved=False, sections=sections)
         assert dto.id == 1
         assert dto.number == "DOC-001"
         assert dto.is_trainable is False
+        assert dto.is_externally_approved is False
         assert len(dto.sections) == 1
 
     def test_from_attributes(self):
-        from models import DocumentModel, SectionModel
+        from models import DocumentModel
         doc = DocumentModel()
         doc.id = 3
         doc.number = "DOC-003"
         doc.title = "Test"
         doc.is_trainable = True
+        doc.is_externally_approved = True
         doc.sections = []
         dto = DocumentDTO.model_validate(doc)
         assert dto.id == 3
         assert dto.is_trainable is True
+        assert dto.is_externally_approved is True
 
     def test_empty_sections(self):
-        dto = DocumentDTO(id=1, number="DOC-001", title="Doc", is_trainable=False, sections=[])
+        dto = DocumentDTO(id=1, number="DOC-001", title="Doc", is_trainable=False,
+                          is_externally_approved=False, sections=[])
         assert dto.sections == []
+
+    def test_is_externally_approved_true(self):
+        dto = DocumentDTO(id=1, number="DOC-001", title="Doc", is_trainable=False,
+                          is_externally_approved=True, sections=[])
+        assert dto.is_externally_approved is True
 
 
 class TestUpdateDocumentTrainableRequestDTO:
@@ -68,6 +80,20 @@ class TestUpdateDocumentTrainableRequestDTO:
     def test_missing_field_raises(self):
         with pytest.raises(Exception):
             UpdateDocumentTrainableRequestDTO()
+
+
+class TestUpdateDocumentExternallyApprovedRequestDTO:
+    def test_is_externally_approved_true(self):
+        dto = UpdateDocumentExternallyApprovedRequestDTO(is_externally_approved=True)
+        assert dto.is_externally_approved is True
+
+    def test_is_externally_approved_false(self):
+        dto = UpdateDocumentExternallyApprovedRequestDTO(is_externally_approved=False)
+        assert dto.is_externally_approved is False
+
+    def test_missing_field_raises(self):
+        with pytest.raises(Exception):
+            UpdateDocumentExternallyApprovedRequestDTO()
 
 
 class TestTrainingSamplesDTO:
@@ -93,8 +119,10 @@ class TestSchemasDocumentsInit:
         assert "DocumentDTO" in sd.__all__
         assert "SectionDTO" in sd.__all__
         assert "UpdateDocumentTrainableRequestDTO" in sd.__all__
+        assert "UpdateDocumentExternallyApprovedRequestDTO" in sd.__all__
         assert "TrainingSamplesDTO" in sd.__all__
         assert "UpdateSectionRequestDTO" in sd.__all__
+        assert "UploadDocumentRequestDTO" in sd.__all__
 
     def test_version(self):
         import schemas.documents as sd

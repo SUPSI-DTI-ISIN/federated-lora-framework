@@ -10,4 +10,5 @@ class DocumentDTO(BaseModel):
     id: int
     number: str
     title: str
+    is_externally_approved: bool
     sections: List[SectionDTO]

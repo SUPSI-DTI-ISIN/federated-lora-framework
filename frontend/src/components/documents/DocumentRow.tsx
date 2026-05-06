@@ -1,13 +1,16 @@
 import { useState } from "react";
 import type { DocumentDTO } from "@isin/data-service-client";
 import { motion } from "framer-motion";
-import { FileText, Trash2, Eye, BrainCircuit } from "lucide-react";
+import {FileText, Trash2, Eye, BrainCircuit, ShieldCheck} from "lucide-react";
 import { useDeleteDocument } from "../../hooks/institute/data/documents/useDeleteDocument.ts";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { DeleteConfirmModal } from "../common/DeleteConfirmModal";
 import {useUpdateDocumentTrainability} from "../../hooks/institute/data/documents/useUpdateDocumentTrainability.ts";
+import {
+    useUpdateDocumentExternalApproved
+} from "../../hooks/institute/data/documents/useUpdateDocumentExternalApproved.ts";
 
 interface DocumentRowProps {
     document: DocumentDTO;
@@ -21,6 +24,7 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const {mutateAsync: updateDocumentTrainability} = useUpdateDocumentTrainability();
+    const {mutateAsync: updateDocumentExternalApproved} = useUpdateDocumentExternalApproved();
     const [isUpdating, setIsUpdating] = useState(false);
     const navigate = useNavigate();
 
@@ -50,6 +54,27 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
         } catch (e) {
             console.error(e);
             toast.error(t("documents.list.trainabilityUpdateError"));
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleToggleExternalApproved = async () => {
+        setIsUpdating(true);
+        try {
+            await updateDocumentExternalApproved({
+                documentId: document.id,
+                isExternallyApproved: !document.is_externally_approved
+            });
+
+            toast.success(
+                document.is_externally_approved
+                    ? t("documents.list.externalApprovedDisabled")
+                    : t("documents.list.externalApprovedEnabled")
+            );
+        } catch (e) {
+            console.error(e);
+            toast.error(t("documents.list.externalApprovedUpdateError"));
         } finally {
             setIsUpdating(false);
         }
@@ -86,10 +111,47 @@ export const DocumentRow = ({ document, index }: DocumentRowProps) => {
                             <BrainCircuit size={12} />
                             {document.is_trainable ? t("documents.list.trainable") : t("documents.list.notTrainable")}
                         </span>
+                        <span
+                            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded ${
+                                document.is_externally_approved
+                                    ? "bg-info/10 text-info"
+                                    : "bg-base-content/5 text-base-content/40"
+                            }`}
+                        >
+        <ShieldCheck size={12} />
+                            {document.is_externally_approved
+                                ? t("documents.list.externallyApproved")
+                                : t("documents.list.notExternallyApproved")}
+    </span>
                     </div>
                 </div>
 
                 <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100 shrink-0">
+                    <button
+                        onClick={handleToggleExternalApproved}
+                        disabled={isDeleting || isUpdating}
+                        className={`btn btn-circle btn-sm btn-ghost ${
+                            document.is_externally_approved
+                                ? "text-info hover:bg-info/10"
+                                : "text-base-content/40 hover:bg-base-content/10"
+                        }`}
+                        title={
+                            document.is_externally_approved
+                                ? t("documents.list.actions.markNotExternallyApproved")
+                                : t("documents.list.actions.markExternallyApproved")
+                        }
+                        aria-label={
+                            document.is_externally_approved
+                                ? t("documents.list.actions.markNotExternallyApproved")
+                                : t("documents.list.actions.markExternallyApproved")
+                        }
+                    >
+                        {isUpdating ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                            <ShieldCheck size={18} />
+                        )}
+                    </button>
                     <button
                         onClick={handleToggleTrainability}
                         disabled={isDeleting || isUpdating}

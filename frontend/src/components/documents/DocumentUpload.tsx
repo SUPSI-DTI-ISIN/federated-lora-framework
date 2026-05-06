@@ -13,6 +13,7 @@ interface DocumentUploadProps {
 export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
     const {t} = useTranslation();
     const {mutateAsync: uploadDocument} = useUploadDocument();
+    const [isExternallyApproved, setIsExternallyApproved] = useState<boolean>(false);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isDragging, setIsDragging] = useState(false);
     const [isUploading, setIsUploading] = useState(false);
@@ -38,6 +39,7 @@ export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
                 return;
             }
             setSelectedFile(file);
+            setIsExternallyApproved(false);
         },
         [t]
     );
@@ -50,13 +52,17 @@ export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
             return;
         }
         setSelectedFile(file);
+        setIsExternallyApproved(false);
     };
 
     const handleUpload = async () => {
         if (!selectedFile) return;
         setIsUploading(true);
         try {
-            const uploadedDocument = await uploadDocument(selectedFile);
+            const uploadedDocument = await uploadDocument({
+                isExternallyApproved,
+                file: selectedFile,
+            });
             toast.success(t("documents.upload.success"));
             onClose(uploadedDocument.id);
         } catch (e) {
@@ -65,6 +71,12 @@ export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
         } finally {
             setIsUploading(false);
         }
+    };
+
+    const handleClose = () => {
+        setSelectedFile(null);
+        setIsExternallyApproved(false);
+        onClose();
     };
 
     return (
@@ -91,7 +103,7 @@ export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
                                 <Upload className="text-primary"/>
                                 {t("documents.upload.title")}
                             </h3>
-                            <button onClick={() => onClose()} className="btn btn-ghost btn-sm btn-circle">
+                            <button onClick={handleClose} className="btn btn-ghost btn-sm btn-circle">
                                 <X size={20}/>
                             </button>
                         </div>
@@ -105,6 +117,62 @@ export const DocumentUpload = ({onClose}: DocumentUploadProps) => {
                             onFileSelect={onFileSelect}
                             onRemoveFile={() => setSelectedFile(null)}
                         />
+
+                        {selectedFile && (
+                            <motion.div
+                                initial={{opacity: 0, y: 10}}
+                                animate={{opacity: 1, y: 0}}
+                                exit={{opacity: 0, y: 10}}
+                                className="mt-6"
+                            >
+                                <div
+                                    className={`rounded-2xl border p-5 transition-all ${
+                                        isExternallyApproved
+                                            ? "border-success/30 bg-success/10"
+                                            : "border-base-content/10 bg-base-200/40"
+                                    }`}
+                                >
+                                    {/* Header */}
+                                    <div className="flex items-start justify-between">
+                                        <div className="flex flex-col gap-1">
+                    <span className="text-sm font-semibold text-base-content">
+                        {t("documents.upload.externallyApproved")}
+                    </span>
+                                            <span className="text-xs text-base-content/60">
+                        {t("documents.upload.externallyApprovedHint")}
+                    </span>
+                                        </div>
+
+                                        <input
+                                            type="checkbox"
+                                            className="toggle toggle-primary mt-1"
+                                            checked={isExternallyApproved}
+                                            onChange={(e) => setIsExternallyApproved(e.target.checked)}
+                                            disabled={isUploading}
+                                        />
+                                    </div>
+
+                                    {/* Divider */}
+                                    <div className="my-4 h-px bg-base-content/10"/>
+
+                                    {/* Status */}
+                                    <div className="flex items-center justify-center">
+
+                                        <span
+                                            className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                                                isExternallyApproved
+                                                    ? "bg-success/20 text-success"
+                                                    : "bg-base-300 text-base-content/50"
+                                            }`}
+                                        >
+                    {isExternallyApproved
+                        ? t("documents.upload.externallyApprovedYes")
+                        : t("documents.upload.externallyApprovedNo")}
+                </span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        )}
 
                         <div className="flex gap-3 mt-8">
                             <button onClick={() => onClose()} className="btn flex-1 bg-base-200 border-none"

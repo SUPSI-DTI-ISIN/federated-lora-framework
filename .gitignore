@@ -176,3 +176,5 @@ pdf-innosuisse/
 models/
 keycloak-initial-configuration/
 department/federated-learning-management-service/flwr/
+
+*coverage*

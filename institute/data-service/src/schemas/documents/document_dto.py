@@ -11,4 +11,5 @@ class DocumentDTO(BaseModel):
     number: str
     title: str
     is_trainable: bool
+    is_externally_approved: bool
     sections: List[SectionDTO]

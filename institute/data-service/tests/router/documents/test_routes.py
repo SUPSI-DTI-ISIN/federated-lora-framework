@@ -1,6 +1,5 @@
 import io
 import pytest
-from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -13,12 +12,14 @@ from services.documents import DocumentsServiceInterface, get_documents_service
 from auth import jwt_validator
 
 
-def _dto(id=1, number="DOC-001", title="Test Doc", is_trainable=False, sections=None):
+def _dto(id=1, number="DOC-001", title="Test Doc", is_trainable=False,
+         is_externally_approved=False, sections=None):
     return DocumentDTO(
         id=id,
         number=number,
         title=title,
         is_trainable=is_trainable,
+        is_externally_approved=is_externally_approved,
         sections=sections or [],
     )
 
@@ -44,6 +45,7 @@ class TestUpload:
         pdf_bytes = b"%PDF-1.4 fake content"
         response = client.post(
             "/documents/upload",
+            data={"is_externally_approved": "false"},
             files={"file": ("test.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
         )
         assert response.status_code == 201
@@ -52,6 +54,7 @@ class TestUpload:
     def test_returns_400_for_non_pdf(self, client, mock_service):
         response = client.post(
             "/documents/upload",
+            data={"is_externally_approved": "false"},
             files={"file": ("test.txt", io.BytesIO(b"text content"), "text/plain")},
         )
         assert response.status_code == 400
@@ -61,6 +64,7 @@ class TestUpload:
         pdf_bytes = b"%PDF-1.4 fake content"
         response = client.post(
             "/documents/upload",
+            data={"is_externally_approved": "false"},
             files={"file": ("test.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
         )
         assert response.status_code == 409
@@ -70,9 +74,21 @@ class TestUpload:
         pdf_bytes = b"%PDF-1.4 fake content"
         response = client.post(
             "/documents/upload",
+            data={"is_externally_approved": "false"},
             files={"file": ("test.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
         )
         assert response.status_code == 400
+
+    def test_passes_is_externally_approved_to_service(self, client, mock_service):
+        mock_service.upload_data = AsyncMock(return_value=_dto(id=1, is_externally_approved=True))
+        pdf_bytes = b"%PDF-1.4 fake content"
+        client.post(
+            "/documents/upload",
+            data={"is_externally_approved": "true"},
+            files={"file": ("test.pdf", io.BytesIO(pdf_bytes), "application/pdf")},
+        )
+        call_kwargs = mock_service.upload_data.call_args.kwargs
+        assert call_kwargs["is_externally_approved"] is True
 
 
 class TestGetAll:
@@ -134,7 +150,7 @@ class TestGetById:
 class TestUpdateDocumentTrainable:
     def test_returns_200_on_success(self, client, mock_service):
         mock_service.update_document_trainable = AsyncMock(return_value=_dto(id=1, is_trainable=True))
-        response = client.put("/documents/1", json={"is_trainable": True})
+        response = client.put("/documents/trainability/1", json={"is_trainable": True})
         assert response.status_code == 200
         assert response.json()["is_trainable"] is True
 
@@ -142,10 +158,31 @@ class TestUpdateDocumentTrainable:
         mock_service.update_document_trainable = AsyncMock(
             side_effect=DocumentNotFoundError(document_id=1)
         )
-        assert client.put("/documents/1", json={"is_trainable": True}).status_code == 404
+        assert client.put("/documents/trainability/1", json={"is_trainable": True}).status_code == 404
 
     def test_missing_body_returns_422(self, client):
-        assert client.put("/documents/1", json={}).status_code == 422
+        assert client.put("/documents/trainability/1", json={}).status_code == 422
+
+
+class TestUpdateDocumentExternallyApproved:
+    def test_returns_200_on_success(self, client, mock_service):
+        mock_service.update_document_externally_approved = AsyncMock(
+            return_value=_dto(id=1, is_externally_approved=True)
+        )
+        response = client.put("/documents/externally-approved/1",
+                               json={"is_externally_approved": True})
+        assert response.status_code == 200
+        assert response.json()["is_externally_approved"] is True
+
+    def test_returns_404_when_not_found(self, client, mock_service):
+        mock_service.update_document_externally_approved = AsyncMock(
+            side_effect=DocumentNotFoundError(document_id=1)
+        )
+        assert client.put("/documents/externally-approved/1",
+                          json={"is_externally_approved": True}).status_code == 404
+
+    def test_missing_body_returns_422(self, client):
+        assert client.put("/documents/externally-approved/1", json={}).status_code == 422
 
 
 class TestDeleteById:

@@ -17,14 +17,21 @@ class TestSectionDTO:
 class TestDocumentDTO:
     def test_valid_with_sections(self):
         sections = [SectionDTO(id=1, title="1. Intro", content="Content")]
-        dto = DocumentDTO(id=1, number="DOC-001", title="My Project", sections=sections)
+        dto = DocumentDTO(id=1, number="DOC-001", title="My Project",
+                          is_externally_approved=False, sections=sections)
         assert dto.id == 1
         assert dto.number == "DOC-001"
         assert len(dto.sections) == 1
 
     def test_empty_sections(self):
-        dto = DocumentDTO(id=1, number="DOC-001", title="My Project", sections=[])
+        dto = DocumentDTO(id=1, number="DOC-001", title="My Project",
+                          is_externally_approved=False, sections=[])
         assert dto.sections == []
+
+    def test_is_externally_approved_field(self):
+        dto = DocumentDTO(id=1, number="DOC-001", title="My Project",
+                          is_externally_approved=True, sections=[])
+        assert dto.is_externally_approved is True
 
     def test_missing_field_raises(self):
         with pytest.raises(Exception):

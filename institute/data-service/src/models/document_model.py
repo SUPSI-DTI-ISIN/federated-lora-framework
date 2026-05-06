@@ -12,6 +12,7 @@ class DocumentModel(BaseModel):
     number: Mapped[str] = mapped_column(String(50), unique=True, index=True)
     title: Mapped[str] = mapped_column(String(255))
     is_trainable: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_externally_approved: Mapped[bool] = mapped_column(Boolean, default=False)
 
     sections: Mapped[List["SectionModel"]] = relationship(
         back_populates="document", cascade="all, delete-orphan", lazy="selectin"

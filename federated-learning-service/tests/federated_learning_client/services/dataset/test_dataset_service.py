@@ -15,6 +15,7 @@ def _section(id=1, title="1. Intro", content="Content"):
 def _document(id=1, number="DOC-001", title="My Project", sections=None):
     return DocumentDTO(
         id=id, number=number, title=title,
+        is_externally_approved=False,
         sections=sections if sections is not None else [_section()]
     )
 

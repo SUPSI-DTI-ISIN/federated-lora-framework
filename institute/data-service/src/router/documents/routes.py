@@ -1,10 +1,11 @@
 from typing import List
 
-from fastapi import APIRouter, status, UploadFile, HTTPException, Depends, File
+from fastapi import APIRouter, status, HTTPException, Depends
 from shared_auth_library.entities import User
 
 from auth import jwt_validator
-from schemas.documents import DocumentDTO, UpdateDocumentTrainableRequestDTO, TrainingSamplesDTO
+from schemas.documents import DocumentDTO, UpdateDocumentTrainableRequestDTO, TrainingSamplesDTO, \
+    UpdateDocumentExternallyApprovedRequestDTO, UploadDocumentRequestDTO
 from services.documents import DocumentsServiceInterface, get_documents_service
 
 router = APIRouter(prefix="/documents")
@@ -18,25 +19,27 @@ tags = ["documents"]
     tags=tags
 )
 async def upload(
-        file: UploadFile = File(..., description="PDF file to upload"),
+        request: UploadDocumentRequestDTO = Depends(UploadDocumentRequestDTO.as_form),
         service: DocumentsServiceInterface = Depends(get_documents_service),
         _: User = Depends(jwt_validator.get_current_user_required)
 ):
-    if not file:
+    if not request.file:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No file provided"
         )
 
-    if file.content_type != "application/pdf":
+    if request.file.content_type != "application/pdf":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Only PDF files are allowed"
         )
 
-    file_content = await file.read()
-    return await service.upload_data(file_content=file_content)
-
+    file_content = await request.file.read()
+    return await service.upload_data(
+        file_content=file_content,
+        is_externally_approved=request.is_externally_approved
+    )
 
 @router.get(
     "",
@@ -60,7 +63,7 @@ async def get_all_trainable(
         documents_service: DocumentsServiceInterface = Depends(get_documents_service),
         #_: User = Depends(jwt_validator.get_current_user_required)
 ):
-    return await documents_service.get_all_trainable()
+    return await documents_service.get_all_trainable(is_trainable=True)
 
 @router.get(
     "/training-samples",
@@ -88,7 +91,7 @@ async def get_by_id(
     return await service.get_by_id(document_id=document_id)
 
 @router.put(
-    "/{document_id}",
+    "/trainability/{document_id}",
     status_code=status.HTTP_200_OK,
     response_model=DocumentDTO,
     tags=tags
@@ -100,6 +103,20 @@ async def update_document_trainable(
         _: User = Depends(jwt_validator.get_current_user_required)
 ):
     return await service.update_document_trainable(document_id=document_id, is_trainable=update_document_trainable_request_dto.is_trainable)
+
+@router.put(
+    "/externally-approved/{document_id}",
+    status_code=status.HTTP_200_OK,
+    response_model=DocumentDTO,
+    tags=tags
+)
+async def update_document_externally_approved(
+        document_id: int,
+        update_document_externally_approved_request_dto: UpdateDocumentExternallyApprovedRequestDTO,
+        service: DocumentsServiceInterface = Depends(get_documents_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await service.update_document_externally_approved(document_id=document_id, is_externally_approved=update_document_externally_approved_request_dto.is_externally_approved)
 
 
 @router.delete(

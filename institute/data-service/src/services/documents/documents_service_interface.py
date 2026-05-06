@@ -6,7 +6,7 @@ from schemas.documents import DocumentDTO, TrainingSamplesDTO
 
 class DocumentsServiceInterface(ABC):
     @abstractmethod
-    async def upload_data(self, file_content: bytes) -> DocumentDTO:
+    async def upload_data(self, file_content: bytes, is_externally_approved: bool) -> DocumentDTO:
         raise NotImplementedError
 
     @abstractmethod
@@ -27,6 +27,10 @@ class DocumentsServiceInterface(ABC):
 
     @abstractmethod
     async def update_document_trainable(self, document_id: int, is_trainable: bool) -> DocumentDTO:
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_document_externally_approved(self, document_id: int, is_externally_approved: bool) -> DocumentDTO:
         raise NotImplementedError
 
     @abstractmethod
