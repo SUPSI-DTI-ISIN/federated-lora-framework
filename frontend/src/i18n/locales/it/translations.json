@@ -297,6 +297,13 @@
   "sections": {
     "title": "Sezioni",
     "empty": "Nessuna sezione disponibile per questo documento.",
+    "header": {
+      "description": "Gestisci le sezioni del documento, organizza la struttura dei contenuti, aggiorna le impostazioni di addestramento e controlla l'approvazione esterna."
+    },
+    "list": {
+      "title": "Sezioni del Documento",
+      "subtitle": "{{count}} sezioni disponibili"
+    },
     "error": {
       "title": "Errore nel caricamento del documento",
       "description": "Impossibile trovare il documento con l'ID fornito."
@@ -326,6 +333,24 @@
       "success": "Sezione aggiornata con successo",
       "error": {
         "failed": "Impossibile aggiornare la sezione"
+      }
+    },
+    "settings": {
+      "title": "Impostazioni Documento",
+      "subtitle": "Configura le opzioni di addestrabilità e approvazione",
+
+      "trainable": {
+        "title": "Documento Addestrabile",
+        "description": "Consenti a questo documento di essere utilizzato per l’addestramento federato.",
+        "success": "Addestrabilità aggiornata",
+        "error": "Impossibile aggiornare l’addestrabilità"
+      },
+
+      "externalApproved": {
+        "title": "Approvazione Esterna",
+        "description": "Contrassegna questo documento come approvato e validato esternamente.",
+        "success": "Approvazione esterna aggiornata",
+        "error": "Impossibile aggiornare l’approvazione esterna"
       }
     }
   },

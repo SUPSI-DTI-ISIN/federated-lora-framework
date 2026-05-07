@@ -1,4 +1,5 @@
-import type {LucideIcon} from 'lucide-react';
+import {type LucideIcon} from 'lucide-react';
+import {motion} from "framer-motion";
 
 interface PageHeaderProps {
     icon?: LucideIcon;
@@ -19,28 +20,25 @@ export const PageHeader = ({
                            }: PageHeaderProps) => {
     return (
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-start gap-3">
+            <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-5 mb-8"
+            >
                 {Icon && (
-                    <div className="mt-1 flex-shrink-0">
-                        <Icon
-                            size={32}
-                            className="text-primary"
-                            strokeWidth={2}
-                            aria-hidden="true"
-                        />
+                    <div className="flex h-16 w-16 items-center justify-center bg-info/10 rounded-2xl text-info shadow-inner">
+                        <Icon size={36} />
                     </div>
                 )}
                 <div>
-                    <h1 className="text-3xl font-bold text-base-content">
+                    <h1 className="text-4xl font-black tracking-tight text-base-content leading-none mb-2">
                         {title}
                     </h1>
-                    {subtitle && (
-                        <p className="mt-1 text-base text-base-content/70">
-                            {subtitle}
-                        </p>
-                    )}
+                    <p className="text-lg text-base-content/60 font-medium">
+                        {subtitle}
+                    </p>
                 </div>
-            </div>
+            </motion.div>
 
             {action && (
                 <button

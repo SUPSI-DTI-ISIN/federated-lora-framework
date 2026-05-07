@@ -4,7 +4,6 @@ import {useNavigate} from "react-router-dom";
 import {Home, FileText, MessageSquare, Menu, X, Microchip, LayoutGrid, Network} from "lucide-react";
 import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
 import {ThemeToggle} from "./ThemeToggle.tsx";
-import {InstituteBadge} from "./InstituteBadge.tsx";
 import {useAuthWrapper} from "../../../hooks/auth/useAuthWrapper.ts";
 import {useSelectorRealm} from "../../../hooks/realm/useSelectorRealm.ts";
 import {HeaderBranding} from "./HeaderBranding.tsx";
@@ -51,11 +50,7 @@ export const Header = () => {
             <div className="container mx-auto px-4 py-2">
                 <div className="navbar min-h-16 px-0">
                     <div className="navbar-start">
-                        <HeaderBranding/>
-
-                        {isAuthenticated && realm && (
-                            <InstituteBadge instituteName={realm} className="ml-3 hidden md:inline-flex"/>
-                        )}
+                        <HeaderBranding isAuthenticated={isAuthenticated} realm={realm}/>
                     </div>
 
                     <div className="navbar-center hidden lg:flex">

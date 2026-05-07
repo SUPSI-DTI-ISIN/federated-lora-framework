@@ -300,6 +300,13 @@
   "sections": {
     "title": "Sections",
     "empty": "No sections available for this document.",
+    "header": {
+      "description": "Manage document sections, organize content structure, update training settings, and control external approved."
+    },
+    "list": {
+      "title": "Document Sections",
+      "subtitle": "{{count}} sections available"
+    },
     "error": {
       "title": "Error loading document",
       "description": "Unable to find the document with the provided ID."
@@ -329,6 +336,24 @@
       "success": "Section updated successfully",
       "error": {
         "failed": "Failed to update section"
+      }
+    },
+    "settings": {
+      "title": "Document Settings",
+      "subtitle": "Configure trainability and approval options",
+
+      "trainable": {
+        "title": "Trainable Document",
+        "description": "Allow this document to be used for federated learning training.",
+        "success": "Trainability updated",
+        "error": "Failed to update trainability"
+      },
+
+      "externalApproved": {
+        "title": "External Approval",
+        "description": "Mark this document as externally approved and validated.",
+        "success": "External approval updated",
+        "error": "Failed to update external approval"
       }
     }
   },

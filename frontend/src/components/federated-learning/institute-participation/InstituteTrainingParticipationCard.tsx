@@ -11,11 +11,12 @@ import {LoadingSkeleton} from "../../common/LoadingSkeleton.tsx";
 import {InstitutesTrainingParticipationTable} from "./InstitutesTrainingParticipationTable.tsx";
 import {InstituteTrainingParticipationCardHeader} from "./InstituteTrainingParticipationCardHeader.tsx";
 import {InstitutesTrainingParticipationChart} from "./InstitutesTrainingParticipationChart.tsx";
+import {InstitutesTrainingParticipationPieChart} from "./InstitutesTrainingParticipationPieChart.tsx";
 
 export const InstituteTrainingParticipationCard = () => {
     const {t} = useTranslation();
     const [isOpen, setIsOpen] = useState(false);
-    const [viewMode, setViewMode] = useState<"table" | "chart">("table");
+    const [viewMode, setViewMode] = useState<"table" | "chart" | "pie">("table");
 
     const {
         data: institutesTrainingParticipation,
@@ -67,7 +68,10 @@ export const InstituteTrainingParticipationCard = () => {
                                     >
                                         {viewMode === "table"
                                             ? <InstitutesTrainingParticipationTable institutesTrainingParticipation={displayData}/>
-                                            : <InstitutesTrainingParticipationChart institutesTrainingParticipation={displayData}/>}
+                                            : viewMode === "chart"
+                                                ? <InstitutesTrainingParticipationChart institutesTrainingParticipation={displayData}/>
+                                                : <InstitutesTrainingParticipationPieChart institutesTrainingParticipation={displayData}/>
+                                        }
                                     </motion.div>
                                 </AnimatePresence>
                             )}

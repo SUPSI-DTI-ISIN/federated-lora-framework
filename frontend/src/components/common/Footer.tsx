@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { FaGithub, FaLinkedin, FaInstagram, FaHeart, FaCode } from "react-icons/fa";
 import { motion } from "framer-motion";
-import mimirLogo from '../../assets/mimir-logo.png';
+import petallogo from '../../assets/petal-logo.png';
 
 export const Footer = () => {
     const { t } = useTranslation();
@@ -42,9 +42,9 @@ export const Footer = () => {
                         transition={{ delay: 0.1 }}
                     >
                             <img
-                                src={mimirLogo}
+                                src={petallogo}
                                 alt="Mimir Logo"
-                                className="h-20 w-auto object-contain drop-shadow-xl transition-all group-hover:drop-shadow-2xl"
+                                className="h-25 w-auto object-contain drop-shadow-xl transition-all group-hover:drop-shadow-2xl"
                             />
 
                         <div className="flex flex-col items-center gap-4">
@@ -61,7 +61,7 @@ export const Footer = () => {
                             </div>
 
                             <div className="text-base-content/50 text-sm font-medium tracking-widest uppercase">
-                                &copy; {currentYear} Federated Innosuisse
+                                &copy; {currentYear} PETAL
                             </div>
                         </div>
                     </motion.div>

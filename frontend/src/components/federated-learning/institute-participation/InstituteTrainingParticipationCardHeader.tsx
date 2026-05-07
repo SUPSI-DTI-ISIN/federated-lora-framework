@@ -1,12 +1,12 @@
-import {BarChart2, ChevronDown, ChevronUp, Table, Users} from "lucide-react";
+import {BarChart2, ChevronDown, ChevronUp, Table, Users, PieChart} from "lucide-react";
 import {useTranslation} from "react-i18next";
 import type {Dispatch, SetStateAction} from "react";
 
 interface InstituteTrainingParticipationCardHeaderProps {
     isOpen: boolean;
     setIsOpen: Dispatch<SetStateAction<boolean>>;
-    viewMode: "table" | "chart";
-    setViewMode: (viewMode: "table" | "chart") => void;
+    viewMode: "table" | "chart" | "pie";
+    setViewMode: (viewMode: "table" | "chart" | "pie") => void;
     institutesTrainingParticipationLen: number;
 }
 
@@ -56,6 +56,15 @@ export const InstituteTrainingParticipationCardHeader = ({isOpen, setIsOpen, vie
                             }`}
                         >
                             <BarChart2 size={14}/>
+                        </button>
+
+                        <button
+                            onClick={() => setViewMode("pie")}
+                            className={`join-item btn btn-xs ${
+                                viewMode === "pie" ? "btn-secondary" : "btn-ghost"
+                            }`}
+                        >
+                            <PieChart size={14}/>
                         </button>
                     </div>
                 )}

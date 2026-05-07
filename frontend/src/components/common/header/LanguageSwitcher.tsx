@@ -31,7 +31,7 @@ export const LanguageSwitcher = () => {
         <div ref={switcherRef} className="relative">
             <motion.button
                 onClick={() => setOpen(!open)}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-base-200 transition-all duration-300 group"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full hover:bg-base-200 transition-all duration-300 group cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 aria-label={t('header.language.label')}
@@ -62,7 +62,7 @@ export const LanguageSwitcher = () => {
                             <li key={lang}>
                                 <button
                                     onClick={() => changeLanguage(lang)}
-                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-base-200 transition-all duration-200 ${
+                                    className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-base-200 transition-all duration-200 cursor-pointer ${
                                         lang === currentLang
                                             ? 'bg-primary/10 text-primary font-medium'
                                             : 'text-base-content'

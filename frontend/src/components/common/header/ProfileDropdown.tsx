@@ -50,7 +50,7 @@ export const ProfileDropdown = ({username, onLogout}: ProfileDropdownProps) => {
                                 {username}
                             </div>
                             <button
-                                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-base-200"
+                                className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm hover:bg-base-200 cursor-pointer"
                                 onClick={onLogout}
                             >
                                 <LogOut size={16}/>

@@ -8,6 +8,7 @@ import {useDeleteSection} from "../hooks/institute/data/sections/useDeleteSectio
 import toast from "react-hot-toast";
 import {Trash2} from "lucide-react";
 import {DeleteConfirmModal} from "../components/common/DeleteConfirmModal.tsx";
+import {DocumentSettingsCard} from "../components/sections/DocumentSettingsCard.tsx";
 
 
 export const SectionsPage = () => {
@@ -144,6 +145,8 @@ export const SectionsPage = () => {
                             </div>
                         )}
                     </div>
+
+                    <DocumentSettingsCard document={document} />
 
                     <div className="space-y-3">
                         <SectionsList
