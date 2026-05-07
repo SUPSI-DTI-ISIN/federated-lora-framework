@@ -1,0 +1,6 @@
+from .celery_job_service import CeleryJobService
+from .celery_job_service_interface import CeleryJobServiceInterface
+from config import settings
+
+def get_celery_job_service(flwr_app_base_path: str = settings.flwr_app_base_path, federated_learning_deployment_environment: str = settings.federated_learning_deployment_environment, is_federated_learning_simulation_environment=settings.is_federated_learning_simulation_environment) -> CeleryJobServiceInterface:
+    return CeleryJobService.get_instance(flwr_app_base_path=flwr_app_base_path, federated_learning_deployment_environment=federated_learning_deployment_environment, is_federated_learning_simulation_environment=is_federated_learning_simulation_environment)

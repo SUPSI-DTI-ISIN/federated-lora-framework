@@ -1,0 +1,20 @@
+meta {
+  name: get_federated_data
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:9010/api_mlflow/federated/:model_key
+  body: none
+  auth: inherit
+}
+
+params:path {
+  model_key: llama-2-7b
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

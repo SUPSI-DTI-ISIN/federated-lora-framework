@@ -1,0 +1,16 @@
+meta {
+  name: get_all_documents_trainable
+  type: http
+  seq: 6
+}
+
+get {
+  url: http://localhost:8080/api_data/documents/trainable
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

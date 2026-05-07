@@ -1,0 +1,400 @@
+{
+  "header": {
+    "logoInitials": "IS",
+    "title": "Innosuisse AI Assistant",
+    "nav": {
+      "home": "Home",
+      "documents": "Documenti",
+      "chat": "Chat AI",
+      "adapters": "Adattatori",
+      "realms": "Realms",
+      "federatedLearning": "Lavori FL",
+      "settings": "Impostazioni",
+      "logout": "Esci"
+    },
+    "navLabel": "Navigazione principale",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
+    "language": {
+      "label": "Lingua",
+      "it": "Italiano",
+      "en": "Inglese",
+      "es": "Spagnolo",
+      "de": "Tedesco",
+      "fr": "Francese",
+      "flags": {
+        "it": "IT",
+        "en": "GB",
+        "es": "ES",
+        "de": "DE",
+        "fr": "FR"
+      }
+    },
+    "settings": {
+      "language": "Lingua",
+      "theme": "Tema"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "Il Progetto",
+      "description": "Sistema AI per assistenza nella scrittura e revisione di progetti Innosuisse utilizzando Federated Learning e LoRA."
+    },
+    "links": {
+      "title": "Link Utili",
+      "documentation": "Documentazione",
+      "support": "Supporto",
+      "privacy": "Privacy"
+    },
+    "contact": {
+      "title": "Contatti",
+      "description": "Contattaci per collaborazioni o domande.",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
+    },
+    "copyright": "Innosuisse AI Assistant. Tutti i diritti riservati."
+  },
+  "home": {
+    "welcome": "Bentornato, {{name}}!",
+    "guest": "Ospite",
+    "tagline": "Chat intelligente sui documenti per ricerca e studio",
+    "description": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
+    "hero": {
+      "title": "Intelligenza Documentale Basata su AI",
+      "subtitle": "Carica documenti, scegli adapter e chatta con modelli adattati ai tuoi dati.",
+      "cta": {
+        "documents": "Gestisci Documenti",
+        "chat": "Inizia a Chattare"
+      }
+    },
+    "features": {
+      "title": "Funzionalità Potenti",
+      "subtitle": "Tutto il necessario per esperimenti rapidi e Q&A affidabili.",
+      "upload": {
+        "title": "Carica Documenti",
+        "description": "Importa PDF, testo e risorse da usare come contesto."
+      },
+      "finetune": {
+        "title": "Affina Modelli",
+        "description": "Crea adapter personalizzati (LoRA) per specializzare i modelli."
+      },
+      "chat": {
+        "title": "Chat Interattiva",
+        "description": "Conversazioni iterative con il modello."
+      },
+      "federated": {
+        "title": "Privato e Sicuro",
+        "description": "Esegui e memorizza modelli localmente per privacy e conformità."
+      },
+      "collaborative": {
+        "title": "Collaborazione di Team",
+        "description": "Condividi upload e adapter con il team."
+      },
+      "improve": {
+        "title": "Apprendimento Continuo",
+        "description": "Raccogli feedback e migliora le prestazioni degli adapter nel tempo."
+      }
+    },
+    "howItWorks": {
+      "title": "Come Funziona",
+      "user": {
+        "step1": {
+          "title": "Carica Documenti",
+          "description": "Carica documenti PDF per il fine-tuning con federated learning."
+        },
+        "step2": {
+          "title": "Seleziona Adapter",
+          "description": "Scegli l'adapter che vuoi utilizzare per il tuo task."
+        },
+        "step3": {
+          "title": "Inferenza Modello",
+          "description": "Chatta con il modello utilizzando l'adapter selezionato."
+        }
+      },
+      "admin": {
+        "step1": {
+          "title": "Avvia Federated Learning",
+          "description": "Inizia nuovi job di fine-tuning con federated learning tramite UI."
+        },
+        "step2": {
+          "title": "Monitora Stato Job",
+          "description": "Controlla lo stato e il progresso dei job di training in esecuzione."
+        },
+        "step3": {
+          "title": "Gestisci Adapter Globali",
+          "description": "Supervisiona e gestisci tutti gli adapter globali del sistema."
+        }
+      }
+    }
+  },
+  "documents": {
+    "title": "Documenti",
+    "subtitle": "Tutti i documenti caricati sono elencati qui.",
+    "uploadButton": "Carica Documento",
+    "empty": "Nessun documento. Carica il tuo primo documento per iniziare.",
+    "error": "Impossibile caricare i documenti. Riprova più tardi.",
+    "search": {
+      "placeholder": "Cerca documenti..."
+    },
+    "list": {
+      "error": {
+        "title": "Impossibile caricare i documenti",
+        "description": "Si è verificato un errore durante il recupero dei documenti. Riprova più tardi."
+      },
+      "empty": {
+        "title": "Nessun documento",
+        "noDocuments": "Non hai ancora caricato documenti.",
+        "noResults": "Nessun documento corrisponde alla ricerca."
+      },
+      "deleteConfirm": "Sei sicuro di voler eliminare questo documento? Questa azione non può essere annullata.",
+      "deleteSuccess": "Documento eliminato con successo.",
+      "deleteError": "Impossibile eliminare il documento.",
+      "trainabilityUpdateSuccess": "Addestrabilità aggiornata con successo.",
+      "trainabilityUpdateError": "Impossibile aggiornare l'addestrabilità.",
+      "trainable": "Addestrabile",
+      "notTrainable": "Non addestrabile",
+      "externallyApproved": "Approvato esternamente",
+      "notExternallyApproved": "Non approvato",
+      "externalApprovedEnabled": "Contrassegnato come approvato esternamente",
+      "externalApprovedDisabled": "Contrassegnato come non approvato esternamente",
+      "externalApprovedUpdateError": "Errore durante l'aggiornamento dell'approvazione esterna",
+      "actions": {
+        "delete": "Elimina",
+        "enableTraining": "Abilita per l'addestramento",
+        "disableTraining": "Disabilita dall'addestramento",
+        "markExternallyApproved": "Segna come approvato esternamente",
+        "markNotExternallyApproved": "Rimuovi approvazione esterna"
+      }
+    },
+    "upload": {
+      "title": "Carica Documento",
+      "dragDrop": "Trascina qui un PDF",
+      "or": "oppure",
+      "browse": "Sfoglia file",
+      "info": "Sono accettati solo file PDF. Il file verrà processato per estrarre il testo da usare nella chat.",
+      "confirm": "Carica",
+      "uploading": "Caricamento...",
+      "success": "Documento caricato con successo",
+      "error": {
+        "invalidType": "Tipo di file non valido. Accettati solo PDF.",
+        "failed": "Caricamento fallito. Riprova."
+      },
+      "externallyApproved": "Approvazione esterna",
+      "externallyApprovedHint": "Indica se il documento è già stato approvato fuori dal sistema",
+      "externallyApprovedYes": "Già approvato esternamente",
+      "externallyApprovedNo": "Da approvare nel sistema"
+    }
+  },
+  "adapters": {
+    "title": "Adapters",
+    "subtitle": "Gestisci gli adapter dei modelli (LoRA) e scaricali localmente.",
+    "empty": "Nessun adapter disponibile. Ricontrolla più tardi o contatta l'amministratore.",
+    "emptyDescription": "Gli adapter appariranno qui una volta disponibili.",
+    "local": "Locale",
+    "installed": "Installato",
+    "download": "Scarica",
+    "filter": {
+      "localOnly": "Mostra solo locali",
+      "searchPlaceholder": "Cerca adapter..."
+    },
+    "toast": {
+      "downloading": "Avvio download...",
+      "downloaded": "Adapter scaricato con successo",
+      "deleted": "Adapter eliminato con successo",
+      "error": "Impossibile scaricare l'adapter"
+    },
+    "errorFetch": "Impossibile recuperare gli adapter. Riprova più tardi.",
+    "notLocal": "Non locale",
+    "card": {
+      "title": "Adapter v{{version}}"
+    },
+    "list": {
+      "empty": "Nessun adapter trovato"
+    },
+    "admin": {
+      "fl": {
+        "start": "Avvia Federated Learning",
+        "startSuccess": "Federated learning avviato con successo",
+        "startError": "Errore nell'avvio del federated learning",
+        "trackJobs": "Traccia job in background"
+      }
+    }
+  },
+  "chat": {
+    "title": "Chat",
+    "subtitle": "Inizia una conversazione con un modello. Scegli un adapter o usa il modello base.",
+    "empty": "Ancora nessuna conversazione. Inizia una nuova chat per cominciare.",
+    "startPromptPlaceholder": "Scrivi una domanda o incolla un prompt...",
+    "sendButton": "Invia",
+    "sending": "Invio...",
+    "sampleReply": "Questa è una risposta di esempio. Sostituiscila con l'output reale.",
+    "emptyHint": "Avvia la chat inviando un messaggio.",
+    "errorInference": "Errore nell'esecuzione del modello. Riprova.",
+    "errorCreate": "Errore nella creazione della chat",
+    "errorDelete": "Errore nell'eliminazione della chat",
+    "deleteSuccess": "Chat eliminata con successo",
+    "createSuccess": "Chat creata con successo",
+    "disclaimer": "L'AI può commettere errori. Verifica le informazioni importanti.",
+    "modal": {
+      "title": "Nuova Chat",
+      "nameLabel": "Nome Chat",
+      "namePlaceholder": "Inserisci nome chat...",
+      "create": "Crea Chat"
+    },
+    "adapter": {
+      "selectLabel": "Adapter",
+      "chooseLabel": "Scegli adapter:",
+      "baseModelLabel": "Modello base (nessun adapter)",
+      "baseModel": "Modello Base",
+      "version": "Adapter v{{version}}",
+      "local": "locale"
+    },
+    "sidebar": {
+      "title": "Conversazioni",
+      "new": "Nuova",
+      "empty": "Ancora nessuna conversazione.",
+      "newChat": "Nuova Chat",
+      "creating": "Creazione...",
+      "newChatPrompt": "Titolo chat",
+      "confirmDelete": "Eliminare questa chat?",
+      "delete": "Elimina",
+      "collapse": "Comprimi barra laterale",
+      "expand": "Espandi barra laterale",
+      "noChats": "Nessuna chat ancora. Crea la prima!"
+    }
+  },
+  "common": {
+    "loading": "Caricamento...",
+    "error": "Errore",
+    "retry": "Riprova",
+    "cancel": "Annulla",
+    "save": "Salva",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "view": "Visualizza",
+    "upload": "Carica",
+    "clear": "Pulisci",
+    "close": "Chiudi",
+    "start": "Avvia"
+  },
+  "modal": {
+    "delete": {
+      "title": "Conferma Eliminazione",
+      "message": "Sei sicuro di voler eliminare questo elemento? Questa azione non può essere annullata.",
+      "messageNamed": "Sei sicuro di voler eliminare \"{{itemName}}\"? Questa azione non può essere annullata.",
+      "confirm": "Elimina",
+      "cancel": "Annulla"
+    }
+  },
+  "theme": {
+    "light": "Passa alla modalità chiara",
+    "dark": "Passa alla modalità scura"
+  },
+  "app": {
+    "version": "v1.0.0"
+  },
+  "sections": {
+    "title": "Sezioni",
+    "empty": "Nessuna sezione disponibile per questo documento.",
+    "header": {
+      "description": "Gestisci le sezioni del documento, organizza la struttura dei contenuti, aggiorna le impostazioni di addestramento e controlla l'approvazione esterna."
+    },
+    "list": {
+      "title": "Sezioni del Documento",
+      "subtitle": "{{count}} sezioni disponibili"
+    },
+    "error": {
+      "title": "Errore nel caricamento del documento",
+      "description": "Impossibile trovare il documento con l'ID fornito."
+    },
+    "selection": {
+      "selectAll": "Seleziona Tutto",
+      "deselectAll": "Deseleziona Tutto",
+      "deleteSelected": "Elimina {{count}} selezionate",
+      "deleteConfirm": "{{count}} sezioni"
+    },
+    "delete": {
+      "action": "Elimina sezione",
+      "confirm": "Sei sicuro di voler eliminare questa sezione?",
+      "success": "Sezione eliminata con successo",
+      "bulkSuccess": "{{count}} sezioni eliminate con successo",
+      "bulkError": "Impossibile eliminare le sezioni",
+      "bulkPartial": "{{success}} sezioni eliminate, {{failed}} fallite",
+      "error": {
+        "failed": "Impossibile eliminare la sezione"
+      }
+    },
+    "update": {
+      "save": "Salva",
+      "edit": "Modifica",
+      "cancel": "Annulla",
+      "editLabel": "Modifica contenuto sezione",
+      "success": "Sezione aggiornata con successo",
+      "error": {
+        "failed": "Impossibile aggiornare la sezione"
+      }
+    },
+    "settings": {
+      "title": "Impostazioni Documento",
+      "subtitle": "Configura le opzioni di addestrabilità e approvazione",
+
+      "trainable": {
+        "title": "Documento Addestrabile",
+        "description": "Consenti a questo documento di essere utilizzato per l’addestramento federato.",
+        "success": "Addestrabilità aggiornata",
+        "error": "Impossibile aggiornare l’addestrabilità"
+      },
+
+      "externalApproved": {
+        "title": "Approvazione Esterna",
+        "description": "Contrassegna questo documento come approvato e validato esternamente.",
+        "success": "Approvazione esterna aggiornata",
+        "error": "Impossibile aggiornare l’approvazione esterna"
+      }
+    }
+  },
+  "realms": {
+    "title": "Realms",
+    "search": {
+      "placeholder": "Cerca istituto per nome..."
+    },
+    "delete": {
+      "success": "Realm eliminato con successo",
+      "error": "Impossibile eliminare il realm"
+    }
+  },
+  "federatedLearning": {
+    "title": "Lavori di Federated Learning",
+    "subtitle": "Monitora e gestisci i lavori di fine-tuning federato",
+    "errorFetch": "Errore nel caricamento dei lavori di federated learning",
+    "search": {
+      "placeholder": "Cerca per ID o Celery Task ID..."
+    },
+    "empty": {
+      "title": "Nessun Lavoro",
+      "description": "Avvia un nuovo lavoro di federated learning per vederlo qui",
+      "noResults": "Nessun Risultato Trovato",
+      "noResultsDescription": "Prova a modificare la tua ricerca"
+    },
+    "jobs": {
+      "title": "Lavori di Federated Learning"
+    },
+    "participation": {
+      "title": "Partecipazione degli Istituti all'Addestramento",
+      "samples": "Campioni addestrabili",
+      "unreachable": "Non raggiungibile",
+      "reachable": "Raggiungibile",
+      "unreachableNote": "Alcuni istituti non sono raggiungibili — il conteggio dei campioni non è disponibile.",
+      "error": "Errore nel caricamento dei dati di partecipazione.",
+      "empty": "Nessun dato di partecipazione disponibile.",
+      "viewTable": "Vista tabella",
+      "viewChart": "Vista grafico",
+      "col": {
+        "name": "Istituto",
+        "samples": "Campioni Addestrabili",
+        "status": "Stato"
+      }
+    }
+  }
+}

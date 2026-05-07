@@ -1,0 +1,403 @@
+{
+  "header": {
+    "logoInitials": "IS",
+    "title": "Innosuisse AI Assistant",
+    "nav": {
+      "home": "Home",
+      "documents": "Documents",
+      "chat": "AI Chat",
+      "adapters": "Adapters",
+      "realms": "Realms",
+      "federatedLearning": "FL Jobs",
+      "settings": "Settings",
+      "logout": "Logout"
+    },
+    "navLabel": "Main navigation",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "language": {
+      "label": "Language",
+      "it": "Italian",
+      "en": "English",
+      "es": "Spanish",
+      "de": "German",
+      "fr": "French",
+      "flags": {
+        "it": "IT",
+        "en": "GB",
+        "es": "ES",
+        "de": "DE",
+        "fr": "FR"
+      }
+    },
+    "settings": {
+      "language": "Language",
+      "theme": "Theme"
+    }
+  },
+  "footer": {
+    "about": {
+      "title": "The Project",
+      "description": "AI system for assisting in writing and reviewing Innosuisse projects using Federated Learning and LoRA."
+    },
+    "links": {
+      "title": "Useful Links",
+      "documentation": "Documentation",
+      "support": "Support",
+      "privacy": "Privacy"
+    },
+    "contact": {
+      "title": "Contacts",
+      "description": "Reach out for collaboration or questions.",
+      "github": "GitHub",
+      "linkedin": "LinkedIn",
+      "email": "Email"
+    },
+    "copyright": "Innosuisse AI Assistant. All rights reserved.",
+    "role": "Developer",
+    "craftedWith": "Made with",
+    "and": "and"
+  },
+  "home": {
+    "welcome": "Welcome back, {{name}}!",
+    "guest": "Guest",
+    "tagline": "Smart Document Chat for Research & Study",
+    "description": "Upload documents, choose adapters and chat with models fine-tuned to your data.",
+    "hero": {
+      "title": "AI-Powered Document Intelligence",
+      "subtitle": "Upload documents, choose adapters and chat with models fine-tuned to your data.",
+      "cta": {
+        "documents": "Manage Documents",
+        "chat": "Start Chatting"
+      }
+    },
+    "features": {
+      "title": "Powerful Features",
+      "subtitle": "Everything you need to run quick experiments and reliable chat-based Q&A.",
+      "upload": {
+        "title": "Upload Documents",
+        "description": "Import PDFs, text and other resources to use as context."
+      },
+      "finetune": {
+        "title": "Fine-tune Models",
+        "description": "Create custom adapters (LoRA) to specialize models on your data."
+      },
+      "chat": {
+        "title": "Interactive Chat",
+        "description": "Talk to the model and iterate on prompts interactively."
+      },
+      "federated": {
+        "title": "Private & Secure",
+        "description": "Run and store models locally for privacy and compliance."
+      },
+      "collaborative": {
+        "title": "Team Collaboration",
+        "description": "Share uploads and adapters with team members."
+      },
+      "improve": {
+        "title": "Continuous Learning",
+        "description": "Collect feedback and improve adapter performance over time."
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "user": {
+        "step1": {
+          "title": "Upload Documents",
+          "description": "Upload PDF documents for federated learning fine-tuning."
+        },
+        "step2": {
+          "title": "Select Adapter",
+          "description": "Choose the adapter you want to use for your task."
+        },
+        "step3": {
+          "title": "Inference Model",
+          "description": "Chat with the model using your selected adapter."
+        }
+      },
+      "admin": {
+        "step1": {
+          "title": "Start Federated Learning",
+          "description": "Initiate new federated learning fine-tuning jobs via the UI."
+        },
+        "step2": {
+          "title": "Monitor Job Status",
+          "description": "Check the status and progress of running training jobs."
+        },
+        "step3": {
+          "title": "Manage Global Adapters",
+          "description": "Oversee and manage all global adapters across the system."
+        }
+      }
+    }
+  },
+  "documents": {
+    "title": "Documents",
+    "subtitle": "All uploaded documents are listed here.",
+    "uploadButton": "Upload Document",
+    "empty": "No documents yet. Upload your first document to get started.",
+    "error": "Unable to load documents. Please try again later.",
+    "search": {
+      "placeholder": "Search documents..."
+    },
+    "list": {
+      "error": {
+        "title": "Unable to load documents",
+        "description": "An error occurred while fetching documents. Please try again later."
+      },
+      "empty": {
+        "title": "No documents yet",
+        "noDocuments": "You haven't uploaded any documents yet.",
+        "noResults": "No documents match your search."
+      },
+      "deleteConfirm": "Are you sure you want to delete this document? This action cannot be undone.",
+      "deleteSuccess": "Document deleted successfully.",
+      "deleteError": "Could not delete the document.",
+      "trainabilityUpdateSuccess": "Trainability updated successfully.",
+      "trainabilityUpdateError": "Could not update trainability.",
+      "trainable": "Trainable",
+      "notTrainable": "Not trainable",
+      "externallyApproved": "Externally approved",
+      "notExternallyApproved": "Not approved",
+      "externalApprovedEnabled": "Marked as externally approved",
+      "externalApprovedDisabled": "Marked as not externally approved",
+      "externalApprovedUpdateError": "Failed to update external approval",
+      "actions": {
+        "delete": "Delete",
+        "enableTraining": "Enable for training",
+        "disableTraining": "Disable from training",
+        "markExternallyApproved": "Mark as externally approved",
+        "markNotExternallyApproved": "Remove external approval"
+      }
+    },
+    "upload": {
+      "title": "Upload Document",
+      "dragDrop": "Drag & drop a PDF here",
+      "or": "or",
+      "browse": "Browse files",
+      "info": "Only PDF files are accepted. The file will be processed to extract text for the chat context.",
+      "confirm": "Upload",
+      "uploading": "Uploading...",
+      "success": "Document uploaded successfully",
+      "error": {
+        "invalidType": "Invalid file type. Only PDFs are accepted.",
+        "failed": "Upload failed. Please try again."
+      },
+      "externallyApproved": "Externally approved",
+      "externallyApprovedHint": "Mark if this document was approved outside the system",
+      "externallyApprovedYes": "Approved externally",
+      "externallyApprovedNo": "Not externally approved"
+    }
+  },
+  "chat": {
+    "title": "Chat",
+    "subtitle": "Start a conversation with a model. Choose an adapter or use the base model.",
+    "empty": "No conversations yet. Start a new chat to begin.",
+    "startPromptPlaceholder": "Type a question or paste a prompt...",
+    "sendButton": "Send",
+    "sending": "Sending...",
+    "sampleReply": "This is a sample assistant reply. Replace with real inference output.",
+    "emptyHint": "Start the chat by sending a message.",
+    "errorInference": "An error occurred while running the model. Try again.",
+    "errorCreate": "Error creating chat",
+    "errorDelete": "Error deleting chat",
+    "deleteSuccess": "Chat deleted successfully",
+    "createSuccess": "Chat created successfully",
+    "disclaimer": "AI can make mistakes. Check important info.",
+    "modal": {
+      "title": "New Chat",
+      "nameLabel": "Chat Name",
+      "namePlaceholder": "Enter chat name...",
+      "create": "Create Chat"
+    },
+    "adapter": {
+      "selectLabel": "Adapter",
+      "chooseLabel": "Choose adapter:",
+      "baseModelLabel": "Base model (no adapter)",
+      "baseModel": "Base Model",
+      "version": "Adapter v{{version}}",
+      "local": "local"
+    },
+    "sidebar": {
+      "title": "Conversations",
+      "new": "New",
+      "empty": "No conversations yet.",
+      "newChat": "New Chat",
+      "creating": "Creating...",
+      "newChatPrompt": "Chat title",
+      "confirmDelete": "Delete this chat?",
+      "delete": "Delete",
+      "collapse": "Collapse sidebar",
+      "expand": "Expand sidebar",
+      "noChats": "No chats yet. Create your first one!"
+    }
+  },
+  "adapters": {
+    "title": "Adapters",
+    "subtitle": "Manage model adapters (LoRA) and download them locally.",
+    "empty": "No adapters available. Check back later or contact your administrator.",
+    "emptyDescription": "Adapters will appear here once they are available.",
+    "local": "Local",
+    "installed": "Installed",
+    "download": "Download",
+    "errorFetch": "Unable to fetch adapters. Try again later.",
+    "notLocal": "Remote",
+    "filter": {
+      "localOnly": "Show only local",
+      "searchPlaceholder": "Search adapters..."
+    },
+    "toast": {
+      "downloading": "Starting download...",
+      "downloaded": "Adapter downloaded successfully",
+      "deleted": "Adapter deleted successfully",
+      "error": "Failed to download adapter"
+    },
+    "card": {
+      "title": "Adapter v{{version}}"
+    },
+    "list": {
+      "empty": "No adapters found"
+    },
+    "admin": {
+      "fl": {
+        "start": "Start Federated Learning",
+        "startSuccess": "Federated learning started successfully",
+        "startError": "Error starting federated learning",
+        "trackJobs": "Track background jobs"
+      }
+    }
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "upload": "Upload",
+    "clear": "Clear",
+    "close": "Close",
+    "start": "Start"
+  },
+  "modal": {
+    "delete": {
+      "title": "Confirm Deletion",
+      "message": "Are you sure you want to delete this item? This action cannot be undone.",
+      "messageNamed": "Are you sure you want to delete \"{{itemName}}\"? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    }
+  },
+  "theme": {
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode"
+  },
+  "app": {
+    "version": "v1.0.0"
+  },
+  "sections": {
+    "title": "Sections",
+    "empty": "No sections available for this document.",
+    "header": {
+      "description": "Manage document sections, organize content structure, update training settings, and control external approved."
+    },
+    "list": {
+      "title": "Document Sections",
+      "subtitle": "{{count}} sections available"
+    },
+    "error": {
+      "title": "Error loading document",
+      "description": "Unable to find the document with the provided ID."
+    },
+    "selection": {
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "deleteSelected": "Delete {{count}} selected",
+      "deleteConfirm": "{{count}} sections"
+    },
+    "delete": {
+      "action": "Delete section",
+      "confirm": "Are you sure you want to delete this section?",
+      "success": "Section deleted successfully",
+      "bulkSuccess": "{{count}} sections deleted successfully",
+      "bulkError": "Failed to delete sections",
+      "bulkPartial": "{{success}} sections deleted, {{failed}} failed",
+      "error": {
+        "failed": "Failed to delete section"
+      }
+    },
+    "update": {
+      "save": "Save",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "editLabel": "Edit section content",
+      "success": "Section updated successfully",
+      "error": {
+        "failed": "Failed to update section"
+      }
+    },
+    "settings": {
+      "title": "Document Settings",
+      "subtitle": "Configure trainability and approval options",
+
+      "trainable": {
+        "title": "Trainable Document",
+        "description": "Allow this document to be used for federated learning training.",
+        "success": "Trainability updated",
+        "error": "Failed to update trainability"
+      },
+
+      "externalApproved": {
+        "title": "External Approval",
+        "description": "Mark this document as externally approved and validated.",
+        "success": "External approval updated",
+        "error": "Failed to update external approval"
+      }
+    }
+  },
+  "realms": {
+    "title": "Realms",
+    "search": {
+      "placeholder": "Search institute by name..."
+    },
+    "delete": {
+      "success": "Realm deleted successfully",
+      "error": "Failed to delete realm"
+    }
+  },
+  "federatedLearning": {
+    "title": "Federated Learning Jobs",
+    "subtitle": "Monitor and manage federated learning fine-tuning jobs",
+    "errorFetch": "Error loading federated learning jobs",
+    "search": {
+      "placeholder": "Search by ID or Celery Task ID..."
+    },
+    "empty": {
+      "title": "No Jobs Yet",
+      "description": "Start a new federated learning job to see it here",
+      "noResults": "No Results Found",
+      "noResultsDescription": "Try adjusting your search query"
+    },
+    "jobs": {
+      "title": "Federated Learning Jobs"
+    },
+    "participation": {
+      "title": "Institute Training Participation",
+      "samples": "Trainable samples",
+      "unreachable": "Unreachable",
+      "reachable": "Reachable",
+      "unreachableNote": "Some institutes are unreachable — their sample count could not be retrieved.",
+      "error": "Error loading institute participation data.",
+      "empty": "No institute participation data available.",
+      "viewTable": "Table view",
+      "viewChart": "Chart view",
+      "col": {
+        "name": "Institute",
+        "samples": "Trainable Samples",
+        "status": "Status"
+      }
+    }
+  }
+}

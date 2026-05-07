@@ -1,0 +1,69 @@
+from typing import List
+
+from fastapi import APIRouter, status, Depends
+from shared_auth_library.entities import User
+
+from auth import jwt_validator
+from entities import MessageRole
+from schemas.chat import ConversationDTO
+
+from schemas.message import MessageDTO, InferenceRequestDTO, MessageCreationRequestDTO
+from services.chat import ChatServiceInterface, get_chat_service
+from services.inference import InferenceServiceInterface, get_inference_service
+from services.message import MessageServiceInterface, get_message_service
+
+router = APIRouter(prefix="/chats/{chat_id}/messages")
+
+tags = ["messages"]
+
+@router.post(
+    "",
+    response_model=MessageDTO,
+    status_code=status.HTTP_201_CREATED,
+    tags=tags
+)
+async def send_message(
+        chat_id: int,
+        inference_request_dto: InferenceRequestDTO,
+        message_service: MessageServiceInterface = Depends(get_message_service),
+        inference_service: InferenceServiceInterface = Depends(get_inference_service),
+        chat_service: ChatServiceInterface = Depends(get_chat_service),
+        user: User = Depends(jwt_validator.get_current_user_required)
+):
+    user_message = MessageCreationRequestDTO(
+        chat_id=chat_id,
+        role=MessageRole.USER,
+        content=inference_request_dto.prompt,
+        model_key=inference_request_dto.model_key,
+        adapter_version=inference_request_dto.adapter_version
+    )
+
+    user_message_created = await message_service.create_new_message(message_creation_request_dto=user_message)
+
+    chat_messages = await message_service.get_all_by_chat(chat_id=chat_id)
+
+    conversation_history = [
+        ConversationDTO(role=message.role, content=message.content)
+        for message in chat_messages[:-1]
+    ]
+
+    is_doing_inference = await inference_service.inference_model(user_id=user.id, chat_id=chat_id, user_message=user_message_created, conversation_history=conversation_history)
+
+    await chat_service.update_chat_inference_state(chat_id=chat_id, is_doing_inference=is_doing_inference)
+
+    await chat_service.update_chat_modification_date(chat_id=chat_id)
+
+    return user_message_created
+
+@router.get(
+    "",
+    response_model=List[MessageDTO],
+    status_code=status.HTTP_200_OK,
+    tags=tags
+)
+async def get_messages(
+        chat_id: int,
+        message_service: MessageServiceInterface = Depends(get_message_service),
+        _: User = Depends(jwt_validator.get_current_user_required)
+):
+    return await message_service.get_all_by_chat(chat_id=chat_id)

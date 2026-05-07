@@ -1,0 +1,20 @@
+meta {
+  name: delete_document
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:8080/api_data/documents/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 103.518 IP-ICT
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

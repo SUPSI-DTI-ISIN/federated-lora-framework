@@ -1,0 +1,8 @@
+from fastapi import Depends
+
+from .adapter_registry_service_interface import AdapterRegistryServiceInterface
+from .adapter_registry_service import AdapterRegistryService
+from clients.mlflow import MlFlowServiceClientInterface, get_mlflow_service_client
+
+def get_adapter_registry_service(mlflow_service_client: MlFlowServiceClientInterface = Depends(get_mlflow_service_client)) -> AdapterRegistryServiceInterface:
+    return AdapterRegistryService.get_instance(mlflow_service_client=mlflow_service_client)

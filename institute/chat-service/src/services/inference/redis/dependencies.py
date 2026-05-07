@@ -1,0 +1,8 @@
+import redis.asyncio
+
+from .inference_result_redis_event_consumer import InferenceResultRedisEventConsumer
+from services.redis import RedisEventConsumerServiceInterface
+from clients.redis import build_redis_client_async
+
+def get_inference_result_redis_event_consumer(redis_client_async: redis.asyncio.Redis = build_redis_client_async()) -> RedisEventConsumerServiceInterface:
+    return InferenceResultRedisEventConsumer.get_instance(redis_client_async=redis_client_async)

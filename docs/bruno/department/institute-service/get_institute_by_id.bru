@@ -1,0 +1,20 @@
+meta {
+  name: get_institute_by_id
+  type: http
+  seq: 3
+}
+
+get {
+  url: http://localhost:9020/api_institute/institutes/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 1
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

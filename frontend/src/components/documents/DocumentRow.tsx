@@ -1,0 +1,195 @@
+import { useState } from "react";
+import type { DocumentDTO } from "@isin/data-service-client";
+import { motion } from "framer-motion";
+import {FileText, Trash2, Eye, BrainCircuit, ShieldCheck} from "lucide-react";
+import { useDeleteDocument } from "../../hooks/institute/data/documents/useDeleteDocument.ts";
+import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { DeleteConfirmModal } from "../common/DeleteConfirmModal";
+import {useUpdateDocumentTrainability} from "../../hooks/institute/data/documents/useUpdateDocumentTrainability.ts";
+import {
+    useUpdateDocumentExternalApproved
+} from "../../hooks/institute/data/documents/useUpdateDocumentExternalApproved.ts";
+
+interface DocumentRowProps {
+    document: DocumentDTO;
+    index: number;
+}
+
+export const DocumentRow = ({ document, index }: DocumentRowProps) => {
+    const { t } = useTranslation();
+    const { mutateAsync: deleteDocument } = useDeleteDocument();
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+    const {mutateAsync: updateDocumentTrainability} = useUpdateDocumentTrainability();
+    const {mutateAsync: updateDocumentExternalApproved} = useUpdateDocumentExternalApproved();
+    const [isUpdating, setIsUpdating] = useState(false);
+    const navigate = useNavigate();
+
+    const handleDelete = async () => {
+        setShowDeleteModal(false);
+        setIsDeleting(true);
+        try {
+            await deleteDocument(document.id);
+            toast.success(t("documents.list.deleteSuccess"));
+            navigate("/documents");
+        } catch (e) {
+            console.error(e);
+            toast.error(t("documents.list.deleteError"));
+            setIsDeleting(false);
+        }
+    };
+
+    const handleNavigateToSections = () => {
+        navigate(`/documents/${document.id}/sections`);
+    };
+
+    const handleToggleTrainability = async () => {
+        setIsUpdating(true);
+        try {
+            await updateDocumentTrainability({ documentId: document.id, isTrainable: !document.is_trainable });
+            toast.success(t("documents.list.trainabilityUpdateSuccess"));
+        } catch (e) {
+            console.error(e);
+            toast.error(t("documents.list.trainabilityUpdateError"));
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    const handleToggleExternalApproved = async () => {
+        setIsUpdating(true);
+        try {
+            await updateDocumentExternalApproved({
+                documentId: document.id,
+                isExternallyApproved: !document.is_externally_approved
+            });
+
+            toast.success(
+                document.is_externally_approved
+                    ? t("documents.list.externalApprovedDisabled")
+                    : t("documents.list.externalApprovedEnabled")
+            );
+        } catch (e) {
+            console.error(e);
+            toast.error(t("documents.list.externalApprovedUpdateError"));
+        } finally {
+            setIsUpdating(false);
+        }
+    };
+
+    return (
+        <>
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ delay: index * 0.05 }}
+                className="group flex items-start gap-4 bg-base-100 hover:bg-base-200/50 p-6 rounded-2xl border border-base-content/5 hover:border-primary/20 transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-transform group-hover:scale-110">
+                    <FileText size={24} />
+                </div>
+
+                <div className="flex-1 min-w-0">
+                    <h3 className="text-base font-bold text-base-content group-hover:text-primary transition-colors break-words">
+                        {document.title}
+                    </h3>
+                    <div className="flex items-center gap-3 mt-2">
+                        <span className="text-xs font-mono text-base-content/40 bg-base-200 px-2 py-1 rounded">
+                            ID: {document.number}
+                        </span>
+                        <span
+                            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded ${
+                                document.is_trainable
+                                    ? "bg-success/10 text-success"
+                                    : "bg-base-content/5 text-base-content/40"
+                            }`}
+                        >
+                            <BrainCircuit size={12} />
+                            {document.is_trainable ? t("documents.list.trainable") : t("documents.list.notTrainable")}
+                        </span>
+                        <span
+                            className={`flex items-center gap-1 text-xs font-medium px-2 py-1 rounded ${
+                                document.is_externally_approved
+                                    ? "bg-info/10 text-info"
+                                    : "bg-base-content/5 text-base-content/40"
+                            }`}
+                        >
+        <ShieldCheck size={12} />
+                            {document.is_externally_approved
+                                ? t("documents.list.externallyApproved")
+                                : t("documents.list.notExternallyApproved")}
+    </span>
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100 shrink-0">
+                    <button
+                        onClick={handleToggleExternalApproved}
+                        disabled={isDeleting || isUpdating}
+                        className={`btn btn-circle btn-sm btn-ghost ${
+                            document.is_externally_approved
+                                ? "text-info hover:bg-info/10"
+                                : "text-base-content/40 hover:bg-base-content/10"
+                        }`}
+                        title={
+                            document.is_externally_approved
+                                ? t("documents.list.actions.markNotExternallyApproved")
+                                : t("documents.list.actions.markExternallyApproved")
+                        }
+                        aria-label={
+                            document.is_externally_approved
+                                ? t("documents.list.actions.markNotExternallyApproved")
+                                : t("documents.list.actions.markExternallyApproved")
+                        }
+                    >
+                        {isUpdating ? (
+                            <span className="loading loading-spinner loading-xs" />
+                        ) : (
+                            <ShieldCheck size={18} />
+                        )}
+                    </button>
+                    <button
+                        onClick={handleToggleTrainability}
+                        disabled={isDeleting || isUpdating}
+                        className={`btn btn-circle btn-sm btn-ghost ${document.is_trainable ? "text-success hover:bg-success/10" : "text-base-content/40 hover:bg-base-content/10"}`}
+                        title={document.is_trainable ? t("documents.list.actions.disableTraining") : t("documents.list.actions.enableTraining")}
+                        aria-label={document.is_trainable ? t("documents.list.actions.disableTraining") : t("documents.list.actions.enableTraining")}
+                    >
+                        {isUpdating ? <span className="loading loading-spinner loading-xs" /> : <BrainCircuit size={18} />}
+                    </button>
+
+                    <button
+                        onClick={handleNavigateToSections}
+                        disabled={isDeleting}
+                        className="btn btn-circle btn-sm btn-ghost text-primary hover:bg-primary/10"
+                        title={t("common.view")}
+                        aria-label={t("common.view")}
+                    >
+                        <Eye size={18} />
+                    </button>
+
+                    <button
+                        onClick={() => setShowDeleteModal(true)}
+                        disabled={isDeleting}
+                        className="btn btn-circle btn-sm btn-ghost text-error hover:bg-error/10"
+                        title={t("documents.list.actions.delete")}
+                        aria-label={t("documents.list.actions.delete")}
+                    >
+                        {isDeleting ? <span className="loading loading-spinner loading-xs" /> : <Trash2 size={18} />}
+                    </button>
+                </div>
+            </motion.div>
+
+            <DeleteConfirmModal
+                isOpen={showDeleteModal}
+                onConfirm={handleDelete}
+                onCancel={() => setShowDeleteModal(false)}
+                itemName={document.title}
+            />
+        </>
+    );
+};

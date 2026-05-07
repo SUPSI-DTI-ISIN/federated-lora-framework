@@ -1,0 +1,99 @@
+[project]
+name = "federated-learning-service"
+version = "0.1.0"
+description = "Federated Learning service which contains client app and server app to orchestrate FL fine tuning"
+requires-python = ">=3.12.12"
+dependencies = [
+    "bitsandbytes>=0.49.1",
+    "datasets>=4.4.2",
+    "flwr[simulation]==1.25.0",
+    "peft>=0.18.1",
+    "pydantic>=2.12.5",
+    "pydantic-settings>=2.12.0",
+    "torch==2.9.1",
+    "transformers==4.57.2",
+    "accelerate==1.12.0",
+    "superexec>=1.0",
+    "safetensors>=0.7.0",
+]
+
+[tool.uv]
+required-environments = [
+    "sys_platform == 'linux'",
+    "sys_platform == 'darwin' and platform_machine == 'arm64'",
+    "sys_platform == 'win32'",
+]
+
+[tool.uv.sources]
+torch = [
+    { index = "pytorch-cu130", marker = "sys_platform == 'linux'" },
+    { index = "pytorch-cu130", marker = "sys_platform == 'win32'" },
+    { index = "pytorch-cpu",   marker = "sys_platform == 'darwin'" },
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.flwr.app]
+publisher = "luca-fanto"
+
+[tool.flwr.app.components]
+serverapp = "src.server_app:app"
+clientapp = "src.client_app:app"
+
+
+[tool.flwr.app.config]
+num-server-rounds = 2
+fraction-train = 0.5
+local-epochs = 1
+lr = 0.01
+
+[tool.flwr.federations]
+default = "local-simulation"
+
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 2
+
+[tool.flwr.federations.local-deployment]
+address = "127.0.0.1:9093"
+insecure = true
+
+[tool.flwr.federations.staging-deployment]
+address = "superlink:9093"
+insecure = true
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.1.0",
+    "pytest-mock>=3.15.1",
+]
+# root-certificates = "<PATH/TO/ca.crt>"  # For TLS setup
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
+addopts = ["--cov=src", "--cov-report=term-missing", "--cov-report=html:htmlcov", "--cov-fail-under=80", "--cov-branch", "-v"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "@abstractmethod"
+]
+
+[tool.coverage.run]
+omit = [
+    "src/server_app.py",
+    "src/client_app.py",
+]

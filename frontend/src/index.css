@@ -1,0 +1,66 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Custom CSS Variables for Theme-Specific Colors */
+:root {
+  /* Light Theme Variables */
+  --color-background: #F8F9FB;
+  --color-surface: #FFFFFF;
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-text: #1E293B;
+  --color-text-secondary: #64748B;
+  --color-border: #E2E8F0;
+  
+  /* Typography */
+  font-family: "DM Sans", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  /* Rendering optimizations */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+  --color-background: #0F1117;
+  --color-surface: #1A1D27;
+  --color-primary: #6366F1;
+  --color-primary-hover: #818CF8;
+  --color-text: #F8FAFC;
+  --color-text-secondary: #94A3B8;
+  --color-border: #334155;
+}
+
+/* Base Styles */
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+/* Heading Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-weight: 600;
+}
+
+/* Monospace Typography */
+code, pre, kbd, samp {
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

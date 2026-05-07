@@ -1,0 +1,8 @@
+import redis.asyncio
+
+from .federated_learning_job_redis_event_consumer import FederatedLearningJobRedisEventConsumer
+from services.redis import RedisEventConsumerServiceInterface
+from clients.redis import build_redis_client_async
+
+def get_federated_learning_job_redis_event_consumer(redis_client_async: redis.asyncio.Redis = build_redis_client_async()) -> RedisEventConsumerServiceInterface:
+    return FederatedLearningJobRedisEventConsumer.get_instance(redis_client_async=redis_client_async)

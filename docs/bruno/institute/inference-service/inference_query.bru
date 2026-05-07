@@ -1,0 +1,29 @@
+meta {
+  name: inference_query
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8095/api_inference/inference
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "model_key": "llama-2-7b",
+    "adapter_version": null,
+    "prompt": "What are the sections of an Innosuisse Project Proposal which start with 1.* as a title of the section (i want the response in English)?",
+    "conversation_history": []
+  }
+}
+
+settings {
+  encodeUrl: false
+  timeout: 0
+}
