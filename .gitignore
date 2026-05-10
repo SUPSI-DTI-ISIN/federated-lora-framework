@@ -136,6 +136,7 @@ venv.bak/
 .netrc
 !.netrc.template
 *.fab
+.vscode
 
 # Spyder project settings
 .spyderproject

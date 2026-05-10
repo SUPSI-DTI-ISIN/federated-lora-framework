@@ -1,0 +1,360 @@
+services:
+  superlink:
+    image: flwr/superlink:1.25.0
+    container_name: superlink
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+    command:
+      - --insecure
+      - --isolation
+      - process
+    ports:
+      - "9091:9091"
+      - "9092:9092"
+      - "9093:9093"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  superexec-serverapp:
+    build:
+      context: ../federated-learning-service
+      dockerfile: docker/superexec.uv.Dockerfile
+    container_name: superexec-serverapp
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+    command:
+      - --insecure
+      - --plugin-type
+      - serverapp
+      - --appio-api-address
+      - superlink:9091
+    restart: always
+    depends_on:
+      - superlink
+    volumes:
+      - models:/models
+    networks:
+      - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  institutes-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${INSTITUTES_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${INSTITUTES_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${INSTITUTES_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - institutes-mysql-data:/var/lib/mysql
+    networks:
+      - internal
+
+  federated-learning-jobs-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "33061:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - federated-learning-jobs-mysql-data:/var/lib/mysql
+    networks:
+      - internal
+
+  keycloak-postgres-db:
+    image: postgres:15
+    container_name: keycloak-postgres
+    environment:
+      POSTGRES_USER: ${KEYCLOAK_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${KEYCLOAK_POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $KEYCLOAK_POSTGRES_USER || exit 1" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal
+
+  redis-service:
+    image: redis:8.6.1
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    restart: always
+    volumes:
+      - redis-data:/data
+    networks:
+      - internal
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.0
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-postgres-db:5432/${KEYCLOAK_POSTGRES_DB}
+      KC_DB_USERNAME: ${KEYCLOAK_POSTGRES_USER}
+      KC_DB_PASSWORD: ${KEYCLOAK_POSTGRES_PASSWORD}
+
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+
+      KC_HOSTNAME: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      KC_HTTP_PORT: 8086
+      KC_HTTP_ENABLED: true
+
+      KC_METRICS_ENABLED: true
+      KC_HEALTH_ENABLED: true
+    ports:
+      - "8086:8086"
+    command:
+      - start-dev
+    depends_on:
+      keycloak-postgres-db:
+        condition: service_healthy
+    #    healthcheck:
+    #      test: [ "CMD", "curl", "--head", "-fsS", "http://localhost:8085/health/ready" ]
+    #      interval: 20s
+    #      timeout: 5s
+    #      retries: 10
+    networks:
+      - internal
+      - external
+
+  mlflow-service:
+    build:
+      context: ../department/mlflow-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    restart: always
+    ports:
+      - "9010:9010"
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REALM_NAME: ${REALM_NAME:-Department}
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9010/api_mlflow/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - models:/models
+    networks:
+      - internal
+      - external
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  institute-service:
+    build:
+      context: ../department/institute-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    restart: always
+    ports:
+      - "9020:9020"
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      DEPARTMENT_URL: ${DEPARTMENT_URL_URL:-http://frontend:80}
+      REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${INSTITUTES_MYSQL_ROOT_PASSWORD}@institutes-mysql-db:3306/${INSTITUTES_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${INSTITUTES_MYSQL_ROOT_PASSWORD}@institutes-mysql-db:3306/${INSTITUTES_MYSQL_DATABASE}
+      DB_HOST: institutes-mysql-db
+      DB_PORT: 3306
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9020/api_institute/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      institutes-mysql-db:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  federated-learning-management-service:
+    build:
+      context: ../department/federated-learning-management-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    restart: always
+    ports:
+      - "9015:9015"
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
+      REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DB_HOST: federated-learning-jobs-mysql-db
+      DB_PORT: 3306
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9015/api_federated_learning_management/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    depends_on:
+      redis-service:
+        condition: service_healthy
+      federated-learning-jobs-mysql-db:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  federated-learning-management-service-worker:
+    build:
+      context: ../department/federated-learning-management-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    working_dir: /app
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
+      REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      PYTHONPATH: src
+    restart: always
+    entrypoint: ""
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
+    depends_on:
+      federated-learning-management-service:
+        condition: service_healthy
+    networks:
+      - internal
+
+  federated-learning-management-service-flower:
+    build:
+      context: ../department/federated-learning-management-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    working_dir: /app
+    environment:
+      KEYCLOAK_URL: ${KEYCLOAK_URL:-http://keycloak:8086}
+      KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL:-http://frontend:80}
+      REDIS_URL: ${REDIS_URL:-redis://redis-service:6379}
+      REALM_NAME: ${REALM_NAME:-Department}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${FEDERATED_LEARNING_JOBS_MYSQL_ROOT_PASSWORD}@federated-learning-jobs-mysql-db:3306/${FEDERATED_LEARNING_JOBS_MYSQL_DATABASE}
+      PYTHONPATH: src
+    restart: always
+    ports:
+      - "5555:5555"
+    entrypoint: ""
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "flower", "--port=5555" ]
+    depends_on:
+      federated-learning-management-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        NPM_TOKEN: ${GITLAB_TOKEN}
+    environment:
+      MLFLOW_SERVICE_URL: http://mlflow-service:9010
+      INSTITUTE_SERVICE_URL: http://institute-service:9020
+      FEDERATED_LEARNING_MANAGEMENT_SERVICE_URL: http://federated-learning-management-service:9015
+      PORT: 80
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      mlflow-service:
+        condition: service_healthy
+      institute-service:
+        condition: service_healthy
+      federated-learning-management-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+volumes:
+  redis-data:
+    driver: local
+  institutes-mysql-data:
+    driver: local
+  federated-learning-jobs-mysql-data:
+    driver: local
+  keycloak-data:
+    driver: local
+  models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MODELS_INTERNAL_PATH}
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false

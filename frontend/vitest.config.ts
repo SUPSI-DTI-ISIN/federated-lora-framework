@@ -8,13 +8,8 @@ export default defineConfig({
         coverage: {
             provider: 'v8',
             reporter: ['text', 'html'],
-            include: ['src/**/*.ts'],
-            exclude: ['src/**/*.d.ts'],
-        },
-    },
-    resolve: {
-        alias: {
-            'import.meta.env': JSON.stringify({}),
+            include: ['src/**/*.ts', 'src/**/*.tsx'],
+            exclude: ['src/**/*.d.ts', 'src/**/main.tsx', 'src/**/App.tsx'],
         },
     },
 });
