@@ -1,0 +1,320 @@
+services:
+  redis-inference-service:
+    image: redis:8.6.1
+    ports:
+      - "${HOST_REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: [ "CMD-SHELL", "redis-cli ping | grep PONG" ]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    command: [ "redis-server" ]
+    restart: always
+    volumes:
+      - redis-inference-data:/data
+    networks:
+      - internal
+
+  documents-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "${HOST_MYSQL_DOCS_PORT:-3306}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DOCUMENTS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DOCUMENTS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DOCUMENTS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - documents-mysql-data:/var/lib/mysql
+    networks:
+      - internal
+
+  chats-mysql-db:
+    image: mysql:8.4.7
+    ports:
+      - "${HOST_MYSQL_CHATS_PORT:-33061}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${CHATS_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${CHATS_MYSQL_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${CHATS_MYSQL_ROOT_PASSWORD}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - chats-mysql-data:/var/lib/mysql
+    networks:
+      - internal
+
+  inference-service:
+    build:
+      context: ../institute/inference-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      MODEL_SERVICE_URL: http://model-service:8090
+      REDIS_URL: redis://redis-inference-service:6379
+    restart: always
+    ports:
+      - "${HOST_INFERENCE_SERVICE_PORT:-8095}:8095"
+    depends_on:
+      model-service:
+        condition: service_healthy
+      redis-inference-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8095/api_inference/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - models:/models
+    networks:
+      - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  inference-service-worker:
+    build:
+      context: ../institute/inference-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    working_dir: /app
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      MODEL_SERVICE_URL: http://model-service:8090
+      REDIS_URL: redis://redis-inference-service:6379
+      PYTHONPATH: src
+    restart: always
+    entrypoint: ""
+    command: [ "uv", "run", "--env-file", ".env", "celery", "-A", "src.clients.celery", "worker", "--loglevel=info" ]
+    depends_on:
+      inference-service:
+        condition: service_healthy
+    volumes:
+      - models:/models
+    networks:
+      - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+  data-service:
+    build:
+      context: ../institute/data-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${DOCUMENTS_MYSQL_ROOT_PASSWORD}@documents-mysql-db:3306/${DOCUMENTS_MYSQL_DATABASE}
+      DB_HOST: documents-mysql-db
+      DB_PORT: 3306
+      FRONTEND_URL: ${FRONTEND_URL}
+    restart: always
+    ports:
+      - "${HOST_DATA_SERVICE_PORT:-8080}:8080"
+    depends_on:
+      documents-mysql-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/api_data/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+      - external
+
+  model-service:
+    build:
+      context: ../institute/model-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      FRONTEND_URL: ${FRONTEND_URL}
+      MLFLOW_DEPARTMENT_SERVICE_URL: ${MLFLOW_DEPARTMENT_SERVICE_URL}
+    restart: always
+    ports:
+      - "${HOST_MODEL_SERVICE_PORT:-8090}:8090"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8090/api_model/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - models:/models
+    networks:
+      - internal
+      - external
+
+  chat-service:
+    build:
+      context: ../institute/chat-service
+      dockerfile: docker/Dockerfile
+      args:
+        ENV_PATH: .env.local
+        UV_INDEX_GITLAB_USERNAME: ${UV_INDEX_GITLAB_USERNAME}
+        UV_INDEX_GITLAB_PASSWORD: ${UV_INDEX_GITLAB_PASSWORD}
+    environment:
+      INSTITUTE_NAME: ${INSTITUTE_NAME}
+      KEYCLOAK_URL: ${KEYCLOAK_URL}
+      #KEYCLOAK_GLOBAL_HOSTNAME_URL: ${KEYCLOAK_GLOBAL_HOSTNAME_URL}
+      INFERENCE_SERVICE_URL: http://inference-service:8095
+      ALEMBIC_SYNC_DATABASE_URL: mysql+pymysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DATABASE_URL: mysql+aiomysql://root:${CHATS_MYSQL_ROOT_PASSWORD}@chats-mysql-db:3306/${CHATS_MYSQL_DATABASE}
+      DB_HOST: chats-mysql-db
+      DB_PORT: 3306
+      FRONTEND_URL: ${FRONTEND_URL}
+      REDIS_URL: redis://redis-inference-service:6379
+    restart: always
+    ports:
+      - "${HOST_CHAT_SERVICE_PORT:-8081}:8081"
+    depends_on:
+      chats-mysql-db:
+        condition: service_healthy
+      inference-service:
+        condition: service_healthy
+      redis-inference-service:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8081/api_chat/health" ]
+      interval: 20s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+      - external
+
+  nginx-service:
+    build:
+      context: ../institute/nginx-service
+      dockerfile: docker/Dockerfile
+    environment:
+      CHAT_SERVICE_URL: http://chat-service:8081
+      DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
+      PORT: 80
+    restart: always
+    ports:
+      - "${HOST_NGINX_PORT:-80}:80"
+    depends_on:
+      chat-service:
+        condition: service_healthy
+      data-service:
+        condition: service_healthy
+      model-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  supernode:
+    image: flwr/supernode:1.25.0
+    environment:
+      DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
+    ports:
+      - "${HOST_SUPERNODE_PORT:-9094}:9094"
+    command:
+      - --insecure
+      - --superlink
+      - ${SUPERLINK_SERVICE_URL}
+      - --clientappio-api-address
+      - 0.0.0.0:9094
+      - --isolation
+      - process
+    depends_on:
+      data-service:
+        condition: service_healthy
+      model-service:
+        condition: service_healthy
+    networks:
+      - internal
+      - external
+
+  superexec-clientapp:
+    build:
+      context: ../federated-learning-service
+      dockerfile: docker/superexec.uv.Dockerfile
+    environment:
+      DATA_SERVICE_URL: http://data-service:8080
+      MODEL_SERVICE_URL: http://model-service:8090
+    command:
+      - --insecure
+      - --plugin-type
+      - clientapp
+      - --appio-api-address
+      - supernode:9094
+    stop_signal: SIGINT
+    depends_on:
+      - supernode
+    volumes:
+      - models:/models
+    networks:
+      - internal
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [ gpu ]
+
+volumes:
+  redis-inference-data:
+    driver: local
+  documents-mysql-data:
+    driver: local
+  chats-mysql-data:
+    driver: local
+  models:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${MODELS_INTERNAL_PATH}
+
+networks:
+  internal:
+    driver: bridge
+    internal: true
+  external:
+    driver: bridge
+    internal: false

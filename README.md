@@ -1,93 +1,271 @@
-# Decentralised AI
+# PETAL (Privacy preserving Edge Training with Adapter Learning)
 
+A federated learning platform that enables multiple institutes to collaboratively fine-tune a shared LLM without ever sharing their private data. Each institute trains locally; only model updates travel over the network. A central department node orchestrates the federation, tracks experiments, and manages model versions.
 
+---
 
-## Getting started
+## Architecture
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+The system is split into two logical tiers.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+### Department (central node)
 
-## Add your files
+Hosts the federation orchestrator, experiment tracking, institute registry, and the shared frontend.
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+![Department Architecture](docs/screenshots/department-architecture.png)
+
+### Institute (per-institute node)
+
+Each institute runs its own stack: local data, inference, chat, and a Flower SuperNode that connects back to the department SuperLink.
+
+![Institute Architecture](docs/screenshots/institute-architecture.png)
+
+---
+
+## Global Requirements
+
+Make sure the following tools are installed on your machine before proceeding.
+
+| Tool | Purpose | Install |
+|---|---|---|
+| **Docker** (with Compose v2) | Run all services | [docs.docker.com](https://docs.docker.com/get-docker/) |
+| **uv** | Python package manager (replaces pip/venv) | [docs.astral.sh/uv](https://docs.astral.sh/uv/getting-started/installation/) |
+| **Node.js + npm** | Frontend development | [nodejs.org](https://nodejs.org/) |
+| **NVIDIA GPU + drivers** | Required for training and inference containers | [nvidia.com/drivers](https://www.nvidia.com/Download/index.aspx) |
+| **NVIDIA Container Toolkit** | Expose GPU to Docker | [docs.nvidia.com/datacenter/cloud-native](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) |
+
+---
+
+## Repository Structure
 
 ```
-cd existing_repo
-git remote add origin https://gitlab-edu.supsi.ch/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai.git
-git branch -M main
-git push -uf origin main
+decentralised-ai/
+├── department/                  # Department-side microservices
+│   ├── federated-learning-management-service/
+│   ├── institute-service/
+│   └── mlflow-service/
+├── institute/                   # Institute-side microservices
+│   ├── chat-service/
+│   ├── data-service/
+│   ├── inference-service/
+│   ├── model-service/
+│   └── nginx-service/
+├── federated-learning-service/  # Flower ClientApp + ServerApp
+├── frontend/                    # React + TypeScript + Vite web UI
+├── shared-auth-library/         # Shared JWT/OIDC library
+├── misc/                        # Utility scripts (model downloader)
+├── models/                      # Local model storage (gitignored)
+│   ├── department/              # Department model files
+│   └── institute/               # Per-institute model files
+├── docker/                      # Docker Compose files
+├── deployment/                  # Deployment scripts and API sync tools
+├── keycloak-initial-configuration/  # Keycloak realm import files
+└── docs/                        # Documentation and screenshots
 ```
 
-## Integrate with your tools
+---
 
-- [ ] [Set up project integrations](https://gitlab-edu.supsi.ch/dti-isin/giuliano.gremlich/progetti_master/2025-2026/luca-fanto/decentralised-ai/-/settings/integrations)
+## Base Model Download
 
-## Collaborate with your team
+> Do this first. The model files are large (~13 GB) and are not included in the repository.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+```bash
+cd ./misc
+```
 
-## Test and Deploy
+Install dependencies:
 
-Use the built-in continuous integration in GitLab.
+```bash
+uv sync
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Create the `.env` file from the template and fill in your values:
 
-***
+```bash
+cp .env.template .env
+```
 
-# Editing this README
+```dotenv
+HUGGINGFACE_TOKEN=hf_...        # Your Hugging Face access token
+MODEL_PATH=../models/department  # Where the model will be saved
+HF_MODEL_ID=meta-llama/Llama-2-7b-chat-hf
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+> **Hugging Face setup:**
+> 1. Create an account at [huggingface.co](https://huggingface.co) and generate an access token at [huggingface.co/settings/tokens](https://huggingface.co/settings/tokens).
+> 2. Request access to the model at [huggingface.co/meta-llama/Llama-2-7b-chat-hf](https://huggingface.co/meta-llama/Llama-2-7b-chat-hf). Meta will approve the request.
 
-## Suggestions for a good README
+Download the model:
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+```bash
+uv run --env-file .env src/huggingface_model_downloader.py
+```
 
-## Name
-Choose a self-explaining name for your project.
+Remove symlinks so Docker can bind-mount the files correctly (your snapshot hash will differ):
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```bash
+./model_remove_symlinks.sh ../models/department/original/models--meta-llama--Llama-2-7b-chat-hf/snapshots/<snapshot-hash>
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+After the download and symlink removal, `./models/department/` should contain:
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+```
+models/department/llama-2-7b/
+└── base/
+    ├── config.json
+    ├── generation_config.json
+    ├── model.safetensors.index.json
+    ├── model-00001-of-00002.safetensors
+    ├── model-00002-of-00002.safetensors
+    ├── special_tokens_map.json
+    ├── tokenizer.json
+    └── tokenizer_config.json
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+---
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+## Quick Start (Docker)
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+The fastest way to bring up the full system. All services run as Docker containers.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### 1. Department stack
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+```bash
+cd department/docker
+cp .env.template .env
+# fill in passwords and Keycloak credentials
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```bash
+docker compose -f ../../docker/docker-compose.department.yml --env-file .env up -d
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### 2. Institute stack
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+```bash
+cd institute/docker
+cp .env.template .env
+# fill in database passwords
+```
 
-## License
-For open source projects, say how it is licensed.
+```bash
+docker compose -f ../../docker/docker-compose.institute.yml --env-file .env up -d
+```
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+See [`docs/README_USE_PORTS.md`](docs/README_USE_PORTS.md) for the full port reference.
+
+---
+
+## Development Guide
+
+Run each microservice locally for development. Services talk to each other over `localhost`; only the infrastructure (databases, Redis, Keycloak) runs in Docker.
+
+### Prerequisites: build the shared auth library
+
+All Python services depend on `shared-auth-library`. For local development you install it from a local path instead of the GitLab registry.
+
+```bash
+cd shared-auth-library
+uv sync
+uv build
+```
+
+See [shared-auth-library/README.md](shared-auth-library/README.md) for details.
+
+---
+
+### Prerequisites: sync the frontend API clients
+
+The frontend uses auto-generated TypeScript clients built from each service's OpenAPI spec. Run the sync script once before starting the frontend (and again whenever a service API changes):
+
+```bash
+cd deployment/apis
+./sync-dev-apis.sh
+```
+
+---
+
+### Department layer
+
+#### Step 1: start the department infrastructure
+
+Start the local Docker Compose for the department. This brings up Keycloak, Redis, and the two MySQL databases (no application services):
+
+```bash
+cd department/docker
+cp .env.template .env
+# fill in passwords
+docker compose -f docker-compose.local.yml --env-file .env up -d
+```
+
+#### Step 2: start department microservices
+
+Start each service individually. Click the links below to go to each service's README for the full setup steps:
+
+- [MLflow Service](department/mlflow-service/README.md)
+- [Institute Service](department/institute-service/README.md)
+- [Federated Learning Management Service](department/federated-learning-management-service/README.md)
+
+Each service README explains how to:
+1. Switch `pyproject.toml` to use the local `shared-auth-library` path
+2. Create the `.env.dev` file from its template
+3. Run `uv sync` and start the service
+
+---
+
+### Institute layer
+
+#### Step 1: start the institute infrastructure
+
+```bash
+cd institute/docker
+cp .env.template .env
+# fill in passwords
+docker compose -f docker-compose.local.yml --env-file .env up -d
+```
+
+This starts Redis and the two MySQL databases (documents + chats).
+
+#### Step 2: start institute microservices
+
+- [Data Service](institute/data-service/README.md)
+- [Model Service](institute/model-service/README.md)
+- [Chat Service](institute/chat-service/README.md)
+- [Inference Service](institute/inference-service/README.md)
+
+---
+
+### Frontend
+
+Once all backend services are running:
+
+- [Frontend README](frontend/README.md)
+
+The dev server starts at `http://localhost:3000`.
+
+---
+
+## Port Reference
+
+See [`docs/README_USE_PORTS.md`](docs/README_USE_PORTS.md) for the full port registry.
+
+---
+
+## Running Tests
+
+For any Python service:
+
+```bash
+cd <service-directory>
+uv sync
+source .venv/bin/activate
+uv run pytest
+```
+
+For the frontend:
+
+```bash
+cd frontend
+npm install
+npm run test
+```

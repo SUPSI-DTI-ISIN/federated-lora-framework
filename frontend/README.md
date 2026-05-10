@@ -1,73 +1,72 @@
-# React + TypeScript + Vite
+# Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript single-page application that serves as the unified UI for both department operators and institute users. Communicates with backend services through auto-generated TypeScript clients.
 
-Currently, two official plugins are available:
+## Local Development
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
 
-## React Compiler
+Before starting the frontend, all backend services must be running and the API clients must be synced. If you haven't done this yet, go back to the [root README](../../README.md) and follow the development guide.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### 1. Configure the environment
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.development.template .env.development
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The template already contains sensible defaults that match the dev ports of all services:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```dotenv
+VITE_FEDERATED_LEARNING_MANAGEMENT_SERVICE_URL=http://localhost:9015
+VITE_INSTITUTE_SERVICE_URL=http://localhost:9020
+VITE_MLFLOW_SERVICE_URL=http://localhost:9010
+VITE_CHAT_SERVICE_URL=http://localhost:8081
+VITE_DATA_SERVICE_URL=http://localhost:8080
+VITE_MODEL_SERVICE_URL=http://localhost:8090
+VITE_MODEL_KEY=llama-2-7b
+VITE_ENVIRONMENT=development
+VITE_KEYCLOAK_URL=http://localhost:8086
+VITE_FRONTEND_URL=http://localhost:3000
+VITE_FLOWER_CELERY_JOBS_URL=http://localhost:5555
+VITE_CLIENT_ID=spa-client
 ```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Start the dev server
+
+```bash
+npm run dev
+```
+
+The app is available at `http://localhost:3000`.
+
+---
+
+## Running Tests
+
+```bash
+npm run test
+```
+
+Generate a coverage report:
+
+```bash
+npm run test:coverage
+```
+
+---
+
+## Build
+
+```bash
+npm run build
+```
+
+Output is in `dist/`.
+
+← [Back to root README](../README.md)
