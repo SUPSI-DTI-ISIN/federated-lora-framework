@@ -138,7 +138,6 @@ services:
       - "8086:8086"
     command:
       - start-dev
-      - --import-realm
     depends_on:
       keycloak-postgres-db:
         condition: service_healthy
@@ -147,8 +146,6 @@ services:
     #      interval: 20s
     #      timeout: 5s
     #      retries: 10
-    volumes:
-      - keycloak-initial-configuration:/opt/keycloak/data/import
     networks:
       - internal
       - external
@@ -347,12 +344,6 @@ volumes:
     driver: local
   keycloak-data:
     driver: local
-  keycloak-initial-configuration:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${KEYCLOAK_INITIAL_CONFIGURATION_PATH}
   models:
     driver: local
     driver_opts:
