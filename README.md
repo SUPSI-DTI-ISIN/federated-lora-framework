@@ -181,32 +181,52 @@ cp ../../../federated-learning-service/pyproject.toml \
 
 ---
 
-### 1. Department stack
+**Sync the API clients remotely**
+
+The frontend Docker image is built with the TypeScript API clients pre-installed from the GitLab npm registry. Run the sync script to generate, publish, and install them before building any image:
 
 ```bash
-cd department/docker
-cp .env.template .env
-# fill in passwords and Keycloak credentials
+cd deployment/apis
+cp .env.template .env.config
+# fill in UV_INDEX_GITLAB_USERNAME, UV_INDEX_GITLAB_PASSWORD, GITLAB_TOKEN
+./sync-apis.sh
 ```
 
+> `sync-apis.sh` starts each service briefly to extract its OpenAPI spec, generates a TypeScript client with `openapi-generator`, publishes it to the GitLab npm registry, and installs it into `frontend`. Run it again whenever a service API changes.
+
+---
+
+### 1. Department stack
+
+Create the env file from the dev template:
+
 ```bash
-docker compose -f ../../docker/docker-compose.department.yml --env-file .env up -d
+cd deployment/department
+cp .env.department.dev.docker.template .env.department.dev.docker
+```
+
+Start the department stack (builds images locally from source):
+
+```bash
+docker compose -f ../../docker/docker-compose.department.dev.yml \
+  --env-file .env.department.dev.docker up -d
 ```
 
 ### 2. Institute stack
 
-```bash
-cd institute/docker
-cp .env.template .env
-# fill in database passwords
-```
+Create the env file from the dev template (one per institute):
 
 ```bash
-docker compose -f ../../docker/docker-compose.institute.yml --env-file .env up -d
+cd deployment/institute
+cp .env.institute-INSTITUTE_NAME-REALM.docker.dev.template .env.institute-<REALM>.docker.dev
 ```
 
-See [`docs/README_USE_PORTS.md`](docs/README_USE_PORTS.md) for the full port reference.
+Start the institute stack (builds images locally from source):
 
+```bash
+docker compose -f ../../docker/docker-compose.institute.dev.yml \
+  --env-file .env.institute-<REALM>.docker.dev up -d
+```
 ---
 
 ## Development Guide
