@@ -78,7 +78,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models:/models
+      - models-institute:/models
     networks:
       - internal
     deploy:
@@ -113,7 +113,7 @@ services:
       inference-service:
         condition: service_healthy
     volumes:
-      - models:/models
+      - models-institute:/models
     networks:
       - internal
     deploy:
@@ -179,7 +179,7 @@ services:
       timeout: 5s
       retries: 10
     volumes:
-      - models:/models
+      - models-institute:/models
     networks:
       - internal
       - external
@@ -286,7 +286,7 @@ services:
     depends_on:
       - supernode
     volumes:
-      - models:/models
+      - models-institute:/models
     networks:
       - internal
     deploy:
@@ -304,7 +304,7 @@ volumes:
     driver: local
   chats-mysql-data:
     driver: local
-  models:
+  models-institute:
     driver: local
     driver_opts:
       type: none
