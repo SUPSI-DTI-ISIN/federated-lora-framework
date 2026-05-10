@@ -26,13 +26,13 @@ Each institute runs its own stack: local data, inference, chat, and a Flower Sup
 
 Make sure the following tools are installed on your machine before proceeding.
 
-| Tool | Purpose | Install |
-|---|---|---|
-| **Docker** (with Compose v2) | Run all services | [docs.docker.com](https://docs.docker.com/get-docker/) |
-| **uv** | Python package manager (replaces pip/venv) | [docs.astral.sh/uv](https://docs.astral.sh/uv/getting-started/installation/) |
-| **Node.js + npm** | Frontend development | [nodejs.org](https://nodejs.org/) |
-| **NVIDIA GPU + drivers** | Required for training and inference containers | [nvidia.com/drivers](https://www.nvidia.com/Download/index.aspx) |
-| **NVIDIA Container Toolkit** | Expose GPU to Docker | [docs.nvidia.com/datacenter/cloud-native](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) |
+| Tool                         | Purpose                                        | Install                                                                                                                         |
+|------------------------------|------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
+| **Docker** (with Compose v2) | Run all services                               | [docs.docker.com](https://docs.docker.com/get-docker/)                                                                          |
+| **uv**                       | Python package manager (replaces pip/venv)     | [docs.astral.sh/uv](https://docs.astral.sh/uv/getting-started/installation/)                                                    |
+| **Node.js + npm**            | Frontend development                           | [nodejs.org](https://nodejs.org/)                                                                                               |
+| **NVIDIA GPU + drivers**     | Required for training and inference containers | [nvidia.com/drivers](https://www.nvidia.com/Download/index.aspx)                                                                |
+| **NVIDIA Container Toolkit** | Expose GPU to Docker                           | [docs.nvidia.com/datacenter/cloud-native](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) |
 
 ---
 
@@ -128,6 +128,59 @@ models/department/llama-2-7b/
 
 The fastest way to bring up the full system. All services run as Docker containers.
 
+### 0. Prerequisites
+
+**Ensure `shared-auth-library` is published to the GitLab registry**
+
+All Python services pull `shared-auth-library` from the internal GitLab PyPI registry when running in Docker. Make sure it has been published before building any image. See [shared-auth-library/README.md](shared-auth-library/README.md).
+
+Also verify that every service's `pyproject.toml` has the GitLab index active (not the local path):
+
+```toml
+[tool.uv.sources]
+# shared-auth-library = { path = "../../shared-auth-library" }  ← must be commented out
+shared-auth-library = { index = "gitlab" }
+```
+
+---
+
+**Build and install the Flower FAB**
+
+The FL Management Service needs the federated learning app pre-installed before it can start fine-tuning jobs. Do this once (and again whenever `federated-learning-service` changes):
+
+```bash
+# 1. Build the FAB from the federated-learning-service
+cd federated-learning-service
+uv sync
+flwr build
+```
+
+This produces a file named `luca-fanto.federated-learning-service.<version>.fab` in the current directory.
+
+```bash
+# 2. Copy the .fab into the FL management service
+cp luca-fanto.federated-learning-service.*.fab \
+   ../department/federated-learning-management-service/flwr/fab/
+```
+
+```bash
+# 3. Install the FAB so Flower can find the app
+cd ../department/federated-learning-management-service/flwr
+flwr install fab/luca-fanto.federated-learning-service.<version>.fab --flwr-dir .
+```
+
+This creates the app directory under `./apps/luca-fanto.federated-learning-service.<version>/`.
+
+```bash
+# 4. Copy the federated-learning-service pyproject.toml into the installed app
+cp ../../../federated-learning-service/pyproject.toml \
+   apps/luca-fanto.federated-learning-service.<version>/pyproject.toml
+```
+
+> Replace `<version>` with the actual version string (e.g. `0.1.0`). After step 3 you can check the exact folder name with `ls apps/`.
+
+---
+
 ### 1. Department stack
 
 ```bash
@@ -198,7 +251,38 @@ cp .env.template .env
 docker compose -f docker-compose.local.yml --env-file .env up -d
 ```
 
-#### Step 2: start department microservices
+#### Step 2: configure Keycloak
+
+Once the infrastructure is up, Keycloak is available at `http://localhost:8086`. Log in with the admin credentials you set in `.env` (`KEYCLOAK_ADMIN` / `KEYCLOAK_ADMIN_PASSWORD`).
+
+You need to create a realm and import the `spa-client` into it so the frontend can authenticate.
+
+**Create the Department realm**
+
+1. Open `http://localhost:8086` and log in as admin.
+2. Click the realm dropdown (top-left) → **Create realm**.
+3. Name it `Department` (this must match `REALM_NAME` in each service's `.env.dev`).
+
+**Import the spa-client**
+
+1. Inside the `Department` realm, go to **Clients** → **Import client**.
+2. Upload the file [`docs/keycloak-spa-client-configuration/example-department-spa-client.json`](docs/keycloak-spa-client-configuration/example-department-spa-client.json).
+3. Save.
+
+The imported client is a **public OpenID Connect** client (`spa-client`) with:
+- PKCE enabled (`S256`)
+- Redirect URI and web origin set to `http://localhost:3000`
+- A hardcoded `realm_admin: true` claim added to the access token (used by the department frontend to identify admin users)
+
+> For production, update the redirect URIs and web origins to match your actual frontend URL.
+
+**Create users**
+
+Add at least one user inside the `Department` realm so you can log in through the frontend.
+
+---
+
+#### Step 3: start department microservices
 
 Start each service individually. Click the links below to go to each service's README for the full setup steps:
 
@@ -226,7 +310,33 @@ docker compose -f docker-compose.local.yml --env-file .env up -d
 
 This starts Redis and the two MySQL databases (documents + chats).
 
-#### Step 2: start institute microservices
+#### Step 2: configure Keycloak for the institute
+
+Each institute has its own realm in the same Keycloak instance (running on the department node at `http://localhost:8086`).
+
+**Create the institute realm**
+
+1. Open `http://localhost:8086` and log in as admin.
+2. Click the realm dropdown → **Create realm**.
+3. Name it after the institute (e.g. `ISIN`). This must match `REALM_NAME` in the institute services' `.env.dev` files.
+
+**Import the spa-client**
+
+1. Inside the institute realm, go to **Clients** → **Import client**.
+2. Upload the file [`docs/keycloak-spa-client-configuration/example-institute-spa-client.json`](docs/keycloak-spa-client-configuration/example-institute-spa-client.json).
+3. Save.
+
+The imported client is a **public OpenID Connect** client (`spa-client`) with:
+- PKCE enabled (`S256`)
+- Redirect URI and web origin set to `http://localhost:3000`
+
+> The institute client has no `realm_admin` claim - that claim is department-only.
+
+**Create users**
+
+Add at least one user inside the institute realm so institute users can log in through the frontend.
+
+#### Step 3: start institute microservices
 
 - [Data Service](institute/data-service/README.md)
 - [Model Service](institute/model-service/README.md)

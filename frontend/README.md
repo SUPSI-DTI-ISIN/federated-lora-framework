@@ -6,7 +6,7 @@ React + TypeScript single-page application that serves as the unified UI for bot
 
 ### Prerequisites
 
-Before starting the frontend, all backend services must be running and the API clients must be synced. If you haven't done this yet, go back to the [root README](../../README.md) and follow the development guide.
+Before starting the frontend, all backend services must be running and the API clients must be synced. If you haven't done this yet, go back to the [root README](../README.md) and follow the development guide.
 
 ### 1. Configure the environment
 

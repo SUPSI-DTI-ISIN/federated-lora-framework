@@ -77,5 +77,54 @@ uv run pytest
 
 > Ensure `pyproject.toml` uses `shared-auth-library = { index = "gitlab" }` before building.
 
+### Prepare the Flower FAB
+
+Before starting the containers, the federated learning app must be built and installed into the `flwr/` directory. The Celery worker uses it to launch FL fine-tuning jobs via the Flower CLI.
+
+**Step 1 — build the FAB**
+
+```bash
+cd federated-learning-service
+uv sync
+flwr build
+```
+
+This produces `luca-fanto.federated-learning-service.<version>.fab` in the current directory.
+
+**Step 2 — copy the FAB**
+
+```bash
+cp luca-fanto.federated-learning-service.*.fab \
+   ../department/federated-learning-management-service/flwr/fab/
+```
+
+**Step 3 — install the FAB**
+
+```bash
+cd ../department/federated-learning-management-service/flwr
+flwr install fab/luca-fanto.federated-learning-service.<version>.fab --flwr-dir .
+```
+
+This creates the app under `./apps/luca-fanto.federated-learning-service.<version>/`. Check the exact name with `ls apps/`.
+
+**Step 4 — copy the pyproject.toml into the installed app**
+
+```bash
+cp ../../../federated-learning-service/pyproject.toml \
+   apps/luca-fanto.federated-learning-service.<version>/pyproject.toml
+```
+
+> Repeat steps 1–4 whenever `federated-learning-service` is updated.
+
+### Start the containers
+
+Three containers are started from the same image:
+
+```bash
+docker compose -f ../../docker/docker-compose.department.yml --env-file ../docker/.env up -d \
+  federated-learning-management-service \
+  federated-learning-management-service-worker \
+  federated-learning-management-service-flower
+```
 
 ← [Back to root README](../../README.md)
